@@ -1,0 +1,34 @@
+---
+layout: post
+title: 'Pairing Tour: Eric K - Working with iOS Touch Events'
+date: '2013-01-17T23:45:27-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/40821152999/pairing-tour-eric-k-working-with-ios-touch
+---
+<p>On Tuesday I had the chance to pair with <a href="http://ekosz.github.com/">Eric Koslow</a> on the client project that I worked on with Brian Pratt last week. Eric did his apprenticeship during mine so we&rsquo;ve paired quite a bit together. He’s a quick thinker who seems to know something about every toolset out there so I invariably learn something new every time we work together.</p>
+
+<p>He was continuing to work on the JavaScript for the iPad web app, which meant tracking down some unexpected behavior and getting the app to respond to touches and swipes the way that it should.</p>
+
+<p>The secret to handling touch events in Safari on iOS is that the mobile browser provides unique DOM elements that you can interact with. The ones that we worked with most were the targetTouches and touchEvent object. <a href="http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/touchEventClassReference/touchEvent/touchEvent.html">Apple&rsquo;s documentation</a> explains it best:</p>
+
+<blockquote>The system continually sends touchEvent objects to an application as fingers touch and move across a surface. A touch event provides a snapshot of all touches during a multi-touch sequence, most importantly the touches that are new or have changed for a particular target. A multi-touch sequence begins when a finger first touches the surface. Other fingers may subsequently touch the surface, and all fingers may move across the surface. The sequence ends when the last of these fingers is lifted from the surface. An application receives touch event objects during each phase of any touch.</blockquote>
+
+<p>So, in a nutshell, what happens is that targetTouches ends up being an array of touchEvent objects. These events are things like <code>touchstart</code>, <code> touchmove</code> and <code>touchend</code>, and  can be mapped to the mouse events <code>mousedown</code>, <code>mousemove</code> and <code>mouseup</code>.  These touchEvents have various properties, such as the X and Y coordinates of each event.</p>
+
+<p>Unfortunately all the code we worked on is in the client repo so I’m going to need to update this post with some better examples after I follow up with Eric, but here’s a quick and dirty example:</p>
+
+<p>Let’s say that you wanted to track how far a touch moved along the X- or Y-axis. Normally a touch that moved further along the X-axis would just move the page around on the mobile browser (and snap back into place), but you want to intercept it and do something like a “page swipe” so that you can advance to the next slide in an HTML presentation or the next photo in a web gallery.</p>
+
+<pre><code>function pageSwipe(event) {
+    event.preventDefault();
+    var movementThreshold = 100;    
+    var xDistanceMoved = event.targetTouches[0].pageX - startX;
+    var yDistanceMoved = event.targetTouches[0].pageY - startY;
+    if (xDistanceMoved &gt; yDistanceMoved &amp;&amp; xDistanceMoved &gt; movementThreshold)
+        advanceToNextPage;
+};
+</code></pre>
+
+<p>All this function does is grab the first element out of the targetTouches and ask what its X and Y coordinates are (pageX and pageY). By subtracting the starting X and Y values we can then determine just how far it moved. If the X distance is greater than Y and also greater than the &ldquo;accidental movement&rdquo; threshold, then you trigger the page swipe. (Again, not the greatest example, so I’ll definitely update the post with more).</p>
+
+<p>I  feel like Eric and I just “touched” on the tip of the iceberg when it came to event handling in mobile browsers. As so much web consumption moves to mobile I&rsquo;m looking forward to learning more about it.</p>

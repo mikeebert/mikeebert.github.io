@@ -1,0 +1,39 @@
+---
+layout: post
+title: Problem Solving Steps
+date: '2014-02-10T23:49:06-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/76296522657/problem-solving-steps
+---
+<p>Developing software is all about problem solving. At the highest level we hope our software solves a problem for our customers and users. At the next level down we&rsquo;re solving the problem of creating a system that moves data from here, does something with it, and move it over there. Below that we&rsquo;re solving a problem by implementing sort of algorithm, and at the bottom level we&rsquo;re solving the problem of properly telling a machine what to do with our functions and data.</p>
+
+<p>When I first started programming it was often these low-level problems— getting the machine to do what I want— that would catch me up and prove the most frustrating- things like a nil object error, an unexpected return value or worse yet, no behavior when I expected something to happen. Over the years a few simple tactics have actually turned these frustrations into nothing more than speedbumps and micro-learning lessons&hellip; but there are still those times when I tell the computer to A, it does Z, and I can only respond with a big, fat <em>wtf</em>. Fortunately, by falling back on these steps I can usually find my way again.</p>
+
+<p>[Note: if you&rsquo;re looking for a great post on problem solving tips be sure to check out <a href="http://blog.8thlight.com/doug-bradbury/2013/10/08/stuck-in-the-muck.html">Doug Bradbury&rsquo;s post</a>.]</p>
+
+<h3>My &ldquo;Low-Level&rdquo; Problem Solving Steps (in order)</h3>
+
+<h4>1) Read the error message.</h4>
+
+<p>More often than not when I hit a snag there&rsquo;s an error message staring me in the face— and as soon as I learned how to properly read them they become problem solving tool numero uno. Good people put hard work into making sure that stack trace printed out for me&ndash; and bless them. Anyone who&rsquo;s kind enough to make sure other poor saps get a nicely outputted stack trace should start including a link to a charity or beer fund they&rsquo;d like us to donate to.
+But seriously, the error message often tells you exactly where to go and what went wrong. When I&rsquo;m working on a toy project or playing around with a new language a lot of times I&rsquo;ll just let the error messages guide me along- sure, we can call it <a href="https://twitter.com/davehoover/status/390979692867502080">error-driven development</a>, but really I&rsquo;m just messing around— and with good error messages, usually having fun.</p>
+
+<h4>2) Read the code, I mean <em>really</em> read the code.</h4>
+
+<p>&ldquo;<em><a href="http://media.tumblr.com/tumblr_lrq5kmwVOp1qfff9p.gif">You keep using that word, I do not think it means what you think it means.</a></em>&rdquo;</p>
+
+<p>When I&rsquo;m working in a foreign code base I know that trying to understand all of it is not always required and I should trust my teammates and the developer before me. So I&rsquo;ll look over the code to see what&rsquo;s going on be all, &ldquo;Yep, got it. I see that this function returns X&rdquo;. Then I&rsquo;ll write a test for what I&rsquo;m trying to do, and of course I&rsquo;m expecting the test to fail, but sometimes it fails in some spectacular way that makes my head explode. The error message directs me back to the source code that I was originally looking at, and only after carefully reading through it do I realize that the method is doing some entirely different from what I thought. (Also known as <a href="http://en.wikipedia.org/wiki/RTFM">RTFM</a>)</p>
+
+<h4>3) Pry! <em><a href="http://www.youtube.com/watch?v=SfcSXmFFVfE&amp;noredirect=1">These eyes&hellip; are prying</a></em></h4>
+
+<p>Thanks to the <a href="http://vimeo.com/26391171">one and only Josh Cheek</a> for my exposure to <a href="https://github.com/pry/pry">pry</a>. I think pry should be the first tool that every Rubyist learns. For newbies it&rsquo;s incredibly valuable to be able to poke around under the hood and for experienced programmers it&rsquo;s an extremely powerful tool for troubleshooting or fine-tuning an algorithm. In my perfect problem-solving world (well, not entirely perfect because steps 1 and 2 didn&rsquo;t work, and then there&rsquo;s still a problem to solve&hellip;) I have a spec I can run in conjunction with a well-placed pry statement and not only am I able to quickly solve the problem but I also gain a deeper understanding of whatever it is I&rsquo;m working on.
+[<em>Sidenote</em>: Most languages have some form of debugger, but when I&rsquo;m working in another language, or in a Ruby project that doesn&rsquo;t have pry available- the best fallback is definitely the humble <code>print</code> statement (eg. <code>puts</code>, <code>println</code>, <code>console.log</code>, etc.).]</p>
+
+<h3>Bonus tip: Get your Grep On</h3>
+
+<p>I started with <a href="http://macromates.com/">TextMate&rsquo;s</a> &lsquo;find in project&rsquo; and moved on to <a href="http://beyondgrep.com/install/">Ack</a> in <a href="https://code.google.com/p/macvim/">MacVim</a> and this past year I&rsquo;ve become a decent <a href="http://en.wikipedia.org/wiki/Grep">grep</a>'er. However, going code spunkeling is often one of the last things I do when solving a problem. I enjoy reading code and I probably have some subconscious fear that if I dive in I won&rsquo;t come up for air. But a few weeks ago I rolled on to a team with <a href="http://8thlight.com/our-team/mark-grant">Mark Grant</a> and today he put on a spelunking clinic for me&ndash; he dove with both precision and speed. 
+While implementing a feature I came across a method whose name signaled a potentially dangerous side effect, but I had no idea what it actually did. A quick grep revealed only one other use in the project and no method definition. The system we&rsquo;re working on uses a service-oriented architecture so there were several different projects that could have defined or used it and I wasn&rsquo;t sure where to start looking. I asked Mark if he knew and he wasn&rsquo;t sure, but he did know the system well enough to strategically aim his greps. Within a few seconds he followed the trail and pointed me to the method definition and where it was being used. Score one for the grepper.</p>
+
+<h4>It&rsquo;s the Small Steps</h4>
+
+<p>Before we can run we need to know how to walk, and when we fall the first step is to get back up. These four steps usually get set me back on the the right path. In a follow-up post I&rsquo;ll tackle some of the problems higher up the chain.</p>

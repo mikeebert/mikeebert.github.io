@@ -1,0 +1,39 @@
+---
+layout: post
+title: 'Postgres and OS X: Round Two '
+date: '2013-08-23T07:56:53-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/59097528187/postgres-and-os-x-round-two
+---
+<p><em>TL;DR
+If you&rsquo;re on OS X, installed Postgres with homebrew, and are receiving errors asking if your Postgres server is running locally and accepting connections, check that your PGHOST is configured for localhost</em></p>
+
+<p>In the never-ending battle that is Postgres versus Mac OS X, which I&rsquo;ve <a href="http://mikeebert.tumblr.com/post/25576735173/setting-up-sinatra-datamapper-postgresql-rspec">written about before</a>, Postgres narrowly claimed a victory tonight but four little words and a <a href="http://stackoverflow.com/a/16204429/1883265">helpful Stack Overflow answer</a> saved the day.</p>
+
+<p>I was digging into a Rails app and firing up Postgres for one of the first few times on a computer running OS X 10.8.4. When I tried to run any of the <code>rake db</code> commands I received what unfortunately may be a familiar error for any dev trying to run Postgres on OS X:</p>
+
+<pre><code>could not connect to server: No such file or directory
+    Is the server running locally and accepting
+    connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
+</code></pre>
+
+<p>Seeing as how I&rsquo;d stared down the Postgres beast before I was confident this would be a relatively quick yak-shave and tried to fire up Postgres on the command line. Somewhat surprisingly it worked and I was able to create and edit tables and roles without any problem.</p>
+
+<p>Next I did a check for running processes via &lsquo;ps auxwww | grep postgres&rsquo; and I could see that all the expected postgres processes were there. Hmmm&hellip;.</p>
+
+<p>The next line in the stack trace directed me down into the gem file&hellip;</p>
+
+<pre><code>../gems/activerecord-3.2.13/lib/active_record/connection_adapters/postgresql_adapter.rb:1216:in `initialize'
+</code></pre>
+
+<p>&hellip;but when I opened that I immediately spied a splat operator in the method that meant the offending argument could really be anything&hellip;</p>
+
+<pre><code>def connect
+      @connection = PGconn.connect(*@connection_parameters)
+</code></pre>
+
+<p>So then I took a step back and wandered back up to the original error. What stuck out to me there was the very specific socket in the error: <code>.s.PGSQL.5432</code>.</p>
+
+<p>A Google search then led me to my solution, which was to configure my PGHOST to point to <code>localhost</code>. This could be done in one of two places, either by adding 'export PGHOST=localhost&rsquo; to a file that handled some of my other variables (like my ~/.bash_profile), or by adding <code>host:localhost</code> to the Rails app&rsquo;s config/database.yml file (for the test and development environments.</p>
+
+<p>I ended up setting the variable in my .bash_profile because when I fired up an old Sinatra app that used Postgres I received similar errors. Setting the variable system-wide took care of those errors as well.</p>

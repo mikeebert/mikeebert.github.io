@@ -1,0 +1,10 @@
+---
+layout: post
+title: 47 Failing Tests on the Wall...
+date: '2012-04-10T16:47:38-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/20859022214/47-failing-tests-on-the-wall
+---
+<p>As I <a href="http://mikeebert.tumblr.com/post/20586727331/to-fix-or-not-to-fix-a-tale-of-two-user-stories">guessed last week</a>,  after talking with Mike we decided to go with the more robust solution for selecting competitors since the future stories would definitely be implemented. I found plenty of fragility too as implementing the solution broke 47 of my 63 tests. It only took me a few minutes to fix them but there was still a moment of panic as a sea of red failures flowed across my terminal. Most of the failures were a result of the fact that I&rsquo;d restructured and renamed the method that placed a player&rsquo;s move, so a quick find-and-replace took care of all but five of them, and then the remaining failures needed to be rewritten anyway.</p>
+
+<p>Still no luck on my white whale, the minimax algorithm. I really thought I&rsquo;d narrowed it down to how I was ranking the results of each move since I can play all the branches recursively and find out the final value, but unfortunately there&rsquo;s no consistency in how it takes the best move. It will take a winning move and block a losing move, but I can&rsquo;t find any correlation to the best move in the data I&rsquo;m collecting beyond that. I paired with <a href="http://twitter.com/#!/gmassanek">Geoff M</a> at &ldquo;Code and Coffee&rdquo; this morning and our solutions were headed down the same road, but he charged me to just test drive the hell out of it from the base case up to the most complex. I&rsquo;d tried that before but hopefully I&rsquo;ll have a fresh perspective on it now. The other issue I&rsquo;ve had is that all of the online resources I&rsquo;ve found about the Minimax algorithm are fuzzy at best when it comes to <em>completely</em> explaining it and no two code solutions I&rsquo;ve seen are the same. Once I get mine working I&rsquo;ll attempt to explain it as clearly as possible.</p>

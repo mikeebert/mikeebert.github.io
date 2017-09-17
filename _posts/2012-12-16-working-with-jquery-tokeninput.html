@@ -1,0 +1,29 @@
+---
+layout: post
+title: Working With jQuery Tokeninput
+date: '2012-12-16T22:38:00-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/38121294909/working-with-jquery-tokeninput
+---
+<p>During the project I was working on the past month we decided to incorporate <a href="http://loopj.com/jquery-tokeninput/">jQuery Tokeninput</a> as an autocomplete &amp; token solution. We came across some big +’s and -’s that I wanted to share for anyone considering using it.</p>
+
+<h4>Pros:</h4>
+
+<ul><li><p><strong>Simple to set up.</strong> Michael worked on this with me and we had the basics up and running pretty quickly. We already had an endpoint that served up JSON for autocomplete suggestions, so then we just needed to include the Tokeninput JS and CSS files and add the following javascript:</p>
+
+<pre><code>$(“#input-selector-to-bind-to”).tokenInput('api/endpoint_serving_json’, {
+  queryParam: 'term',
+  resultsLimit: 10
+})
+</code></pre></li>
+<li><p><strong>Pretty good out of the box configurability.</strong> You can set options like the number of suggestions returned, the value you’d like to pass on submit, if you want suggestion text, and even if you want to format the returned result in special HTML (which is very handy for styling).</p></li>
+<li><strong>Pretty good documentation</strong> The project&rsquo;s main page has a lot of good info and there&rsquo;s also a <a href="http://loopj.com/jquery-tokeninput/demo.html">solid demo page</a> with a lot of additional details.</li>
+<li><strong>Some handy callbacks &amp; add/remove methods.</strong> If you want to trigger something when a token item is added or removed then Tokeninput includes <code>onAdd</code> and <code>onDelete</code> methods (among others). For example, we used the onAdd callback to update a recommendation box based on the token they’d selected. You can also use the <code>tokenInput(“add”, {<em>your_item</em>})</code> method to populate your input field. For example, if a user wanted to keep track of previous searches in order to refine an earlier search, you could use tokenInput to add in these previous terms.</li>
+</ul><h4>Cons:</h4>
+
+<ul><li><strong>”Hidden” Data</strong> Once you start adding items via tokenInput they can be pretty well abstracted away from you. Although the items have an tokenInput id and a name, those attributes aren&rsquo;t reflected on the page&rsquo;s source code and they aren’t easy to work with.</li>
+<li><strong>tokenInput brings its own DOM elements</strong> tokenInput muscles it&rsquo;s own DOM elements into your code. Although you’re attaching the tokenInput action to a DOM element you create, tokenInput stores the items it adds in its own containers and attaches its own slightly-confusing class names. Our personal favorite: ‘token-input-input-token’</li>
+<li><strong>It’s a little <em>too</em> good</strong> We eventually figured out how to use <a href="http://underscorejs.org/">underscore</a> and some DOM tomfoolery to dig into tokenInput’s data stores and do all sorts of things like attach dynamic ratings to search tokens that users could update. It made for some really slick UI- however, this code could start to get ugly and fragile very quickly so we really had to be careful.</li>
+</ul><h4>Verdict</h4>
+
+<p>jQuery tokenInput is a pretty easy and powerful tool and the next time I need an autocomplete/token solution I&rsquo;ll look into using it again. However, I&rsquo;ll also be pretty careful with it and be sure to get a lot of acceptance test coverage around it as we learned it can get hairy pretty quickly.</p>

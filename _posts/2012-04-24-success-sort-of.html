@@ -1,0 +1,12 @@
+---
+layout: post
+title: Success! (Sort of)
+date: '2012-04-24T23:05:36-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/21762684835/success-sort-of
+---
+<p>With my mentor&rsquo;s algorithm as a guide I was able to get a working version of Minimax up and running. The final gap in my own solution that I started to glimpse last Friday morning was that my comparison of the &ldquo;best move&rdquo; for the min and max players needed separate logic. I had started to build it out into two separate methods for the min and max moves, but keeping it all in one method is much cleaner.</p>
+
+<p>I have just one final anomaly to figure it out. It&rsquo;s currently returning all of the squares as possible opening moves when it should only choose a corner. Yesterday it was choosing the corners but I made an egregious error in my refactoring process today that has bitten me in the ass.</p>
+
+<p>I had a test that the opening move would return a corner&hellip;. but since my algorithm isn&rsquo;t optimized it takes about 2 to 3 minutes to play through all of the scenarios on an empty board (to determine the opening move). So while I was busily red, green, refactoring I commented out that test— and I didn&rsquo;t uncomment it at regular enough intervals to figure out which refactoring might have led me astray. Fortunately it still doesn&rsquo;t lose after a dumb opening move, but tomorrow morning I&rsquo;ll have to figure out what happened.</p>

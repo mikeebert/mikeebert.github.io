@@ -1,0 +1,35 @@
+---
+layout: post
+title: 'HTML5 Form Validation: If Only All Browsers Were Created Equal'
+date: '2012-08-15T22:18:10-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29523702241/html5-form-validation-if-only-all-browsers-were
+---
+<p>Today I worked on some form validations to let my users knew if their input was valid or not— and then provided them with some guidance if there were errors and the input didn&rsquo;t save. Rails and ActiveRecord offer plenty of built-in support for this and DataMapper even has some options too, but they don&rsquo;t quite work they way I need them to.</p>
+
+<p>I figured that HTML5 offered some nice options and a quick Google search led me to <a href="http://www.the-art-of-web.com/html/html5-form-validation/">this page</a>, which offered many of the little shortcuts you could add to an <code> input </code> tag for validation.</p>
+
+<p>For example, you could do something as simple as:</p>
+
+<pre><code>&lt;input type="text" name="email" required&gt;
+</code></pre>
+
+<p>Now if your user pushed the &ldquo;submit&rdquo; button without filling in the email field then a little popover would let them know that it&rsquo;s required.</p>
+
+<p>Additionally, HTML5 also offers specific type attributes that can check formatting (with rules that vary by browser). An example of this with the type &ldquo;email&rdquo; would be:</p>
+
+<pre><code>&lt;input type="email" name="email" required&gt;  
+</code></pre>
+
+<p>Now the user not only has to definitely put some text in the field but they also need to have a properly formatted email address. The rules of a properly formatted email address vary from browser to browser, but typically it at least requires an &ldquo;@&rdquo; symbol.</p>
+
+<p>And for the cherry on top there is the <code>pattern</code> attribute that you can add to the input tag, and it accepts JavaScript regular expressions. The example that the aforementioned site uses is an input tag that requires a url in the proper format:</p>
+
+<pre><code>&lt;input type="url" name="website" required pattern="https?://.+"&gt;
+</code></pre>
+
+<p>This insures that not only does a user have to enter something and that it&rsquo;s a url, but that it is specifically a url preceded by &ldquo;http://&rdquo;.</p>
+
+<p>There is only one huge problem with all of this: it doesn&rsquo;t work on all browsers, and especially not older ones. I actually can&rsquo;t even get it to work in Safari 6 locally, although Apple&rsquo;s <a href="https://developer.apple.com/technologies/safari/html5.html">advertises the new Safari</a> as offering HTML5 forms validation.</p>
+
+<p>As nice as HTML5 form validation is &hellip; it looks like I&rsquo;ll have to find another solution.</p>

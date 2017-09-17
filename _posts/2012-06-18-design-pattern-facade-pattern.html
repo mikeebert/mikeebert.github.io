@@ -1,0 +1,20 @@
+---
+layout: post
+title: 'Design Pattern: Facade Pattern [UPDATED]'
+date: '2012-06-18T21:44:16-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25342991856/design-pattern-facade-pattern
+---
+<p>&ldquo;Software facades are a compromise: you are trying to expose just the functionality that you need while holding back the tide of complexity.&rdquo; -<a href="http://designpatternsinruby.com/section02/facade.html">Russ Olsen</a></p>
+
+<p>The Facade Pattern is all about exposing a &ldquo;simple and specific interface&rdquo; to an otherwise complex system. It&rsquo;s about convention and deciding what and how your system should be accessed. In the PPP book Uncle Bob refers to the Facade Pattern as &ldquo;imposing policy from above&rdquo; because when you build a facade you make those decisions.</p>
+
+<p>The PPP book also had the easiest to understand example of a Facade Pattern. The facade was a class called &ldquo;DB&rdquo; that provided a simple and unified interface to the many classes required for using a database: creating, maintaining, connecting, cleaning up, etc.</p>
+
+<p>Believe it or not, the Facade Pattern is a design pattern that actually didn&rsquo;t make the cut for the Design Patterns in Ruby Book, and it&rsquo;s a shame because the <a href="http://designpatternsinruby.com/section02/facade.html">online draft chapter</a> is full of nuggets like the quote at the beginning of this post. Olsen has a great run through of the patterns that are similar to the facade too and how they all differ:</p>
+
+<blockquote>&ldquo;The facade is yet another of those patterns where an object stands in for one or more other objects. Facades and proxies and adapters and decorators all look something alike. But adapters exist to hide the fact that we are stuck using an object that has the wrong interface. A proxy stands between the user of an object and the object itself and somehow controls access to the object. And decorators add functionality to an object. The key idea behind a facade is that we are trying to simplify access to the object we are wrapping, the thing behind the curtain.&rdquo;</blockquote>
+
+<p>I could see where the facade pattern would come in very handy when you&rsquo;d want to simplify, but I do have one question. If you find yourself needing to simplify an interface, before implementing a facade shouldn&rsquo;t you check to see that your code isn&rsquo;t needlessly complex in the first place? I&rsquo;ll definitely be asking around the office tomorrow.</p>
+
+<p>UPDATE: Both <a href="http://www.8thlight.com/our-team/mike-jansen">Mike</a> and <a href="http://www.8thlight.com/our-team/jim-suchy">Jim</a> gave me some solid advice on the Facade Pattern today. They said that the pattern is often used when you don&rsquo;t have control over the object that you&rsquo;re applying the facade too. If it&rsquo;s your own code then it would be worth taking a look at the complexity, but it&rsquo;s quite often that you&rsquo;re working with some sort of legacy codebase and need to simplify the interface it offers.</p>

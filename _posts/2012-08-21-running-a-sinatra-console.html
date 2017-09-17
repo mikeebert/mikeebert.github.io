@@ -1,0 +1,32 @@
+---
+layout: post
+title: Running A Sinatra Console
+date: '2012-08-21T22:57:43-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29941784481/running-a-sinatra-console
+---
+<p>For the past couple of months I&rsquo;ve been searching for (and bemoaning the lack of) a proper &lsquo;console&rsquo; command in Sinatra to access my data. Rails has its aptly named <code>rails console</code> command that allows you to quickly see things like <code>User.all</code> or <code>User.last</code>—but despite my best Googling, I&rsquo;d found no such thing for Sinatra.</p>
+
+<p>Well, today one of my beta testers forgot their password and asked me if there was a way to reset it. My immediate response was that I could do it&hellip; but I&rsquo;d have to figure it out. The only way I&rsquo;d been accessing my production data at this point was to log in directly to my Postgres database and issue SQL commands. However, all of my users&rsquo; passwords are stored as encoded strings so I wasn&rsquo;t sure of the best way to encrypt the string and send it in&hellip;</p>
+
+<p>I jumped into the terminal and typed <code>heroku pg:psql</code>.  <em>Fortunately</em>, I was faced with an 'update heroku toolbelt&rsquo; message that made me take a pause. Upgrading the heroku tools just to change a user&rsquo;s password sounded like a trip down a rabbit hole, so I decided to see if I could at least just do a <code>heroku run console</code>. That worked fine and I was faced with the familiar irb prompt.</p>
+
+<p>My next thought was that if I could just require the file that had my DataMapper User model in it, via <code>require './lib/datastore/dm_datastore/models/user' </code>&hellip; and then somehow require the proper DataMapper and Postgres adapter gems&hellip; and then configure the DB adapter to point to my heroku database&hellip; then I could use familiar DataMapper commands (which are similar to ActiveRecord).</p>
+
+<p>But what was the easiest and safest way to do all the requiring of the proper files and set-up of the DB adapter?</p>
+
+<p>And then I remembered that there&rsquo;s already a file that has all of that set-up plus requires all the other files and gems the app the app needs&hellip; </p>
+
+<p>Any guesses?</p>
+
+<p>Of course, it&rsquo;s my main Sinatra app file. In my case <code>foundry.rb</code>. So after one simple <code>require './foundry'</code> in irb I had access to all the familiar DataMapper commands and access to my data to easily do what I needed to.</p>
+
+<p>This works locally as well. If I open up irb while in my app directory, then just require the main app file, I can poke around whichever repository I happen to be using.</p>
+
+<p>So yeah, there&rsquo;s a Sinatra console- it was right in front of me the whole time:</p>
+
+<pre><code>$: irb
+irb &gt; require './yourappfile.rb'
+*should return true*
+irb &gt; *and you're in*
+</code></pre>

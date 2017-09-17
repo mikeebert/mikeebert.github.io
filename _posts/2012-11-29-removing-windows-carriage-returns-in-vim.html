@@ -1,0 +1,19 @@
+---
+layout: post
+title: Removing Windows Carriage Returns in Vim
+date: '2012-11-29T08:02:06-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/36806478391/removing-windows-carriage-returns-in-vim
+---
+<p>I’ve been learning a ton working on a project with <a href="http://www.8thlight.com/our-team/jim-suchy">Jim</a> and <a href="http://www.8thlight.com/our-team/michael-baker">Michael</a> this past month and I have lots of blogging to catch up on- so here’s tip #1.</p>
+
+<p>We’ve received several CSV files from our client that we’re using for seed data- and oftentimes we’ve had to do a little cleaning before importing them (my next tip will be the simple script to use a CSV for seed data).</p>
+
+<p>Removing Windows Carriage Returns from a Microsoft Excel generated CSV is a simple enough problem that I’m sure many people already know the answer (or have an alternate solution), but it’s also a common enough problem that I wanted to write it down. Thanks to Jim for quickly tracking down the solution for me.</p>
+
+<p>If you’re using Vim or MacVim you can remove these with a simple replace:</p>
+
+<pre><code>:%s/^M/\r/g
+</code></pre>
+
+<p>But in order to generate the “^M” that you want to match you need to use <strong>ctrl-v</strong> to make the “^” and <strong>ctrl-m</strong> to make the “M”.</p>

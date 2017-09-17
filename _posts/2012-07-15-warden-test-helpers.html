@@ -1,0 +1,61 @@
+---
+layout: post
+title: Warden Test Helpers
+date: '2012-07-15T22:19:04-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/27301616102/warden-test-helpers
+---
+<p>In my <a href="http://mikeebert.tumblr.com/post/27097231613">last post</a> I went through how to set up Warden with a Sinatra app for authentication. However, once you&rsquo;ve done that any tests you&rsquo;ve written for those now authenticated routes and controllers in Sinatra will break because of course the authentication will prevent the controller actions from executing. Fortunately Warden&rsquo;s Spec helpers make this a pretty easy update.</p>
+
+<p>First, let&rsquo;s take a look at one of the routes we previously set up before authentication.</p>
+
+<pre><code>class YourApp
+  get "/protected_pages" do
+    erb 'admin_only_page'.to_sym
+  end
+end
+</code></pre>
+
+<p>A test to make sure this page loaded correctly would look like this:</p>
+
+<pre><code>describe "YourApp Pages" do
+  it "should load the admin_only_page" do
+    get "/protected_pages"
+    last_response.should be_ok
+  end
+end
+</code></pre>
+
+<p>But once we added in Warden our route would look like this:</p>
+
+<pre><code>  get "/protected_pages" do
+    check_authentication
+    erb 'admin_only_page'.to_sym
+  end
+</code></pre>
+
+<p>and the test would fail.</p>
+
+<p>In order to log in users for any of your specs you just need to tell the RSpec config to include the Warden Test Helpers. For a Sinatra app you already need to set up the Rspec config to use use the <code>Rack::Test::Methods</code> so you can add the Warden line right after that. (This whole block goes inside the <code>spec_helper.rb</code> file inside of your spec folder.)</p>
+
+<pre><code>RSpec.configure do |config|
+  config.include Rack::Test::Methods
+  config.include Warden::Test::Helpers
+end
+</code></pre>
+
+<p>Once you&rsquo;ve added this to the spec_helper you can use the <code>login_as</code> command anywhere in your tests that you&rsquo;ve set up a user that needs to login. So, this is how we might configure our new test (using a MockUser):</p>
+
+<pre><code>describe "YourApp Pages" do
+  it "should load the admin_only_page" do
+    @user = MockUser.new(:email =&gt; "test@test.com", :password =&gt; "password", :admin =&gt; true)
+    login_as @user
+    get "/protected_pages"
+    last_response.should be_ok
+  end
+end
+</code></pre>
+
+<p>If the <code>check_authentication</code> method that we set up checks that it&rsquo;s a legitimate user and that they are an admin, this test should pass since the Warden helper logs in our <code>@user</code> and grants them access.</p>
+
+<p>Warden helpers are built to automatically include login and logout but also allow you to build custom helpers. For a quick rundown head over to the <a href="https://github.com/hassox/warden/wiki/Testing">Warden wiki</a>.</p>

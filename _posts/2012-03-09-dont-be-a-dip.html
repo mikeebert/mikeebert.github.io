@@ -1,0 +1,18 @@
+---
+layout: post
+title: Don't be a DIP
+date: '2012-03-09T08:12:35-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/19000093406/dont-be-a-dip
+---
+<p>The fourth SOLID principle I&rsquo;ve read up on this week is the Dependency-Inversion Principle (the &ldquo;D&rdquo; in SOLID but it&rsquo;s listed fourth in the <a href="http://www.amazon.com/Software-Development-Principles-Patterns-Practices/dp/0135974445">PPP book</a>). The first two lines in the chapter pretty much sum it up:</p>
+
+<p><em>a. High-level modules should not depend on low-level modules. Both should depend on abstractions.</em><br/><em>b. Abstractions should not depend on details. Details should depend on abstractions.</em> (p. 127)</p>
+
+<p>Seems straight forward enough, right? I think because my introduction to programming came through Rails this seemed to be one of the simpler principles for me, and in the fourth paragraph of the chapter Uncle Bob even says, &ldquo;This principle is at the very heart of framework design&rdquo;. Most of the code I&rsquo;ve written in Rails always depended on higher-level modules that Rails provided for me. Over time I&rsquo;ve begun to understand what these higher level modules are doing, but when I started writing code it didn&rsquo;t matter because those modules wouldn&rsquo;t be affected by what I was doing (as long as I stuck to convention).</p>
+
+<p>Outside of the PPP book I&rsquo;ve also been reading <a href="http://www.amazon.com/Software-Craftsmanship-Imperative-Pete-McBreen/dp/0201733862">Software Craftsmanship</a> by Pete McBreen and working away on my command line tic-tac-toe app.</p>
+
+<p>The McBreen book has been a pretty quick read and the primary point thus far is that the most important thing in software development is the people: the strength of the craftsmen building the product, their users and customers, and the relationship between all of them. It&rsquo;s an excellent read and I highly recommend it for any aspiring developers, but also for entrepreneurs looking to build relationships with developers. Although the book was written ten years ago McBreen was quite prescient- he definitely saw where software and development were headed.</p>
+
+<p>And tic-tac-toe? Well, after struggling with how to TDD the interface I got clearance to go ahead and just see what I could do without testing. I implemented the interface a lot quicker than I expected and even more surprising was how few lines of code it took me. I&rsquo;m sure there are quite a few &ldquo;smells&rdquo; in there, so I&rsquo;m looking forward to today&rsquo;s code review and figuring out how to do it better.</p>

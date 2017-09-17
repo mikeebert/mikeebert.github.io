@@ -1,0 +1,43 @@
+---
+layout: post
+title: Dependency Injection
+date: '2012-06-02T15:31:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24278420204/dependency-injection
+---
+<p>Dependency Injection is a concept that I&rsquo;ve been working with since I started blowing apart my initial tic-tac-toe game. Mike first introduced it to me when I was <a href="http://mikeebert.tumblr.com/post/19779681074">building my own mocks</a> way back in March. I&rsquo;d been using it throughout my code these past couple of months but what it really just clicked for me again during my review these past couple of days.</p>
+
+<p>Here&rsquo;s a quick example of how I could and could not using dependency injection, then I&rsquo;ll explain what it is:</p>
+
+{% highlight ruby %}
+require 'board'
+
+class Game
+  attr_accesor :ui, :board
+  def initialize(ui)
+    @ui = ui
+    @board = Board.new(3)
+  end
+end
+{% endhighlight %}
+
+<p>In this example I have a Game class, which I&rsquo;m considering the high-level module, meaning that it&rsquo;s the most important class in all of my tic-tac-toe code. That makes sense, I mean it&rsquo;s <em>the game</em>, right?</p>
+
+<p>My Board and my UI (user interface) are both lower level-modules. Maybe I want to switch up the type of board or use a different UI, and the Game should be able to handle that. It shouldn&rsquo;t be &lsquo;dependent&rsquo; on the lower level modules. If the Game were indeed dependent on the UI and the Board it would be a violation of the <a href="http://mikeebert.tumblr.com/post/19000093406">Dependency-Inversion Principle</a>, which states that higher-level modules should never depend on lower level modules.</p>
+
+<p>In the example code above I am both obeying and breaking the Dependency-Inversion Principle. With my UI class I&rsquo;m getting around breaking the principle by delegating the decision of the UI to an <strong>injector</strong>, which in the case of my command line UI is a simple ruby script to start the game:</p>
+
+<pre><code>ui = CommandLineInterface.new
+game = Game.new(ui)
+game.play
+</code></pre>
+
+<p>This script &ldquo;injects&rdquo; the Game&rsquo;s dependency on the UI, which allows me to decide at run-time what UI I want to use, and I can swap it out at any time. When it comes to testing this allows me to substitute a mock UI so that I focus on just testing my Game class.</p>
+
+<p>However, I mentioned that I&rsquo;m also violating the Dependency-Inversion Principle in the first example code, and that would be with my Board class. The Game class instantiates a board during initialization and then sets its own the @board attribute. This is a hard-coded dependency that I should definitely remove, and fortunately one of my other user stories led me to a possible solution.</p>
+
+<p>The story was to allow my user to decide what size board they wanted to play on. This meant that the Game would no longer instantiate a 3x3 board right off the bat, but instead would be told what kind of board to instantiate.</p>
+
+<p>I still do have one dependency I&rsquo;m working on this weekend and I&rsquo;d mentioned <a href="http://mikeebert.tumblr.com/post/24042624804">a couple of posts ago</a>. The play script inside my Game class is set up for the call-and-response of the command line interface, which makes it dependent on that type of interface. The challenge is to remove that dependency and create some sort of play loop that can be wired up to any interface: the command line, limelight or a web app.</p>
+
+<p>If you&rsquo;re looking for some more reading on Dependency Injection, the <a href="http://en.wikipedia.org/wiki/Dependency_injection">Wikipedia article</a> is pretty straightforward.</p>

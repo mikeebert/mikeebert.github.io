@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'Design Pattern: Proxy Pattern'
+date: '2012-06-10T19:59:43-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24848546448/design-pattern-proxy-pattern
+---
+<p>The OS X Dictionary app says that proxy is a noun meaning:</p>
+
+<pre><code>a figure that can be used to represent the value of something in a calculation 
+</code></pre>
+
+<p>&hellip; and there you have it, the Proxy pattern. Make a ProxySomething class that can represent your Something class and you&rsquo;re done.</p>
+
+<p>Ok, maybe it&rsquo;s not that simple, but it&rsquo;s not that complex either. I&rsquo;ve been giving <a href="http://designpatternsinruby.com/">Olsen</a> a lot of props for his well-worded one-line descriptions of many of the patterns but I&rsquo;m going to tip my hat to the <a href="http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612">Gang of Four</a> on this one. They describe a proxy as something that &ldquo;controls access to an object&rdquo; (p 216), and that pretty much encapsulates how proxies are used.</p>
+
+<p>Here&rsquo;s a quick code sample of our Something class and how you&rsquo;d set up your SomethingProxy.</p>
+
+<pre><code>class Something
+  def awesome_method
+    ...some cool behavior...
+  end
+end
+
+class SomethingProxy
+  def initialize(something_object)
+    @object = something_object
+  end
+
+  def awesome_method
+    @object.awesome_method
+  end
+end
+</code></pre>
+
+<p>Now if you were to instantiate a new proxy object you could do it like this</p>
+
+<pre><code>proxy_object = SomethingProxy.new(an_actual_something_object)
+</code></pre>
+
+<p>and if you were to call the <code>awesome_method</code> on your proxy_object it would perform the cool behavior that we defined in the Something class.</p>
+
+<p>The important thing is that your proxy has the same interface as the actual object. Olsen even dives into metaprogramming and how you can overwrite the default Ruby <code>method_missing</code> to forward any method that isn&rsquo;t defined in your Proxy class to the actual object, but I have a feeling that I&rsquo;ll steer clear of using it much. It seems like blindly passing on messages and arguments would obfuscate the intention of the code and break some of the rules <a href="http://mikeebert.tumblr.com/post/23957894242">I covered from the second Clean Coders episode</a>.</p>
+
+<p>There are three common ways that are proxies are implemented:</p>
+
+<p>1) A protection proxy<br/>
+2) A remote proxy<br/>
+3) A virtual proxy</p>
+
+<p>The first two proxies do just what they sound like. The protection proxy is used to literally control who and what has access to your actual object. Every method call to your object could first be run through a confirm_access method in your proxy, so you could even limit certain methods to certain users or objects. The added benefit is that it separates all of the security concerns out of the object itself.</p>
+
+<p>The remote proxy is used when you want something to stand in for an object that exists somewhere else. The easiest example to think of is if there were an object that existed on a server somewhere far away, and you could create a proxy for that client to use locally.</p>
+
+<p>Last is the virtual proxy. The virtual proxy is used when the creation or modification of your actual object is very expensive (think in terms of CPU, storage, RAM, security). The virtual proxy is the closest a proxy will get to being the actual object because for all intents and purposes it has all the responsibilities of the real object until is explicitly told to create the real object and pass off that responsibility.</p>
+
+<p>The proxy pattern is another one that I&rsquo;ll be looking for out in the wild. I can definitely see where they can be effective in web applications.</p>

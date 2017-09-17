@@ -1,0 +1,33 @@
+---
+layout: post
+title: JavaScript Confirmation Dialog For a Simple HTML Form
+date: '2012-07-31T22:49:14-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28457240379/javascript-confirmation-dialog-for-a-simple-html
+---
+<p>As I might have mentioned a few times before, one of the downsides of doing my project in Sinatra is that I miss out on some of the great Rails helpers, like a simple link_to delete with a confirmation dialog:</p>
+
+<pre><code>&lt;%= link_to 'Delete this task', task_url(@task), :confirm =&gt; 'Are you sure?', :method =&gt; :delete %&gt;
+</code></pre>
+
+<p>In order to accomplish this same task in Sinatra I&rsquo;m actually making a form that includes the information necessary to delete the specific task:</p>
+
+<pre><code>&lt;form method="post" action="/tasks/&lt;%= @task.id"&gt;
+    &lt;input type="hidden" name="_method" value="delete"&gt;
+    &lt;button type="submit"&gt;Delete this task&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>For the past week I&rsquo;ve wanted to add a confirmation dialog to this form so that a user is prompted if they really want to delete the task, and whenever I looked for a quick fix I was stumped. So while on vacation I started reading about the basics of JavaScript (which I needed to do anyway) and I was still surprised that with all the things I was learning I still couldn&rsquo;t get my confirm dialog to act the way that I wanted. I had no problem getting it to appear and do all sorts of cool behaviors, but there wasn&rsquo;t a simple way to abort the request to the delete method if a user hit &ldquo;cancel&rdquo;.</p>
+
+<p>&hellip;and it&rsquo;s great to be back in the office. I was sitting next to Jeremy today so after I helped him talk through some perplexing test behavior I asked him if he knew an easy way to implement a JavaScript confirm dialog. He wasn&rsquo;t entirely sure how to intercept the request either but he did know exactly what to Google. Within a minute or two we happened across the handy little <code>onsubmit</code> addition to my form:</p>
+
+<pre><code>&lt;form onsubmit="return confirm('Are you sure you want to delete?');" method="post" action="/tasks/&lt;%= @task.id"&gt;
+    &lt;input type="hidden" name="_method" value="delete"&gt;
+    &lt;button type="submit"&gt;Delete&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>And that&rsquo;s it. No other code required.</p>
+
+<p>Thanks, Jeremy.</p>

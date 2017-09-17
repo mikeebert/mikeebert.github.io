@@ -1,0 +1,36 @@
+---
+layout: post
+title: Some UML Arrows for Your Quiver
+date: '2012-06-02T20:22:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24295384055/some-uml-arrows-for-your-quiver
+---
+<p>While the 8th Light craftsman reviewed <a href="http://darek-p.blogspot.com/">Darek&rsquo;s</a> apprenticeship on Friday (…HUGE props to both he and <a href="http://cpeak.github.com/">Chris</a> on becoming 8th Light&rsquo;s newest craftsman!), I offered him a distraction by tutoring me in some of the intricacies of the Unified Modeling Language (UML) and helping me think through some coupling problems in my tic-tac-toe code.</p>
+
+<p>I&rsquo;d struggled with what exactly UML arrows mean in terms of how a class &ldquo;uses&rdquo; or &ldquo;knows&rdquo; about another class, so here&rsquo;s a quick rundown on three of the most common arrows you&rsquo;ll see.</p>
+
+<h4>Dashed Line with a Normal Ending</h4>
+
+<p><img src="https://lh6.googleusercontent.com/-IpCnctfgR30/T8quzzcIh8I/AAAAAAAAB20/Pw3wHbovZww/s320/UML_1.jpg" alt=""/></p>
+
+<p>We&rsquo;ll start out with one line and a normal arrow ending. In the image above we see how the Game class &ldquo;uses&rdquo; the UserInterface. The dashed line in the image above depicts a dependency in which the Game class knows about the UI class and uses it, but it doesn&rsquo;t <em>own</em> the UI— it doesn&rsquo;t create the UI. (See my earlier post on <a href="http://mikeebert.tumblr.com/post/24278420204">Dependency Injection</a> for details on the UI&rsquo;s creation).</p>
+
+<p>A modeling language that preceded UML was <a href="http://en.wikipedia.org/wiki/Booch_method">Booch-94</a> by <a href="http://en.wikipedia.org/wiki/Booch_method">Grady Booch</a>, and he actually referred to the dashed-arrow relationship as a &ldquo;using&rdquo; relationship, which I think is a bit clearer. Our Game uses the UI, but the UI class doesn&rsquo;t know about or &ldquo;use&rdquo; the Game class in any way.</p>
+
+<h4>Lines with Different Endings</h4>
+
+<p><img src="https://lh5.googleusercontent.com/-BVc6SQq0QhQ/T8quzw2X8wI/AAAAAAAAB2w/2D4kCv3MYrw/s528/UML_4.jpg" alt=""/></p>
+
+<p>The image above shows how my Game class creates and then &ldquo;owns&rdquo; the PlayerFactory (&hellip;which is technically a violation of the <a href="http://mikeebert.tumblr.com/post/19000093406">Dependency Inversion Principle</a>), and then how the PlayerFactory &ldquo;owns&rdquo; and creates a HumanPlayer or ComputerPlayer, that then inherit some behavior from the Player superclass. The Game also knows about Players, but not about a specific type of player.</p>
+
+<p>The solid arrows with the normal endings represent how the Game class is responsible for and uses the PlayerFactory class. The arrow between the Game and PlayerFactory that ends on the PlayerFactory signifies that the PlayerFactory doesn&rsquo;t know anything about the Game class— it&rsquo;s a uni-directional relationship.</p>
+
+<p>Similarly, the dashed arrow between Game and Player ends on the Player class because the Game uses and knows about the Player, but the Player knows nothing about the Game. It&rsquo;s a dashed line because Game is not responsible for creating the Players, it delegated that responsibility to the PlayerFactory</p>
+
+<p>Finally, the arrow with an open triangle ending between the HumanPlayer, ComputerPlayer and Player class signifies that Human and Computer <strong>inherit</strong> something from the Player class. In this case it&rsquo;s the behavior of serving up the information of what move they decided to make. The arrow terminates on the Player superclass because again it&rsquo;s a uni-directional relationship. The HumanPlayer and ComputerPlayer need to know some information from the Player class, but the Player class doesn&rsquo;t need to know anything about it&rsquo;s subclasses.</p>
+
+<p>There&rsquo;s a lot of information on UML diagrams out there and it seemed liked several authors interchanged some key terms that made it difficult know which end of the arrow was up. Here&rsquo;s three resources that helped me decipher it (Darek being the fourth, of course):</p>
+
+<p><a href="http://www.amazon.com/UML-Distilled-Standard-Modeling-Language/dp/0321193687/ref=sr_1_1?ie=UTF8&amp;qid=1338682924&amp;sr=8-1">UML Distilled</a> by Martin Fowler
+<a href="http://objectmentor.com/resources/articles/umlClassDiagrams.pdf">Object Mentor article on UML Class Diagrams</a>
+<a href="http://www.tutorialspoint.com/uml/uml_basic_notations.htm">UML Basic Notations on Tutorial Point</a></p>

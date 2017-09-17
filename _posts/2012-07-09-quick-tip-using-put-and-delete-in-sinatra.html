@@ -1,0 +1,33 @@
+---
+layout: post
+title: 'Quick Tip: Using PUT and DELETE in Sinatra'
+date: '2012-07-09T22:42:30-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26877173686/quick-tip-using-put-and-delete-in-sinatra
+---
+<p>Part of my task when building my Sinatra app is to adhere to RESTful resources, which means using the standard HTTP verbs and a conventional routing pattern. Rails provides lots of form helpers and support for your GETs, POSTs, PUTs and DELETEs and can even take care of the routing with something like a simple <code>resources :users</code> line in your routes file. However, in Sinatra you need to explicitly define those routes, which means that you only have the code for what you really need, but of course you&rsquo;re rolling it by hand.</p>
+
+<p>The form helpers that RAILS provide automatically handle translating all of the action and method requests for the aforementioned verbs, but HTML forms really only support the GET and the POST methods. So, if you want to use the PUT and DELETE you need to <em>trick</em> your form into going to the right place.</p>
+
+<p>A standard HTML form for POST would look like so:</p>
+
+<pre><code>&lt;form method="post" action="/tasks"&gt;
+    # ... all of your form fields
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>In order to use POST in Sinatra you need to do this (where <code>@task</code> is the specific task I&rsquo;m updating):</p>
+
+<pre><code>&lt;form method="post" action="/tasks/&lt;%= @task.id %&gt;"&gt; 
+    &lt;input type="hidden" name="_method" value="put"&gt;
+    #.. all of your form fields
+    &lt;button type="submit"&gt;Update&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>And in order to use DELETE you would just swap out the <code>value="put"</code> for <code>value="delete"</code>.</p>
+
+<p>This little form trickery is courtesy of some Ruby method magic provided by Rack::MethodOverride, which is also <a href="http://edgeguides.rubyonrails.org/rails_on_rack.html#internal-middleware-stack">used by Rails</a>. It allows the default method to be overridden when we set the params[:method] like we do in the hidden input above.</p>
+
+<p>Big props to the nettuts &ldquo;<a href="http://net.tutsplus.com/tutorials/ruby/singing-with-sinatra-the-recall-app-2/">Singing with Sinatra - Part 2</a>&rdquo; tutorial for helping me figure this out and to this <a href="http://stackoverflow.com/questions/5166484/sending-a-delete-request-from-sinatra">Stack Overflow post</a>.</p>

@@ -1,0 +1,25 @@
+---
+layout: post
+title: 'Quick Tip: Embedding Gists in a Tumblr'
+date: '2012-05-03T08:00:36-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/22316714720/quick-tip-embedding-gists-in-a-tumblr
+---
+<p>This blog hasn&rsquo;t gotten too technical yet as I feel that I&rsquo;m still learning a lot of the basics, but I also haven&rsquo;t had a good way to embed code. Fortunately I stumbled across this tip, fittingly on a <a href="https://gist.github.com/1395926">Github Gist</a>, and switched to a wider template so that now I can easily embed gists with syntax highlighting.</p>
+
+<p>1) Go to your Tumblr Dashboard &amp; select your blog (if you have more than one)<br/>
+2) Click &ldquo;Customize Theme&rdquo;<br/>
+3) Click &ldquo;Edit HTML&rdquo;<br/>
+4) Paste the three &lsquo;script&rsquo; lines from below just before your closing head tag.</p>
+
+{% highlight html %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+<script src="http://static.tumblr.com/fpifyru/VCxlv9xwi/writecapture.js"></script>
+<script src="http://static.tumblr.com/fpifyru/AKFlv9zdu/embedgist.js"></script>
+{% endhighlight %}
+
+<p>Now when you want to embed that gist just type this line directly into your post:</p>
+
+{% highlight html %}
+<div class="gist">https://gist.github.com/#INSERT GIST NUMBER HERE#</div>
+{% endhighlight %}

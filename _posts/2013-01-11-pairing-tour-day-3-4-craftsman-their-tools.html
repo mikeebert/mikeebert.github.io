@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'Pairing Tour Day 3 & 4: Craftsman & Their Tools'
+date: '2013-01-11T09:26:30-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/40254415264/pairing-tour-day-3-4-craftsman-their-tools
+---
+<p>The last two days I’ve been pairing with <a href="http://www.8thlight.com/our-team/brian-pratt">Brian Pratt</a> on another client project. The client has an existing application and 8th Light is helping to build out an iPad optimized web app for their content. It’s built almost entirely in JavaScript and has a really impressive user experience. Although it’s only been a month since my last dive into JavaScript, it feels like a long time ago so it&rsquo;s been a good review.</p>
+
+<p>One lesson of working with all the crafstmen this week is to see how adeptly they use their toolset and how their small investments in learning more about them can result in bigger and bigger payoffs.</p>
+
+<p>For example, when working with Eric in IntelliJ (which he hasn’t spent much time with) he would spend a few extra moments searching down a keyboard shortcut to avoid reaching for the mouse. That research interrupted his workflow the first few times he had to do it, but just a few minutes later he was instantly firing off commands. I’m a huge keyboard-shortcut fan, but I think too often I choose to do something the “long” way because I don’t want to interrupt my workflow.</p>
+
+<p>When working with Brian he showed some serious git-, tmux-, and vim-Fu. Most of his moves were things I’d seen before, but his speed and aptitude when sailing through different git commands- branching, checkouts, bisects, etc&hellip;- was particularly impressive. Git is such a powerful tool that I always take a pause with any commands beyond the basics. Both Brian and Eric definitely showed me how valuable it is to invest more time into learning about the tools we use.</p>
+
+<p>Brian did my first Vim macro with me yesterday too. Let’s say I have a bunch of text I want to format into an array. For example, I want this:</p>
+
+<pre><code>#987    #398    LabelA
+#876    #234    LabelB
+#765    #543    LabelC
+</code></pre>
+
+<p>To look like this:</p>
+
+<pre><code>[[#987, #398, LabelA], [#876, #234, LabelB],[#765, #543, LabelC]]
+</code></pre>
+
+<p>I can use a macro to format the first line and then use one keystroke to format the rest. Here’s how it’s done:</p>
+
+
+<ol>
+  <li>Move your cursor to the beginning of the first line, and then while still in select-mode hit "q" to start recording mode.</li>
+  <li>Hit the key you'd like to assign the macro to. I'll use "2"</li>
+  <li>Do the Macro exactly like you want for the first line*</li>
+  <li>Next, type q to quit the recording.</li>
+  <li>Now, go to the next line you'd like to apply the macro to (if you're not already there)</li>
+  <li>Type @, then 2 (the key you assigned the Macro to)</li>
+  <li>The line should be formatted exactly like the first, and you can continue to type @, then 2 for all the other lines you'd like to apply the macro to.</li>
+</ol>
+
+
+<p>*For the example line I would do something this:</p>
+
+<pre><code>- I (Enter Insert mode)
+-  Type [, then type "
+- Esc, e, a (Exit insert mode, go to end of word, append word)
+- Type ", then type ,
+- Esc, n, i (Exit insert mode, go to next word, enter insert mode)
+- Type "
+- Esc, e, a (Exit insert mode, go to end of word, append word)
+- Type ", then type ,
+- Esc, n, i (Exit insert mode, go to next word, enter insert mode)
+- Type "
+- Esc, e, a (Exit insert mode, go to end of word, append word)
+- Type ", then type ]
+- Esc, j, 0 (Exit insert mode, go to next line, go to beginning of line)
+</code></pre>

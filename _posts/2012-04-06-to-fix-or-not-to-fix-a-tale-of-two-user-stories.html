@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'To Fix or Not To Fix: A Tale of Two User Stories'
+date: '2012-04-06T09:48:50-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/20586727331/to-fix-or-not-to-fix-a-tale-of-two-user-stories
+---
+<p>I&rsquo;m currently working on a user story that allows a user to pick a human vs. computer, computer vs. computer or human vs. human game. I also have a story in the backlog that allows a user to choose whatever alphanumeric character they would like to represent themselves on the board, and I know that at some point I&rsquo;m also probably going to need to allow a user to choose if they or the computer should go first (so I suppose this is really a tale of three stories).</p>
+
+<p>Here&rsquo;s my dilemma: I could complete the story for this iteration (the one that allows the user to choose the competitors) with a working and tested solution well within the deadline. However, while working on the story I also discovered some fragility in my code that will break once I start on the future stories, so I figured out a much more robust solution for the current story&hellip;.but it will take quite a bit longer because it alters key components of my initial design (which had very simple requirements).</p>
+
+<p>So my question for Mike today will be which path I should take: the one that&rsquo;s on time or the one that might be a day or two late now but better in the long run?</p>
+
+<p>I think that the Agile solution would be to explain the situation to the customer and work with them to ultimately decide if it&rsquo;s important to have the feature deployed at the end of the iteration or hold off until the more robust solution (in preparation for future stories) can be implemented. Or maybe the better idea (since this is a relatively simple application) would be to just implement the quick and easy solution, show it to the customer to confirm it&rsquo;s functioning as they&rsquo;d like, then dive into building the more robust solution.</p>
+
+<p>One other lesson I&rsquo;ve learned here is to start building a better Git workflow. As soon as I got the quick and easy solution working I should have created a new branch <em>before</em> I started working on the more robust one. That would have made it much easier to go back and show off one solution before blowing apart my code to work on the other.</p>

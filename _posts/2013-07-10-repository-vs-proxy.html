@@ -1,0 +1,37 @@
+---
+layout: post
+title: Repository vs Proxy
+date: '2013-07-10T23:05:01-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/55140127732/repository-vs-proxy
+---
+<p>Recently one of the 8th Light apprentices said that he was using the Repository pattern in a project and asked me how it differed from the <a href="http://en.wikipedia.org/wiki/Design_Patterns">&ldquo;Gang of Four&rsquo;s&rdquo;</a> Proxy pattern. I confessed that I hadn&rsquo;t read through all of the patterns in <a href="http://www.amazon.com/Design-Patterns-Elements-Object-Oriented-ebook/dp/B000SEIBB8">Design Patterns: Elements of Reusable Object-Oriented Software</a>, so this was an excellent chance to read up on the Proxy pattern (and get back into blogging).</p>
+
+<p>The short answer to his question can be found from the GoF&rsquo;s stated intent for the Proxy Pattern:</p>
+
+<pre><code>Provide a surrogate or placeholder for another object to control access to it.
+</code></pre>
+
+<p>The <code>Repository</code> class from <a href="http://blog.8thlight.com/mike-ebert/2013/03/23/the-repository-pattern.html">my post on the pattern</a> never really <em>controls</em> access to the underlying repositories— it behaves only as a simple pointer and never acts as a surrogate or placeholder for the underlying data stores. The <code>Repository</code> class never stores any data itself, never has any affect on the data being sent to the datastore, and is never responsible for the creation of any datastore. It simply points to data stores with no regard for what they are. They could be in-memory relational databases, or flat-files— <a href="https://www.youtube.com/watch?v=4r7wHMg5Yjg">much like the honey badger</a>, my <code>Repository</code> class doesn&rsquo;t care. Furthermore, in the &lsquo;Applicability&rsquo; section of the GoF Proxy pattern chapter, it states that the Proxy is used specifically when something <em>more powerful</em> than a simple pointer is required, but my <code>Repository</code> is never anything more than that.</p>
+
+<h4>The Long Answer</h4>
+
+<p>There is, however, one statement in the GoF book that could easily be interpreted as a similarity between the two patterns. In fact, the first time I ride it I had to ask whether or not my implementation of the Repository pattern was in fact just a Proxy.</p>
+
+<p>The GoF list the first motivation for using the Proxy pattern as &ldquo;deferring the full cost of an object&rsquo;s creation until we actually need to use it&rdquo;. Deferment was certainly part of my motivation in using the Repository pattern, however that deferment had everything to do with deferring <em>a decision about an implementation detail</em> (the database)- and nothing to do with deferring creation. I still had to create an in-memory datastore and implement all of the methods that I would need from a database. So for all intents and purposes my in-memory datastore is a full-fledged database. I <em>might</em> have even discovered that my app never needed anything more than that.</p>
+
+<p>Of course, I <em>did</em> know that I was going to need some sort of persistence beyond an in-memory datastore, so I think my implementation could be interpreted as a figurative proxy, even if not a literal one. What it did was allow me to determine what I was going to really need from my datastore— as well as provide a lightweight and fast database to test against.</p>
+
+<h4>So Now That We Know What a Proxy Isn&rsquo;t&hellip;</h4>
+
+<p>There are a few other statements in the GoF book that highlight key differences between my implementation of the Repository pattern and the Proxy pattern, and through those differences we can understand a little more about what a Proxy is.</p>
+
+<p>As I mentioned earlier, the GoF state that the &ldquo;Proxy is applicable whenever there is a need for a more versatile or sophisticated reference to and object than a simple pointer&rdquo;. Examples of that versatility and power include:</p>
+
+<ul><li><strong>Virtual proxy</strong>: This also falls under the category of &ldquo;deferring creation&rdquo;. The example the GoF use for this is when a proxy can provide a smaller version of an image file that will get the job done instead of instantiating an image at its full resolution.  I recently participated in a project where we were using caching on a proxy </li>
+<li><strong>Remote Proxy</strong>: this is a proxy that represents something in a local address space instead of having to make the call to a remote object or service. I recently participated in a project where we used cached data on a proxy to save ourselves the expensive call to an external service.</li>
+<li><strong>Protection Proxy</strong>: exactly as it sounds, in this case the proxy is useful when different access rights need to be granted.</li>
+<li><strong>Smart Reference</strong>: in this case the proxy performs some additional behavior before calling the actual object. Examples from the GoF include counting references to an object to manage memory or checking that the actual object is properly locked so that you can make sure nothing else changes it.</li>
+</ul><h4>Wrap-Up</h4>
+
+<p>Ultimately, the difference between my implementation of the Repository pattern and the GoF Proxy pattern boils down to the extra behavior that a Proxy does besides &ldquo;pointing&rdquo;. Although I&rsquo;d heard from others that the &ldquo;Design Patterns&rdquo; can be a bit intimidating, it&rsquo;s still one of those books that every programmer should own and the Proxy chapter is a good one with lots of concrete examples. Since proxies are something we see with regularity &ldquo;in real life&rdquo; I recommend checking it out and reading a little deeper into the details.</p>

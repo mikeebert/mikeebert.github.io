@@ -1,0 +1,50 @@
+---
+layout: post
+title: Wiring Up Limelight
+date: '2012-05-29T23:16:03-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24042624804/wiring-up-limelight
+---
+<p>Today I finally wired up my existing tic-tac-toe code to a Limelight interface. Last week I started building out a separate Limelight Game class as an adapter between what the existing code needed and what Limelight provided, but over the weekend the more I thought about it the more I wanted to make Limelight work with the code I&rsquo;d already written. I don&rsquo;t know if it was necessarily the best practice and in the end I had to do something that felt a bit &ldquo;hacky&rdquo;, but I was drawn to the challenge of seeing how decoupled I&rsquo;d make my previous code from its user interface.</p>
+
+<p><img src="http://68.media.tumblr.com/tumblr_m4tfl3t07k1qlakf9.jpg" alt=""/></p>
+
+<p><em>My Limelight UI</em></p>
+
+<p>My existing Game class controlled almost all the functions of a game. It found out from the UI what type of players there are, what the players&rsquo; symbols are and if I wanted to-what size the board should be. Then it runs through the process of getting moves from alternating players (whether they are a computer or a human) until the game is over. I&rsquo;d already set up my Game class to instantiate itself with whatever UI it&rsquo;s passed, so that&rsquo;s probably another reason I wanted to try and pass it the Limelight UI and build the Limelight interface around the existing code.</p>
+
+<p>It actually went really smoothly and by creating a Limelight &ldquo;scene&rdquo; that handled all of the existing UI methods I didn&rsquo;t have to alter any of my existing code&hellip; except for a crucial part. And this is where I got &ldquo;hacky&rdquo; and a cleaner solution is what I&rsquo;ll probably be thinking about as soon as I get out of bed in the morning.</p>
+
+<p>My existing game class (that I wrote for the Command Line Interface) calls the following script to play the game:</p>
+
+<pre><code>def play
+  ... setup code...
+  play_script until exit_game
+end
+
+def play_script
+  @ui.display_board(@board)
+  next_player_move
+  game_over_scenario if game_is_over
+end
+</code></pre>
+
+<p>That <code>'next player move'</code> method tells player 1 and player 2 to return their moves. In the case of a computer player it returns a move based on a board that&rsquo;s been passed into the minimax algorithm. That&rsquo;s no problem at all in my LimeLight interface and the AI happily spits back a move. However, the Human Player class prompts for some input and then waits until there is a response. That&rsquo;s fine for the command line when it&rsquo;s waiting for user input, but when I&rsquo;m using a graphical user interface the next step in the script really doesn&rsquo;t need to be triggered until something has been clicked. But, in order to use the existing code I needed to figure out a way to make it wait and listen for a response.</p>
+
+<p>Fortunately Ben helped me out with one big step that I never would have figured out by myself. By kicking off my <code>play</code> method into another thread I&rsquo;m able to let the process run while getting my user&rsquo;s mouse clicks in another thread. Starting off the other thread is as easy as adding the following code inside my Limelight &ldquo;begin_game&rdquo; method</p>
+
+<pre><code>def begin_game
+  load_players
+  production.game = TTT::Game.new(self)   #self is the Limelight UI
+  Thread.new do
+    production.game.play
+  end
+end
+</code></pre>
+
+<p>This <em>almost</em> got me where I needed to be but at the end of the day I had to go in and add one line into my existing code that hopefully I can figure out how to do away with tomorrow. The problem with calling the script as it&rsquo;s written, and the ensuing <code>get_move</code> method from my Human Player class, is that they just kick into a non-stop loop and never come up to air to see if the Limelight UI might actually have some valid input for a move. By adding the following line into my Human Player &lsquo;get move&rsquo; method I was able to get it to come up for air long enough to get the move that the user had clicked on in Limelight:</p>
+
+<pre><code>sleep 0.3
+</code></pre>
+
+<p>It&rsquo;s such a simple little method that I just discovered a few weeks ago when I wanted to slow down my AI for a less jarring user experience, but in this case it definitely doesn&rsquo;t feel right. It may end up that I just finish writing that new Game class or at least a new <code>play</code> method that works better for GUI&rsquo;s than the &ldquo;call and response&rdquo; command line interface. Either way, wiring up my existing code was a good lesson and it felt good that <em>most</em> of it worked.</p>

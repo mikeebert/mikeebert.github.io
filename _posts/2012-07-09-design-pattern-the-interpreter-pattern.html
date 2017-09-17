@@ -1,0 +1,35 @@
+---
+layout: post
+title: 'Design Pattern: The Interpreter Pattern'
+date: '2012-07-09T00:28:09-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26811946369/design-pattern-the-interpreter-pattern
+---
+<p>The Interpreter Pattern is a pattern that can be used when you have a very contained, specific problem or set of problems—and it may work best to express the solution to that problem in a language created specifically to solve that problem.</p>
+
+<p>Although I can understand how it&rsquo;s used, I honestly can&rsquo;t think of a solid example beyond those offered up by others, so I&rsquo;ll start with those.</p>
+
+<p>In <a href="http://www.designpatternsinruby.com">Design Patterns in Ruby</a> Olsen starts with the basic example of creating an interpreter that can interpret math symbols and numbers (a very contrived example because of course Ruby can already handle numbers and math symbols), and then moves on to an interpreter for searching out certain types of files. Olsen creates different classes that each interpret a different command that relates to what type of files you want to search for.</p>
+
+<p>For any Java fans, I also came across <a href="http://www.oodesign.com/interpreter-pattern.html">this example</a> of a Roman numerals interpreter, which the site referred to as &ldquo;the classical example of the interpreter pattern&rdquo;. Last but not least, there&rsquo;s even an example <a href="http://sourcemaking.com/design_patterns/interpreter">using musical notation</a>.</p>
+
+<h4>How it works</h4>
+
+<p>There are really two main steps to the Interpreter Pattern:</p>
+
+<p>1) A parser* will read the input and produce an <strong>Abstract Syntax Tree</strong>. The nodes of the tree are separated into <em>terminal</em> and <em>nonterminal</em> nodes. The nonterminal nodes are higher level concepts (in the case of math, a plus or multiplication sign, and terminal nodes are the most objects that won&rsquo;t be broken down any further: a number, a variable, etc.</p>
+
+<p>2) Once the Abstract Syntax Tree is done, then the nodes can be evaluated against whatever conditions you&rsquo;ve set up&hellip;. and then you will have your result. In his file finder example Olsen uses conditions like files of type &ldquo;mp3&rdquo;  or files smaller than 1 Megabyte.</p>
+
+<h4>A Plus and A Minus</h4>
+
+<p>There is one big plus and one big minus to this pattern:</p>
+
+<p>1) The plus is that once you&rsquo;ve gone through the work of setting up your parser and separate classes of expressions you have a lot of flexibility with your interpreter. It can be a powerful tool for your specific set of problems.</p>
+
+<p>2) The downside is that there is a performance hit when the machine has to go through the steps of setting up the abstract syntax tree and then starts to evaluate and take action. However, with the speed of computers nowadays this performance hit will be negligible, but there will be times you&rsquo;ll have to be aware of it.</p>
+
+<p>Ruby itself is of course an interpreted language, but not implemented in quite the same way and well beyond the scope of the interpreter pattern. For now the pattern will be one of those that I keep  aclose eye out for in the wild so that I can find some more concrete examples of it.</p>
+
+<ul><li><em>there is also a parser-less interpreter but I&rsquo;m not going to go into it here so that I can keep the primary one clear.</em></li>
+</ul>

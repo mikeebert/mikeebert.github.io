@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'Day Two: Some Principles and Some Practice'
+date: '2012-03-07T07:56:56-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/18899267860/day-two-some-principles-and-some-practice
+---
+<p>On the first day I was assigned the first 100 pages of Uncle Bob&rsquo;s <a href="http://www.amazon.com/Software-Development-Principles-Patterns-Practices/dp/0135974445">PPP Book</a>, which included an overview on Agile software development and discussed the first of the SOLID principles: the Single Responsibility Principle.</p>
+
+<p>The SRP states that each module (e.g. a method or object) of the code should do one thing and one thing only- and thus only have one reason to change. By doing this it decouples the module from other operations, which can remove several design &ldquo;smells&rdquo;, including rigidity, fragility, immobility and opacity- four of the seven smells described in the book.</p>
+
+<ul><li>The rigidity smell arises when the design is hard to change, and a module that does more than one thing is certainly more complex to change.</li>
+<li>The fragility smell reveals a design that is easy to break, and again, if modules are doing more than one thing there&rsquo;s a greater risk of a chain of things breaking when you make a change.</li>
+<li>Immobility describes a design that is hard to reuse in a similar, and if a module is doing more than one thing it&rsquo;s probably becoming more specific to only the current program.</li>
+<li>And the final smell is opacity (which may or may not be a result of not following the SRP). The opacity smell describes code that is difficult to understand. One of the main tenets of Agile software development and Agile project management is that the only constant on a project is change- and it&rsquo;s very likely that at some point other developers will be working with your code and it&rsquo;s important that it makes sense.</li>
+</ul><p>In addition to the reading I&rsquo;ve been assigned this week I&rsquo;ve also been challenged to rewrite my Tic Tac Toe app using TDD and only the command line as the user interface. It&rsquo;s a big challenge but also a really fun one. I started on it yesterday afternoon and it was pretty amazing how much writing test firsts made me think about many of the things Uncle Bob discusses in the book. The tests force me to consider a lot of bigger questions about my design, and also help me to think about the two principles I&rsquo;ve studied (SRP as well as the Open Closed Principle, which I&rsquo;ll talk about tomorrow). I&rsquo;m looking forward to tackling more of the app today.</p>

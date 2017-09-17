@@ -1,0 +1,37 @@
+---
+layout: post
+title: 'Quick Tip: Watch those Dependency Defaults (CarrierWave/Fog edition)'
+date: '2015-06-04T21:19:44-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/120738021820/quick-tip-watch-those-dependency-defaults
+---
+<p>Today I spent a frustrating amount of time trying to figure out why a data conversion task was failing. The task I was running takes about 15 minutes, and at about 10 minutes in it would choke and the error I received included the following message:</p>
+
+<pre><code>Excon::Errors::BadRequest: Expected(200) &lt;=&gt; Actual(400 Bad Request)
+excon.error.response
+  :body          =&gt; "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n&lt;Error&gt;&lt;Code&gt;AuthorizationHeaderMalformed&lt;/Code&gt;
+                    &lt;Message&gt;The authorization header is malformed; the region 'us-east-1' is wrong;
+                    expecting 'us-west-2'&lt;/Message&gt;
+                    &lt;Region&gt;us-west-2&lt;/Region&gt;
+                    ... "
+</code></pre>
+
+<p>We are using AWS for multiple services, so immediately I dove into environment variables and config files to see if a region might have been set improperly. I found a couple places where we had explicity defaulted to &lsquo;us-east-1&rsquo; if an environment variable was <em>not</em> set- but in all of those cases the proper variable did exist. After a couple more failed tries (fortunately I had other things to work on while the conversion was running), I managed to track down a meaningful stacktrace. It turned out that when we tried to save a Model after setting it&rsquo;s <code>uploaded_file</code> (it&rsquo;s a Rails app), then we would receive the aforementioned error.</p>
+
+<p>A quick Google search and dive into the <a href="http://www.rubydoc.info/gems/carrierwave/CarrierWave/Storage/Fog">Carrierwave::Storage::Fog ruby docs</a> revealed the culprit:</p>
+
+<pre><code>You need to setup some options to configure your usage:
+...
+:region (optional) defaults to 'us-east-1'
+</code></pre>
+
+<p>So, if you&rsquo;re using CarrierWave and Fog for attaching files to models- be sure that you have the proper region set in your <code>config/initializers/carrierwave.rb</code> file. All I had to do was add a region key-value pair and the conversion went smooth as silk (well almost, but that&rsquo;s another post&hellip;). After the update our <code>carrierwave.rb</code> file includes this for our fog credentials:</p>
+
+<pre><code>config.fog_credentials = {
+    provider: 'AWS',
+    aws_access_key_id: 'SOMEKEY',
+    aws_secret_access_key: 'SomeSuperSecretKey',
+    host: 's3.amazonaws.com',
+    region: 'us-west-2'
+  }
+</code></pre>

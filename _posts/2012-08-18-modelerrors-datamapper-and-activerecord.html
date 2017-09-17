@@ -1,0 +1,29 @@
+---
+layout: post
+title: 'Model.errors: DataMapper and ActiveRecord Validations'
+date: '2012-08-18T17:35:02-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29713009521/modelerrors-datamapper-and-activerecord
+---
+<p>While continuing to work on my form validations I dug down into DataMapper to see what my options for error handling were, and also to see how I could mirror its behavior in my in-memory models if I wanted to.</p>
+
+<p>DataMapper handles the errors on model validation very similar to ActiveRecord, in that anything that doesn&rsquo;t pass validation gets stuck into a hash that is stored in the <code>@errors</code> attribute on the model. For example, if a title is required for a Blogpost object but you submit a form without one, your @blogpost.errors is now something like {:title =&gt; &ldquo;Title must be required&rdquo;}.</p>
+
+<p>Anyone who has ever seen a scaffolded Rails form has seen this @errors hash in use. At the top of each &ldquo;_form&rdquo; partial is:</p>
+
+<pre><code>&lt;% if @item.errors.any? %&gt;
+&lt;div id="error_explanation"&gt;
+  &lt;h2&gt;&lt;%= pluralize(@item.errors.count, "error") %&gt; prohibited this item from being saved:&lt;/h2&gt;
+
+  &lt;ul&gt;
+  &lt;% @item.errors.full_messages.each do |msg| %&gt;
+    &lt;li&gt;&lt;%= msg %&gt;&lt;/li&gt;
+  &lt;% end %&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+&lt;% end %&gt;
+</code></pre>
+
+<p>Although I&rsquo;m not using errors entirely the same way as Rails, for now I decided that for basic &ldquo;validating presence of&rdquo; an attribute I would go ahead and keep it on my in-memory models. It doesn&rsquo;t seem like too much of a stretch to say that it is the object&rsquo;s responsibility to make sure that its required attributes are present and accounted for. Then I know if an object is valid by whether or not it has any errors. If there are any, then I can use those errors when I re-render a form to tell a user exactly what the problem is (kind of like the code above, except that I explicitly send the errors hash to the view).</p>
+
+<p>However, as I built this out for my in-memory models, I can already start to see how some of those validation, initialize and update methods are borderline SRP violations. Once I start to add any other sort of validations besides presence then I&rsquo;ll probably want to delegate it to some sort of Validation class.</p>

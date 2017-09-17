@@ -1,0 +1,33 @@
+---
+layout: post
+title: Simple is Hard
+date: '2012-09-23T21:49:17-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/32171232105/simple-is-hard
+---
+<p>Last weekend was a big Uncle Bob weekend for me. On Friday he came in and spoke at 8th Light University, on Saturday I finally caught up and listened to his <a href="http://vimeo.com/46227106">previous talk at 8LU</a> and Sunday I watched his <a href="http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years">2011 Midwest Ruby Keynote</a>.</p>
+
+<p>I might have mentioned this before, but when I first heard of Uncle Bob, probably just a few weeks into learning how to program, I read a couple of his blog posts and found him to be rather opinionated— and that those opinions were almost inaccessible for a beginner like me. However, after learning a bit more programming and then hearing him talk a few times, it became apparent that almost all of his ideas- specifically about clean code, testing and architecture- are about keeping your applications simple and resilient—and those are the exact lessons a beginner should learn.</p>
+
+<h4>Clean Code</h4>
+
+<p>Clean code is about clearly communicating the intention of your program so that someone who has never worked on the project should be able to look at your source code and understand what&rsquo;s going on. It also means that your code follows some basic guidelines like having well-named variables and functions, being DRY (don&rsquo;t repeat yourself), and having small clean methods.</p>
+
+<p>It&rsquo;s amazing how hard it is to keep things simple, and writing clean code has been a challenge during my foray into Clojure. In an effort to not repeat myself I end up passing in layers of functions that have resulted in a tangled mess of parentheses and brackets. I&rsquo;ll admit, sometimes it&rsquo;s even a little fun with this functional stuff to see how much logic you can string together, but once those tests pass I know it&rsquo;s time for some serious refactoring.</p>
+
+<h4>Testing</h4>
+
+<p>Getting really comfortable with the red-green-refactor cycle of TDD probably took me a couple of months. However, now when I&rsquo;m faced with a new challenge or task I almost always turn to a spec file. Writing a spec is a safe place for me to break down problems. I need to be able to express the solution in code <em>and</em> in words. This makes me really think about the most basic place to start, for example: 
+    <s> it &ldquo;should place a move on a board&rdquo;</s> &hellip; 
+    <s> it &ldquo;should get a move from a player&rdquo;</s> &hellip; 
+    it &ldquo;should have a board&rdquo;</p>
+
+<p>The spec files have become my scratch pad to think about how to break down my methods and classes to be as specific, clear and simple as possible. Sometimes it still takes a lot of rewriting and refactoring just to get something to work, but with each test it gets a little easier.</p>
+
+<h4>Architecture</h4>
+
+<p>At first I felt like all of the abstractions and interfaces that Uncle Bob discusses (and that are part of good design patterns) were more obfuscatory than anything. But again, after writing a lot more code and building even small applications, I can see where breaking apart responsibilities and decoupling sections of an app actually make it more simple.</p>
+
+<p>The architecture step is definitely still one of the toughest for me, and it also seems like the one that benefits most from feedback and pragmatism. Things like unit tests, naming and syntax all have some concrete rules to follow, but design can go in a myriad of directions. However, as I work on more apps I&rsquo;m understanding these rules a bit better as well. Uncle Bob&rsquo;s 8LU talk was a group exercise in designing a coffee maker, and I found his yo-yo technique for thinking about high-level concepts and low-level details to be extremely helpful. He said that when you&rsquo;re designing your high-level classes you should send the yo-yo down to the low-level details, and if there is a concept that you&rsquo;re thinking of but that a low-level detail would implement then you&rsquo;re not thinking abstractly enough. Hopefully <a href="http://vimeo.com/eighthlight/videos">the video will be up soon</a> so that you can hear it in his own words.</p>
+
+<p>This idea of simple being hard, and the rules and guidelines that help us software developers move towards it, has had me thinking a lot about what craftsmanship really is and how it relates to my other frames-of-reference for craftsmanship— my family members in the trades and my friends in the arts— but I&rsquo;ll save that for another post.</p>

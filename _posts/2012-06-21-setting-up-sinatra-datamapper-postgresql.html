@@ -1,0 +1,119 @@
+---
+layout: post
+title: Setting up Sinatra + DataMapper + PostgreSQL (+ RSpec + Cucumber)
+date: '2012-06-21T11:09:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25576735173/setting-up-sinatra-datamapper-postgresql
+---
+<p>Although I&rsquo;m still going to work on using my &ldquo;in-memory&rdquo; objects for testing and development purposes, yesterday I decided to go ahead and set up the database for my app. Since I&rsquo;m going to be deploying to Heroku I have to use PostgreSQL so it&rsquo;s not like deferring that decision really defers anything. My database decision is already made. And although I <em>could</em> wire up ActiveRecord through Sinatra, I wanted to use something simpler and most of the Sinatra examples out there use <a href="http://datamapper.org/">DataMapper</a>, an object relational mapper that provides all of the crud actions and associations on top of the database.</p>
+
+<p>I had quite a few hiccups getting this set-up so hopefully these steps will help somebody out there.</p>
+
+<h4>PostgreSQL and Mac OS X Lion are mortal enemies</h4>
+
+<p>Sort of&hellip; OS X Lion ships with a version of PostgreSQL, but it&rsquo;s really difficult for a user to do anything with it. As many people have discovered, if you try to work with this for development there are lots of permission errors. What I ended up doing was using Homebrew to install the latest version of PostgreSQL and then archiving the default version.</p>
+
+<h5>Install PostgreSQL with Homebrew</h5>
+
+<p>Steps 1 and 2 (but only 1 and 2, for now) from Greg Cardoni&rsquo;s installation guide (<a href="http://webcache.googleusercontent.com/search?q=cache:9BCGD40QK6QJ:cardoni.net/postgresql+&amp;cd=2&amp;hl=en&amp;ct=clnk&amp;gl=us">cached copy available here</a>) will get you through these steps. You might have to uninstall MacPorts (which I did), but that was pretty painless.</p>
+
+<h5>&ldquo;Hide&rdquo; the default Lion PostgreSQL installation</h5>
+
+<p>The next step is to hide the PostgreSQL that comes with OS X Lion. This conflict is what had prevented me from getting PostgreSQL up and running during the Code Academy internal project, I just never figured it out back then. I finally stumbled across <a href="http://nextmarvel.net/blog/2011/09/brew-install-postgresql-on-os-x-lion/">Paul Denya&rsquo;s little script</a> that will archive those default OS X PostgreSQL binaries and link up the newly installed homebrew ones. I highly recommend reading through the post to see exactly what happens.</p>
+
+<h5>Firing up the &ldquo;good&rdquo; PostgreSQL</h5>
+
+<p>Now that the install is out of the way you can start up PostgreSQL in Terminal and create a database, which is step 3 in Cardoni&rsquo;s guide. This line will initialize the db and start it up.</p>
+
+<pre><code>initdb /usr/local/var/postgres
+</code></pre>
+
+<p>You can confirm that it&rsquo;s up and running with the following:</p>
+
+<pre><code>ps auxwww | grep postgres
+</code></pre>
+
+<p>which will give you some output about the PostgreSQL processes. Alternatively, you can also fire up Activity Monitor in your Applications&gt;Utilities folder and select &ldquo;All Processes&rdquo; in the main window to see that the processes are running. They are named &ldquo;postgres&rdquo;.</p>
+
+<p>Cardoni also has three lines you can type into terminal to automatically fire up PostgreSQL every time you start your computer, and since it takes a minimal amount of resources it&rsquo;s something I recommend doing.</p>
+
+<h5>Create Your App DB</h5>
+
+<p>If everything is looking good at this point then you can create a database specific to your app with the following line in terminal (where <em>yourappname</em> is the name of your app):</p>
+
+<pre><code>createdb yourappname
+</code></pre>
+
+<p>You can check that it&rsquo;s set up with this command:</p>
+
+<pre><code>psql yourappname
+</code></pre>
+
+<p>&hellip;at which point you should be prompted with the following:</p>
+
+<pre><code>psql (9.1.3) #*or whatever version of PostgreSQL you're running*
+Type "help" for help.
+
+yourappname=#
+</code></pre>
+
+<p>And you&rsquo;re good! Type &ldquo;help&rdquo; (no quotes) to get a dive into all the commands you have at your disposal.</p>
+
+<h4>DataMapper and Cucumber are Mortal Enemies&hellip; at first</h4>
+
+<h5>Installing the DataMapper and PostgreSQL   Gems</h5>
+
+<p>Here&rsquo;s my Gemfile. I originally had it broken up into <code>:test, :development, :production</code> groups, but then cleared all that out when things stopped working.</p>
+
+<pre><code>source "http://rubygems.org"
+
+gem "sinatra", "1.3.2"
+gem "shotgun", "0.9"
+gem "cucumber", "1.2.1"
+gem "capybara", "1.1.2"
+gem "rspec", "2.10.0"
+
+gem "data_mapper", "1.2.0"
+gem "dm-postgres-adapter", "1.2.0"
+gem "pg", "0.13.2"
+</code></pre>
+
+<p>Just installing the DataMapper gem broke Cucumber, which was decidedly not awesome. Although my Gemfile only has eight gems, DataMapper and Cucumber have dependencies back to json, one installing json version 1.6.7 and the other installing 1.7.3. The solution? <code>gem uninstall json -v 1.7.3</code>. After that the Cucumber tests <em>and everything else</em> ran fine.</p>
+
+<h5>Hooking DataMapper up to Your PostgreSQL database</h5>
+
+<p>Ok, time for the home stretch. Now that DataMapper and PostgreSQL are installed, we just need to tell DataMapper what database to use. Here are the lines you need at the top of your main Sinatra app file (and again, <em>yourappname</em> is the name of the database we created above):</p>
+
+<pre><code>    require 'sinatra'
+    require 'data_mapper'
+
+    DataMapper.setup(:default, 'postgres://localhost/yourappname')
+    DataMapper.finalize.auto_upgrade!
+</code></pre>
+
+<p>The last line tells DataMapper to update the database with the tables and fields that we will eventually create in our models, and then automatically update it if we change anything.</p>
+
+<p>And there you have it, you&rsquo;re wired up! You can jump down to the &ldquo;<strong>Define Your Models</strong>&rdquo; section of the <a href="http://datamapper.org/getting-started.html">DataMapper Getting Started guide</a> and learn about setting up your models with the properties you want. I just set up a User table with a name and email field so in the post &ldquo;/users&rdquo; method I can use the familiar crud actions:</p>
+
+<pre><code>    post "/users" do
+      @user = User.create(params)
+      erb :thankyou
+    end
+</code></pre>
+
+<p>And if I want to check that it&rsquo;s actually created I can just kick back to terminal and enter the following commands:</p>
+
+<pre><code>psql yourappname
+select * from users;
+</code></pre>
+
+<p>and here we are:</p>
+
+<pre><code>  id |    name     |     email     
+    ----+-------------+---------------
+   1 | mike         | mike@test.com
+</code></pre>
+
+<p>Of course, the next step is configuring my environments so that I use the in-memory objects for testing and development and DataMapper and PostgreSQL for production, but it&rsquo;s good to know that I have it up and running when I need it.</p>
+
+<p>If anyone has any feedback or their own hiccups please hit my up on <a href="http://www.twitter.com/mikeebert">Twitter</a>.</p>

@@ -1,0 +1,93 @@
+---
+layout: post
+title: Using RSpec Expectations to Verify a Data Migration
+date: '2015-06-27T11:49:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/122596978695/using-rspec-expectations-to-verify-a-data
+---
+<h3>The problem</h3>
+
+<p>Recently I was on a team responsible for migrating data from a legacy application into an entirely new schema. Users of this application would add up to tens of thousands of pieces of data for one company that added up to build a custom &lsquo;configuration&rsquo;. In the legacy application the tables were very 'wide&rsquo; — some with well over 100 columns — and the new schema we were moving to was much more normalized, resulting in deep tables and many more associations. In addition, we were converting some pieces of data to new types: numbers that were strings became integers, some strings were normalized and became foreign keys, and some HTML lists that had been stored simply as text were now broken up into multiple rows in a table.</p>
+
+<p>As we built out our classes that did the conversion and importing of this data we had lots of unit and integration tests to make sure that the data was going where it was supposed to and that the values were what we&rsquo;d expect them to be. However, these tests did not feel like enough. When we considered how important this data was and just how much of it we had- we couldn&rsquo;t honestly say that the conversion and import tasks were 'done&rsquo; until we were confident that every piece of data had been successfully migrated over to its new location (and sometimes even new format).</p>
+
+<p>Fortunately, one of the devs that we were working with realized that we had a source of truth to test against because our application published a massive JSON document for each configuration— and given the same set of inputs, the new app should be publishing the exact same JSON as the legacy app. He whipped up a <code>CompareVersions</code> class that could take the two JSON structures, recursively walk down them, and then log any differences. It started us off on the right path, but like any useful piece of software, we quickly realized that we wanted to tweak a few things to make it even better.</p>
+
+<p>The first thing that we wanted was to beef up the output of the differences to let us quickly see what type of values we were getting. For example, we had a lot of error messages that looked like one of the following:</p>
+
+<pre><code>Error in data field 'widget', old value: 1 - new value: 1
+Error in data field 'cool_field', old value: - new value: 1
+</code></pre>
+
+<p>In the first case the new field had ended up as a string or an integer when the legacy data was the opposite. In the second case we didn&rsquo;t know if the old value was nil or an empty string. One option for beefing up the output was to update the comparison to start doing type checks and nil checks (in addition to the equality checks), but forking the comparison logic would have just added more complexity to what had already become a hairy algorithm since the JSON structures weren&rsquo;t <em>exactly</em> the same. Fortunately, as any Ruby-ist has seen, there are already great tools that provide well-formatted output when comparing two values— our unit test frameworks. Mulling over our options I quickly realized that what what we really wanted was RSpec-like output that read:</p>
+
+<pre><code>it converts attribute: 'max_amount'
+   expected: 1
+        got: '1'
+</code></pre>
+
+<p>or:</p>
+
+<pre><code>it converts attribute: 'max_amount'
+   expected: 1
+        got: nil
+</code></pre>
+
+<h3>RSpec to the rescue</h3>
+
+<p>So instead of re-creating the wheel, we just realized that we could require <a href="https://github.com/rspec/rspec-expectations"><code>rspec-expectations</code></a> in our <code>CompareVersions</code> class, include <code>RSpec::Matchers</code>, then use the standard rspec <code>expect(x).to eq('something')</code> syntax inside of our own method:</p>
+
+<pre><code>require 'rspec/expectations'
+
+class CompareVersions
+  include RSpec::Matchers
+
+  def initialize(new_data, legacy_data)
+    @new_data = new_data
+    @legacy_data = legacy_data
+  end
+
+  def call
+    @legacy_data.each |key, value|
+      ...
+      #some code to extract values from the new and old data
+      ...
+      expect(new_value).to eq(legacy_value)
+    end
+  end
+end
+</code></pre>
+
+<p>This solution worked great&hellip; right up until the first failed expectation, at which point execution of our <code>CompareVersions#call</code> exits with the following:</p>
+
+<pre><code>.../rspec/expectations/fail_with.rb:30:in `fail_with':  (RSpec::Expectations::ExpectationNotMetError)
+expected: 2
+     got: 1
+(compared using ==)
+    from .../rspec/expectations/handler.rb:35:in `handle_failure'
+    from .../rspec/expectations/handler.rb:48:in `handle_matcher'
+    from .../rspec/expectations/expectation_target.rb:54:in `to'
+    from compare_versions.rb:8:in `block in call'
+</code></pre>
+
+<p>This resulted in a nice big face-palm — of course it raised an error because all that happens when an RSpec test fails is that the <code>RSpec::Expectations::ExpectationNotMetError</code> is raised. So, in order for our CompareVersions to be truly useful I needed to collect all the failed data comparisons to be returned later.</p>
+
+<h3><code>rescue</code> to the rescue</h3>
+
+<p>Collecting the errors in the example I&rsquo;ve started above is relatively easy. I can just initialize an instance of the <code>CompareVersions</code> class with an empty <code>@errors</code> hash, and then specifically rescue the <code>RSpec::Expectations::ExpectationNotMetError</code> error. (We used a hash for our errors so that we could use the JSON key, which corresponded to a field, as the key). Our call method now looks like this:</p>
+
+<pre><code>  def call
+    @legacy_data.each |key, value|
+      begin
+        ...
+        #some code to extract values from the new and old data
+        ...
+        expect(new_value).to eq(legacy_value)
+      rescue RSpec::Expectations::ExpectationNotMetError =&gt; e
+        @errors[key] = e
+      end
+    end
+  end
+</code></pre>
+
+<p>Now we could create an instance of the <code>CompareVersions</code> class, <code>call</code> it, and iterate over any <code>errors</code> that were found. At first we just started running one instance at a time against some particularly hairy legacy data sets, but as we refined our migrations we were able to start instantiating more and more &ldquo;comparers&quot;— making sure that we covered every case necessary. Ultimately, only when a comparison for every single customer came back without any errors could we move our 'migration&rsquo; task do the done pile.</p>

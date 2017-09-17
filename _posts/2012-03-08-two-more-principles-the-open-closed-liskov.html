@@ -1,0 +1,21 @@
+---
+layout: post
+title: 'Two More Principles: the Open Closed & Liskov Substitution'
+date: '2012-03-08T07:56:54-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/18946035755/two-more-principles-the-open-closed-liskov
+---
+<p>Over the last couple of days at [my apprenticeship](<a href="http://www.8thlight.com/apprenticeship">http://www.8thlight.com/apprenticeship</a>) I&rsquo;ve been reading up on two more of the SOLID principles. The first is the Open Closed Principle, which many of us heard Uncle Bob discuss at last Friday&rsquo;s [8th Light University](<a href="http://university.8thlight.com">http://university.8thlight.com</a>). In as few words as possible, the open closed principle states that a software method/class/module should be open for extension but closed for modification. </p>
+
+<p>My favorite example of this was one he discussed on Friday of an old phone system that only took ROM chips that had to be manually inserted, and by virtue of ROM being read-only-memory, the program written to the initial ROM chip had to be robust enough that future modifications could just be &ldquo;plugged-in&rdquo; as additional ROM chips. As a more recent example, in rewriting my tic-tac-toe application considering the OCP has caused me to think a lot about the structure of my app and how it might need to be extended in the future. I&rsquo;m currently only allowing the human player to go first and to only play &ldquo;X&rsquo;s&quot;— what if at some point the computer needs to go first or the player needs to be allowed to &quot;O&rsquo;s&rdquo; or some other character?</p>
+
+<p>Of course, all of those what-if&rsquo;s can lead to a lot of unnecessary pre-optimization, and that&rsquo;s where experience and the agile process come into play. If this tic-tac-toe app was for a customer then I could nail down the requirements and ask them if the symbol or order of the player mattered (in this case I&rsquo;ll be asking [Mike](<a href="http://twitter.com/mjansen401">http://twitter.com/mjansen401</a>) today during our morning meeting). I really like the recommendation about pre-optimization that the PPP book recommends, and that&rsquo;s to get the &ldquo;bullets&rdquo; flying at your app as early as possible (through quick iterations to your customer so that they can provide feedback)- and if that first bullet finds you, then optimize so that it doesn&rsquo;t happen again.</p>
+
+<p>The principle that I read about yesterday was the Liskov Substitution Principle, introduced in 1987 by Barbara Liskov. The LSP states that a derivative must be substitutable for it&rsquo;s base. So if &ldquo;subclassA&rdquo; inherits from &ldquo;ClassA&rdquo;, and classA is passed to a method, then if I pass subclassA to that same method I should expect the same behavior. I&rsquo;ll try and write this in some pseudocode:</p>
+
+<p>	if subclassA :: classA<br/>
+	then method(subclassA) should behave the same as method(classA)</p>
+
+<p>&ldquo;Design by Contract&rdquo;, a term coined by Bertrand Meyer and used in the Eiffel programming language, stated the rules of substitution further by explicitly stating preconditions and postconditions for routines within a class. Those preconditions and postconditions had to be met by a derivative as well, with some, er&hellip; conditions. Rather than sloppily paraphrase I&rsquo;ll quote straight from the book on this one: &ldquo;A routine redeclaration may only replace the original precondition by one equal or weaker, and the original postcondition by one equal or stronger.&rdquo; (p. 117)</p>
+
+<p>Both of these principles, as well as the Single Responsibility Principle, have seemed to sink in pretty well, but maybe a little too well. As I TDD my way through the tic-tac-toe app I find myself suffering from a bit of paralysis by analysis as I try and consider the principles and think about design smells that might start emanating from my code. I think today I just need to barrel forward and let the bullets start flying.</p>

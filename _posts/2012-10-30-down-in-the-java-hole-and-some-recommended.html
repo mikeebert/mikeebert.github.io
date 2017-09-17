@@ -1,0 +1,20 @@
+---
+layout: post
+title: Down in the Java Hole (and some recommended reading)
+date: '2012-10-30T10:01:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/34635585120/down-in-the-java-hole-and-some-recommended
+---
+<p>Since finishing up my Java tic tac toe last week I’ve moved on to building my HTTP server that will serve up my game. It also needs to pass 8th Light’s <a href="https://github.com/8thlight/cob_spec">cob_spec</a> suite of test for a web server.</p>
+
+<p>Although I’m still getting comfortable with Java, at this point I’m pretty familiar with the tic-tac-toe problem domain- so getting that app going wasn’t bad after the initial Java hurdles. However, my knowledge of a server up until now has been limited to starting one with ‘rails s’, ‘lein joodo server’ or ‘rackup’ - and then stopping it with control-C.</p>
+
+<p>My lack of server knowledge coupled with my limited knowledge of Java has made for a challenging past week. More often than not I’ve had to set TDD aside because I realize I don’t even fully understand what I’m testing, or I can’t build a mock because I don’t know understand the behavior of the object I’m building a mock for. Usually when I find myself in that position I can take a step back and make the test simpler, but in order to do that I need to understand what the simpler step is. So there’s been a lot of reading.</p>
+
+<ul><li><p><a href="http://www.jmarshall.com/easy/http/">HTTP Made Really Easy</a>. In the weeks before I started the project I read up on as much as I could about how a server works. 8th Light’s newest Craftsman, Adam Gooch had mentioned this article in one of his blogs and it’s a great place to start. Don’t let the name fool you either, it’s actually a pretty in depth resource with lots of great links.</p></li>
+<li><p>I also spent a lot of time at the Princeton Introduction to Java site <a href="http://introcs.cs.princeton.edu/java/84network/">section on Networking</a>. This is where I got my start with <a href="http://mikeebert.tumblr.com/post/34272579997/echo-echo-echo-echo-echo">building the echo server</a>.</p></li>
+<li><p>I always have tabs open to <a href="http://docs.oracle.com/javase/">Oracle’s Java Docs</a> on <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/net/Socket.html#getInputStream()">Sockets</a>, <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/net/ServerSocket.html">ServerSockets</a>, <a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/io/BufferedReader.html">BufferedReaders</a>, <a href="http://docs.oracle.com/javase/6/docs/api/java/io/StringReader.html">StringReaders</a>, <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/io/InputStreamReader.html">InputStreamReaders</a> and all their corresponding “outputers”.</p></li>
+<li><p>Most importantly, almost all of the 8th Light’ers have built a server at some point so there are <a href="https://github.com/mjansen401/java">lots</a> <a href="https://github.com/mylesmegyesi/http-server">of</a> <a href="https://github.com/JoshCheek/java-web-server">examples</a> <a href="https://github.com/bwvoss/HTTP-Server">for</a> <a href="https://github.com/MichaelBaker/clojure-webserver">me</a> to read. 
+Over the past couple of months I’ve really started to enjoy reading code and just as with any author or literature, the more of the craftsmen&rsquo;s code I read the more I’m recognizing their styles.</p></li>
+<li><p>And a special shout out goes to craftsman Patrick Gombert’s <a href="https://github.com/patrickgombert/HTTPSreport">HTTPSReport repo</a> and his extremely thorough and entertaining README. He cleverly named all of his classes so that they are positions in a company, but also describe very well what they do.</p></li>
+</ul><p>Back to wiring things up&hellip;</p>

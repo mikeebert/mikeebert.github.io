@@ -1,0 +1,42 @@
+---
+layout: post
+title: 'Design Pattern: Command Pattern'
+date: '2012-05-24T21:18:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/23605484987/design-pattern-command-pattern
+---
+<p>Whereas some of the patterns I&rsquo;ve covered so far have felt more like broad strategy, the Command Pattern has a very narrow and specific focus. It is used to create an object that has one specific task and simply waits until it is executed. It&rsquo;s built upon a principle that we&rsquo;ve seen in other patterns too: to separate out the things that change from the things that stay the same.</p>
+
+<p>Olsen&rsquo;s example in <a href="http://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452"><em>Design Patterns</em></a> that quickly made sense for me was a GUI framework that had various buttons defined and styled. If you wanted to use these buttons in your application you wouldn&rsquo;t want to duplicate all that button setup code every time you needed a button and then just change the method for:</p>
+
+<pre><code>def on_button_push
+  # some action for this time
+end 
+</code></pre>
+
+<p>Instead, what you could do is create a separate class that held the action, and pass that new class to your button class upon creation. For example, your new class to send a message would look like this:</p>
+
+<pre><code>class SendCommand
+  def execute
+    send_the_message
+  end
+end
+</code></pre>
+
+<p>…and then when you wanted to use the already defined button in your app you could create it like so:</p>
+
+<pre><code>send_btn = ButtonClass.new(SendCommand.new)
+</code></pre>
+
+<p>The Button Class would just need to initialize a command attribute for the command you passed it, and then it&rsquo;s method for calling the action would be:</p>
+
+<pre><code>def on_button_push
+  @command.execute
+end
+</code></pre>
+
+<p>(<em>Lots of props to Olsen because my example is almost identical to his but it just  painted the picture so clearly that I didn&rsquo;t want to mess with it.</em>)</p>
+
+<p>The Command Pattern makes so much sense to me after this example that I wondered why I hadn&rsquo;t come across it before now. However, Olsen states that &ldquo;There is something about the Command pattern that seems to invite enthusiastic overuse&rdquo;, and I could certainly see where a newcomer like myself could get carried away.</p>
+
+<p>Olsen includes a whole other section on how you can use the Command Pattern to record steps that a user has taken to track state and then undo and redo commands as well, but I&rsquo;m going to leave that for another post. In the meantime, while I work on my Limelight app this week I&rsquo;m going to dive into the Limelight source code (a GUI framework) and see if I can hunt down some Command Pattern examples in the wild.</p>

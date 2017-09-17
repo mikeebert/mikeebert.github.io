@@ -1,0 +1,30 @@
+---
+layout: post
+title: Getting Up & Running with Limelight
+date: '2012-05-16T22:29:18-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/23206548136/getting-up-running-with-limelight
+---
+<p>Last week I <a href="http://mikeebert.tumblr.com/post/22826612267">posted</a> about my dive into <a href="http://limelight.8thlight.com">Limelight</a>, a graphical user interface (GUI) that I&rsquo;ll be using with my tic tac toe code. I mentioned that you&rsquo;ll need to install JRuby and then the Limelight gem to check it out, but I glossed over what can be a somewhat tricky process- especially if you want to run the specs in the Limelight tutorial. Following is a more thorough walkthrough.</p>
+
+<p>If you have RVM installed then you can head over to this <a href="http://mikeebert.tumblr.com/post/22278058951">previous post</a> to get JRruby installed on your computer.</p>
+
+<p>If you don&rsquo;t have RVM installed or haven&rsquo;t used it, do yourself a favor and block out 8 minutes to watch <a href="http://screencasts.org/episodes/how-to-use-rvm">this solid intro video</a> and get it set up. Then check out the aforementioned post to get JRuby installed.</p>
+
+<p>RVM check? JRuby Check? Awesome. Now in terminal type <code>'rvm use jruby'</code> (<em>no quotes necessary for any of the commands in this post</em>) to make sure you&rsquo;re using JRuby. (You can also type <code>'rvm list'</code> to see all available Rubies.)</p>
+
+<p>Next up, type <code>'gem install limelight'</code>. After Limelight has finished downloading and installing you can type <code>'limelight open'</code> and you&rsquo;ll be presented with the Limelight welcome screen, including a tutorial, documentation and sample apps.</p>
+
+<p>(<em>Note</em>: if you get a <code>"-bash: Limelight: command not found"</code> error there&rsquo;s a good chance you are not using JRuby and/or didn&rsquo;t install the Limelight gem into the JRuby gemset. You can confirm this by typing <code>'rvm current'</code> to check the Ruby you&rsquo;re running and type <code>'gem list'</code> to see what gems are available)</p>
+
+<p>If you decide to check out the Limelight docs and do the sample app in the &ldquo;Getting Started&rdquo; section you&rsquo;ll need to do one more important step. In order to run the specs in the sample app you need to use a 1.x version of Rspec (which is currently at version 2.10.0).</p>
+
+<p>RVM to the rescue again. It makes it easy to have a different version of Rspec available by allowing you to create a separate gemset. You can do this on a per-project basis (and dive into the awesomeness of .rvmrc files), or you can also just make a gemset for playing around in Limelight. Here&rsquo;s the steps on how to do that:</p>
+
+<p>Confirm that you&rsquo;re using JRuby by typing <code>'rvm list'</code> or <code>'rvm current'</code>.</p>
+
+<p>Next, type <code>'rvm gemset create limelight_gems'</code> (or whatever you want to name the gemset in place of limelight_gems). Then type <code>'rvm gemset use limelight_gems'</code>.</p>
+
+<p>Congrats! You know have a fresh gemset to work with. Be sure to <code>'gem install limelight'</code> again, and then <code>'gem install rspec -v 1.2.9'</code>. If you want to be sure that you&rsquo;re using JRuby and the right gemset you can just type <code>'rvm current'</code> and you should get something like <code>"jruby-1.6.6@limelight_gems"</code>, where 1.6.6 is the version of JRuby you&rsquo;re running.</p>
+
+<p>Now, whenever you want to run Limelight specs (or you get to that point in the tutorial), you can type <code>'jruby -S spec spec'</code> and you should be good to go. If you get the dreaded <code>"jruby: No such file or directory -- spec (LoadError)"</code> it&rsquo;s most likely due to the fact you&rsquo;re using a 2.x version of Rspec. It was a couple hours of seeing this message that lead to some serious frustration for me and the motivation to write this post. Now if I see that message a quick <code>'rvm use gemset limelight_gems'</code> makes it all o.k. again.</p>

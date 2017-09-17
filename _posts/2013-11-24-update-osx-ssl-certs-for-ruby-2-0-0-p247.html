@@ -1,0 +1,30 @@
+---
+layout: post
+title: Update OSX SSL Certs for Ruby 2.0.0-p247
+date: '2013-11-24T17:35:10-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/68000214755/update-osx-ssl-certs-for-ruby-2-0-0-p247
+---
+<p><em>From the department of fool me twice, shame on me. I ran into this issue on my laptop about a month ago and blanked on the solution when I had the same issue on my desktop.</em></p>
+
+<p>All of my recent client work has used Ruby-1.9.3 so I decided to start using Ruby 2 for a couple of my personal projects in order to see what kinks I came across. I&rsquo;m an RVM user so installing the new version was a simple matter of <code>rvm install ruby 2.0.0-p247</code> (the latest patch when I made the jump).</p>
+
+<p>The first kink came hard and fast when I wasn&rsquo;t able to install any gems.  A simple <code>gem install bundler</code> would result in this error:</p>
+
+<pre><code>WARNING:  Unable to pull data from 'https://rubygems.org/': SSL_connect returned=1 errno=0 state=SSLv3 read  
+server certificate B: certificate verify failed (<a href="https://s3.amazonaws.com/production.s3.rubygems.org/specs.4.8.gz">https://s3.amazonaws.com/production.s3.rubygems.org/specs.4.8.gz</a>)
+</code></pre>
+
+<p>I spent  a couple minutes doing some troubleshooting with no success, but then a search brought up a few different stack overflow posts that saved me from any (further) frustration. I actually had two problems- my rvm was woefully out of date and I needed to update the my SSL certificates.</p>
+
+<h4>Updating RVM</h4>
+
+<p>The RVM team couldn&rsquo;t have made it any easier: <code>rvm get stable</code></p>
+
+<h4>Checking &amp; Updating SSL Certificates</h4>
+
+<p>Kudos again to the RVM team for <a href="https://github.com/wayneeseguin/rvm/blob/master/help/osx-ssl-certs.md">making it simple</a>:<br/>
+Check the status of your certificates with: <code>rvm osx-ssl-certs status</code><br/>
+Update all of your certificates with: <code>rvm osx-ssl-certs update all</code></p>
+
+<p><em>Note: while just searching for links for this post I came across <a href="http://stackoverflow.com/a/19151697">these exact same steps</a> from Michal Papis- the release manager for RVM.</em></p>

@@ -1,0 +1,41 @@
+---
+layout: post
+title: 'Clean Coders Episode 4: Function Structure'
+date: '2012-07-03T08:09:38-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26415251071/clean-coders-episode-4-function-structure
+---
+<p>The fourth Clean Coders episode is a monster episode covering a lot of ground— from a run through of Object Oriented, Functional &amp; Structured Programming to a handful of key principles including Dependency Injection, the Law of Demeter, managing Side Effects, Command Query Separation and more. The episode took me a while to get through because I found myself hitting pause almost every minute to take more notes. For the sake of brevity I&rsquo;m just going to focus on a couple of my biggest &ldquo;a-ha&rdquo; moments:</p>
+
+<h4>Structure &amp; Organization</h4>
+
+<p><em>&ldquo;In every application you write you should be able to draw a line that divides where the application lives and where the lower level modules live—the &quot;app&rdquo; partition and the &ldquo;main&rdquo; partition. No dependencies should flow from &ldquo;app&rdquo; to &ldquo;main&rdquo;, main is essentially a plug-in to the application.&ldquo;</em></p>
+
+<p>I really like this quote and the visual that went along with it because it provides a way to start thinking about the structure of your application and how to manage the dependencies. The concept is still a little abstract to me but I&rsquo;ll try and come up with some UML examples for a later post.</p>
+
+<h4>Functional Programming</h4>
+
+<p>I have yet to write more than a few lines in a functional programming language, but every time I hear about it or see it I&rsquo;m intrigued. It sounds so completely different from everything I&rsquo;m writing now, but also somewhat natural. Soon enough I&rsquo;m going to dive into the Clojure Koans and I&rsquo;ll have the opportunity to write a Tic Tac Toe game in Clojure. Here&rsquo;s the functional programming &quot;teasers&rdquo; from the video&rsquo;s brief overview:
+- There are no assignment statements in functional programming and you can&rsquo;t change the state of variables.
+- &ldquo;Instead of setting a bunch of values as variables, you pass those values as arguments into functions. Instead of looping over a set of variables, you recurse through a set of function arguments.&rdquo; 
+- A true mathematical function. You will always get the same result back given the same input.
+- The value of a function depends only on its input arguments. &ldquo;There are no side effects&rdquo;.</p>
+
+<h4>Temporal Coupling</h4>
+
+<p>Temporal coupling is when you have have two functions that must be executed in a certain order and are coupled together. The easiest example would be the functions &ldquo;open&rdquo; and &ldquo;close&rdquo;. You need to open a file before you can close it and vice versa.</p>
+
+<p>The way out of temporal coupling is by passing in a block to the first part of the couple and then hiding the second part of the couple inside the first. For example:</p>
+
+<pre><code> def open(file, update_command)
+   @fileManager.open(file)
+   update_command(file)
+   @fileManager.close(file)
+ end
+</code></pre>
+
+<h4>Command Query Separation</h4>
+
+<p><em>&ldquo;Functions that change state should not return values, Functions that return values should not change state&rdquo;</em></p>
+
+<p>This sounds like such a simple rule but when followed can go a long way towards &ldquo;clean&rdquo; code that is easy to read and easy to maintain. If a function is simply a query that returns a value then your reader or the next person maintaining can rest easy knowing it has no side effects. (Of course in Ruby every method returns the last statement it evaluates so we may be tempted to use the return values even after changing state.) Martin Fowler has a <a href="http://martinfowler.com/bliki/CommandQuerySeparation.html">quick little post</a> about CQS and why an example of why you might want to break it.</p>

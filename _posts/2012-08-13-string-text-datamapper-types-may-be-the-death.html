@@ -1,0 +1,18 @@
+---
+layout: post
+title: String != Text. DataMapper Types May Be the Death of Me (and another lesson)
+date: '2012-08-13T23:23:35-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29384366233/string-text-datamapper-types-may-be-the-death
+---
+<p>Today I spent an inordinate amount of time fixing another DataMapper type error in my Postgres database. I had two models, <code>Feedback</code> and <code>Blogposts</code>, that wouldn&rsquo;t save in production—only this time I had no error messages to guide me to that conclusion. When I submitted form data the app would just redirect to the next page without a peep in either the logs or the console, but nothing I entered persisted. The real kicker was that when I ran the app in development everything <em>seemed</em> to work just fine, but remotely it was like any data I entered just vanished into the &ldquo;depths of the internet&rdquo;.</p>
+
+<p>In an effort to try and figure out what went wrong I littered my code with debug statements and chatted with people around the office&hellip; but it was to no avail. Then this afternoon, just as I was about to move on to do something else so that I didn&rsquo;t feel entirely unproductive, <a href="http://www.8thlight.com/our-team/brian-pratt">Brian</a> came in and sat down with me for 10 minutes. The code all looked good to him so we opened up the production app and tried a few things. Sure enough, Brian was creating objects and they were saving in every week but the current week. So then we took a look at the <code>Weeks</code> class that I&rsquo;d built but nothing stood out. Then we tried to create something in the current week and lo and behold, it worked!</p>
+
+<p>&hellip; and then it hit me. All of the sample data Brian was plugging in that worked and all of the sample data that I&rsquo;d tried in development had a common trait: it was short. There were many places in my models where I was declaring my property type as <code>String</code> when it needed to be <code>Text</code>. While messing around in the app we were putting things in the input fields like &ldquo;Test note&rdquo;, &ldquo;www.test.com&rdquo; or even &ldquo;kjasdkjf&rdquo;. And in all of my unit tests I&rsquo;d done the same thing, the test models were set up with parameters like {:title =&gt; &ldquo;some title&rdquo;, :note =&gt; &ldquo;some note&rdquo;, &hellip;}</p>
+
+<p>But then when it came time to use the app in production I figured that I should always use real data, even when debugging. My blog title was an actual title and my url was the usual long URL, such as <a href="http://mikeebert.tumblr.com/post/29266941475/a-deploy-state-of-mind.">http://mikeebert.tumblr.com/post/29266941475/a-deploy-state-of-mind.</a> DataMapper is very strict about its property types and if you declare a string you better keep it under 50 characters. Since my dummy data didn&rsquo;t go over that I never noticed the problem.</p>
+
+<p>The lesson? Use as close to actual data as possible during testing so that you&rsquo;re more thoroughly prepared for production.</p>
+
+<p>The other lesson? Despite DataMapper offering an <code>auto_update!</code> command that is supposed to take care of changes to your tables, it doesn&rsquo;t <em>actually</em> always auto update—and doesn&rsquo;t tell you when it fails to either. Even after I changed my property types to <code>Text</code> my models still weren&rsquo;t saving. Thanks to the tip Mike showed me last Friday I figured out that I had to fire up a connection to my remote Postgres database and change the column types with a command such as: <code>ALTER TABLE blogposts ALTER COLUMN url TYPE text;</code></p>

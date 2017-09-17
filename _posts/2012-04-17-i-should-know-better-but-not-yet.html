@@ -1,0 +1,44 @@
+---
+layout: post
+title: I Should Know Better... But Not Yet
+date: '2012-04-17T22:46:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/21305976631/i-should-know-better-but-not-yet
+---
+<p>Lots of lessons learned these past few days:</p>
+
+<p>1) Sometimes a weekend full of chores, reading and naps is just what the doctor ordered.</p>
+
+<p>I didn&rsquo;t open up my computer until Sunday evening (a full 48 hours sans programming) and although I worried that I&rsquo;d lose steam on what I was doing I&rsquo;ve been completely recharged these past few days. I feel like I&rsquo;ve been able to think more clearly than I have in weeks. 
+My reading this weekend was finishing up <a href="http://www.amazon.com/Extreme-Programming-Explained-Embrace-Edition/dp/0321278658">XP Explained</a> and working on <a href="http://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1334715614&amp;sr=1-1">Refactoring</a>- but I&rsquo;m not ashamed to admit that I probably napped 20 minutes for every 20 pages I read.</p>
+
+<p>2) Recursion and Refactoring are FUN!</p>
+
+<p>While on my minimax quest these past couple of weeks someone brought up the N-Queens problem, where you must place N number of queens on an N x N board without any of them being able to attack each other. I took a run at it last week for an hour or two and my solution ended up being very much like my first run at unbeatable tic-tac-toe. The logic was hard-coded and a massive if-else chain. Sunday night I started to sketch out another run at it with the idea of a constructing a &ldquo;learner&rdquo; that could track its steps and backtrack when necessary- which is a lot like what I need to do with minimax.</p>
+
+<p>The hard-coded logic for the problem is relatively straightforward (the layout of the Queens typically follows the movement of a knight- in an &ldquo;L&rdquo; shape), but developing a &ldquo;figurer&rdquo; was a definitely a challenge. I started out with a pretty rigorous barrage of tests to find out if a board had any attacks possible, and my thinking was that I could use those methods to place pieces. But the methods ended up being iterative and rigid and as I delved deeper I realized that I could write more organic methods. As my loop gained more whiles, ifs and some recursion I had to throw testing to the wind. When something is &ldquo;untestable&rdquo; it&rsquo;s a good indication that it&rsquo;s too complex, but I&rsquo;m just not that good yet to be able to test-drive a brain teaser like this one. Instead I let the method grow into a <a href="https://github.com/mikeebert/N-Queens/commit/cf25377512e0fb351a5f6783ed45b292ac92404c">30 line monster</a> with many lines pushing the <a href="https://github.com/styleguide/ruby">80 character limit</a>, way too much duplication and a nasty mess of puts statements to help me figure out what did and didn&rsquo;t work.</p>
+
+<p>After spending a good chunk of time with it on Monday I had it solved up to 15 queens with some odd inconsistencies between 16 and 20 queens. Depending on what lines I commented out I could solve for 16, 18 and 19 but not 17 and 20 or vice versa. I went to bed last night determined to find out what was going wrong. When I got up early this morning I made one simple reorder of my flow control and was greeted with a sea of green passing tests. For a solid 10 minutes I debated waking up Rosa so that I could get a well-deserved high five, but it&rsquo;s a really good thing I didn&rsquo;t because once I was fully awake I realized that not only hadn&rsquo;t I fixed it, but I&rsquo;d missed a line in my latest batch of tests- which is the only reason they all passed. Ugh. But I kept at the refactoring/deleting/drying and a little while later had the massive A-HA moment when not only was I able to get it work but I took the monster down to about 10 lines (<a href="https://gist.github.com/2410700">gist</a>).</p>
+
+<pre><code> def coordinates_for_next_move
+   while attackable(@row,@column)
+     @column += 1 if @column &lt; @size
+     while @column &gt;= @size
+       @row = @positions.last[0]
+       @column = @positions.last[1] + 1
+       @positions.delete_at(@positions.count - 1)
+     end
+   end
+   place_next_queen
+ end
+</code></pre>
+
+<p>*<em>place_next_queen shovels the row and column to the positions array and then calls coordinates_for_next_move</em></p>
+
+<p>It&rsquo;s definitely still not perfect (it only solves for up to 20 queens before I get a &ldquo;stack level too deep&rdquo; error) and there&rsquo;s plenty of code to clean up (like that nested while statement and a couple of ridiculously long train wrecks of methods <a href="https://github.com/mikeebert/N-Queens">laid bare over on github</a>), but this led me to my final lesson&hellip;</p>
+
+<p>3) I know better&hellip;but I don&rsquo;t know enough yet</p>
+
+<p>I&rsquo;ve been very fortunate that since I first started writing code I&rsquo;ve been exposed to the &ldquo;right&rdquo; way of doing things from people like <a href="http://codeacademy.org/staff">Jeff</a>, our Code Academy <a href="http://codeacademy.org/community">mentors</a>, the crew at <a href="http://www.8thlight.com/our-team">8th Light</a> and the rest of the <a href="http://www.meetup.com/ChicagoRuby/members/">Chicago community</a>. During the past six weeks at 8th Light I&rsquo;ve also been reading a lot of theory and surrounded daily by crews working within the strict principles that the company adheres to. However, there&rsquo;s definitely been times over the past couple of weeks that my knowledge of that theory and principles has prevented me from writing code that can at least &ldquo;get the job done&rdquo;.  For example, I&rsquo;ll start to write out a solution, but by the time I start writing my second line I realize that it&rsquo;s going to be a pretty ugly method so I start over&hellip; and then the cycle repeats and repeats until I feel like I&rsquo;m just banging my head against a wall in the hopes that the wall gives before my head does.</p>
+
+<p>But therein lies the lesson, and part of what I&rsquo;ve learned with the N-queens problem: I&rsquo;m going to need to write some ugly solutions before I can really start to learn and apply the theories and principles necessary to make it better. Russ Olsen has a great quote in <a href="http://www.amazon.com/Eloquent-Ruby-Addison-Wesley-Professional-Series/dp/0321584104/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1334717107&amp;sr=1-1">Eloquent Ruby</a> that &ldquo;writing clear code is a battle of inches&rdquo;, and it certainly feels like a battle- but every inch also feels like a victory. I&rsquo;m also reminded of <a href="http://vimeo.com/24715531">Ira Glass&rsquo;s advice for beginners</a>: &ldquo;but your taste, the thing that got you into the game, is still killer. And your taste is why your work disappoints you.&rdquo; I don&rsquo;t know if I would go as far as to say that I have killer taste in code, but I&rsquo;ve definitely felt some frustration, and I&rsquo;m most certainly a beginner.</p>

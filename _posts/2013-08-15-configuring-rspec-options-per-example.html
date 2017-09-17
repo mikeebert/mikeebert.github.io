@@ -1,0 +1,47 @@
+---
+layout: post
+title: Configuring Rspec Options Per Example
+date: '2013-08-15T10:03:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/58331265302/configuring-rspec-options-per-example
+---
+<p>Over the past several months we&rsquo;ve been internationalizing the Rails app that I&rsquo;ve been working on. There are all sorts of lessons we&rsquo;ve learned from rolling an app out to 17 countries (and counting)— and suffice it to say that Biggie wasn&rsquo;t wrong <a href="http://www.dailymotion.com/video/x1xdq0_notorious-big-mo-money-mo-problem_music">when he said</a>: &ldquo;Mo countries, Mo problems&rdquo; (or something to that effect).</p>
+
+<p>We have a thorough &lsquo;full-slice&rsquo; set of tests that uses plain old RSpec + Capybara in lieu of Cucumber, and before each of these tests we log in as a user. Once we started adding more countries we needed to log in as different users and our test assertions began to vary. For example, business rules dictated that some view elements might not be displayed for a user in Europe, or the form that a Euro user sees will differ from the one a U.S. user sees. We needed to write tests accordingly and vary the locale of the test users logging in.</p>
+
+<p>I decided to use the <code>Rspec.configure</code> block in a <code>spec_helper.rb</code> file so that it was very easy for us to control the locale of the user at the moment we were writing our tests. We did this via an option passed in to either the <code>it/do</code> or <code>describe</code> block:</p>
+
+<pre><code>describe "view widget for adjusting price" do
+  it "calculates price with value added tax field for European users", :user_locale =&gt; :euro do
+    ... test set up and assertion with VAT...
+  end
+end
+</code></pre>
+
+<p>or&hellip;</p>
+
+<pre><code>describe "view widget with no VAT calculation", :user_locale =&gt; :us do
+  it "calculates price without VAT for U.S. users" do
+    ... test setup and assertion without VAT...
+  end
+end
+</code></pre>
+
+<p>As I mentioned, the <code>:user_locale</code> option is handled back in our <code>spec_helper.rb</code> file. The configuation looks something like this:
+[<strong>UPDATE 2/10/2015</strong>: I came back to this post trying to use this myself and I realized that I now need to use <code>metadata</code> and I also wasn&rsquo;t passing in <code>example</code> to the block.]</p>
+
+<pre><code>RSpec.configure do |config|
+  config.before :each do |example|
+    user_locale = example.metadata[:user_locale]
+    login_for_location(user_locale)
+  end
+end
+
+def login_for_location(user_locale)
+  ... the login/token/auth code ...
+end
+</code></pre>
+
+<p>The key here is <code>example.options</code> in the third line of the <code>Rspec.configure</code> block. All of your RSpec examples can take metadata so when we pass in the hash of <code>:user_locale =&gt; :euro</code> to a test example it is then available to us during the configuration. For further reading I recommend a quick look through the <a href="https://github.com/rspec/rspec-core/blob/master/lib/rspec/core/metadata.rb">rspec-core source code</a> on metadata.</p>
+
+<p>There is one catch to be aware of, but the solution is rather simple (which dawned on me after looking at a project fellow 8th Light'er <a href="http://blog.8thlight.com/myles-megyesi/archive.html">Myles Megyesi</a> had set up). If you only have a certain amount of tests that require configuration then I wouldn&rsquo;t recommend putting this login configuration inside of the main <code>spec_helper.rb</code> file— especially if you have a fork in your logic. It doesn&rsquo;t make any sense for tests that have nothing to do with logging in or a locale to hit this configuration block. Instead, just create a second <code>spec_helper</code> file in the appropriate directory and only include it for those tests that need it. For example, we the locale configuration in <code>spec/integration/locale/spec_helper.rb</code>.</p>

@@ -1,0 +1,128 @@
+---
+layout: post
+title: 'Design Pattern: Template Method'
+date: '2012-05-18T17:39:40-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/23309583273/design-pattern-template-method
+---
+<p>In my <a href="http://mikeebert.tumblr.com/post/22755156685/design-pattern-strategy-pattern">previous post</a> on the Strategy pattern I mentioned that the way I had implemented the pattern in my Minimax players I also used aspects of the Template Method pattern. Well, as I read more about the Template Method pattern this week I realized that the Minimax Player example is actually entirely the Template Method pattern, so now I&rsquo;ll use the code as an example here and I&rsquo;ll need to do a Strategy Pattern redux post.</p>
+
+<p>In <a href="http://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452/ref=sr_1_1?ie=UTF8&amp;qid=1337314472&amp;sr=8-1">Design Patterns in Ruby</a> Olsen describes the Template Method pattern as the simplest of the Gang of Four patterns. He titled the chapter &ldquo;Varying the Algorithm with the Template Method&rdquo; because the Template method allows you to implement an algorithm that may need to act differently depending on different conditions. For example, my Max and Min players both need to compare a best score and a new score to find out which is better, but the result will be different because the Min player wants a lower score and the Max player wants a higher score.</p>
+
+<p>The Template method is built around <strong>inheritance</strong> to separate the <em>things that stay the same</em> into a super class and then pushes the <em>things that change</em> down into sub classes.</p>
+
+<p>The Strategy Pattern, on the other hand, does not use inheritance.</p>
+
+<p>When I was first getting the Minimax algorithm to work I wrote out everything very explicitly so that I could think through every step— and ended up with the 45 line mess of a method (including a couple of ugly supporting methods) that you can see in the first gist below. There is Minimax player logic tied into my scoring method, lots of repetitive code, and an ugly series of if-else statements that switched the behavior based on if the player was max or min.</p>
+
+<p>However, by using the Template Method pattern I was able to create a MinimaxPlayer super class with things that stayed the same (two attributes) and then moved the varying compare methods down into sub-classes (viewable in the second gist). This allowed me to separate out the Minimax player logic as well as do a significant refactor of the scoring and other methods (the third gist). I was pretty happy with how the new Minimax scoring method came out, but I&rsquo;m thinking I might actually just get right rid of the MinimaxPlayer super class and inheritance and officially use the Strategy Pattern.</p>
+
+<h4>Ugly first run (<em>but I was so happy to finally have a working scoring algorithm</em>)</h4>
+{% highlight ruby %}
+def set_min_and_max_players(board)
+  if board.next_player == :player1
+    @max_symbol = board.player1_symbol
+    @max_player = :player1
+    @min_symbol = board.player2_symbol
+    @min_player = :player2
+  elsif board.next_player == :player2
+    @max_symbol = board.player2_symbol
+    @max_player = :player2
+    @min_symbol = board.player1_symbol
+    @min_player = :player1
+  end
+end  
+
+def minimax_score(board)
+  score = game_value(board)
+  return score unless score == -1
+
+  if board.next_player == @min_player
+    scoring_for_player = @min_player
+    new_score = 100
+    best_score = 5
+  else
+    scoring_for_player = @max_player
+    new_score = -100
+    best_score = -5    
+  end
+
+  board.available_spaces.each do |space|
+    test_board = copy(board)
+
+    if test_board.next_player == @min_player
+      test_board.place_move(@min_symbol, space)
+    else
+      test_board.place_move(@max_symbol, space)
+    end
+
+    new_score = minimax_score(test_board)
+
+    best_score = compare_min(best_score,new_score) if scoring_for_player == @min_player
+    best_score = compare_max(best_score,new_score) if scoring_for_player == @max_player
+
+  end
+  return best_score
+end
+
+def compare_min(best_score,new_score)
+  new_score < best_score ? new_score : best_score
+end
+
+def compare_max(best_score,new_score)
+  new_score > best_score ? new_score : best_score
+end
+{% endhighlight%}
+
+<h4>Template Method pattern applied to Minimax Players and compare method</h4>
+
+{% highlight ruby %}
+class MinimaxPlayer
+  attr_accessor :symbol, :starting_score
+  def initialize(symbol, score)
+    @symbol = symbol
+    @starting_score = score
+  end
+end
+
+class MinPlayer < MinimaxPlayer
+  def compare(best_score,new_score)
+    new_score < best_score ? new_score : best_score
+  end
+end
+
+class MaxPlayer < MinimaxPlayer
+  def compare(best_score, new_score)
+    new_score > best_score ? new_score : best_score
+  end
+end
+{% endhighlight%}
+
+<h4>Refactored Scoring and Supporting Methods</h4>
+
+{% highlight ruby %}
+def set_min_and_max_players(board)
+  @max = MaxPlayer.new(board.next_player_symbol, -50)
+  @min = MinPlayer.new(board.opponent_symbol, 50)
+end
+
+def minimax_score(board)
+  score = game_value(board)
+  return score unless score == -1 #-1 means a game is still in progress
+  player = set_player(board.next_player_symbol)
+  best_score = player.starting_score
+
+  board.available_spaces.each do |space|
+    test_board = copy(board)
+    test_board.place_move(player.symbol, space)
+    new_score = minimax_score(test_board)
+    best_score = player.compare(best_score, new_score)
+  end
+
+  return best_score
+end
+
+def set_player(symbol)
+  symbol == @max.symbol ? @max : @min
+end
+{% endhighlight%}

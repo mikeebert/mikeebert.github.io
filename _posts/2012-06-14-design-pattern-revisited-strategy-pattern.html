@@ -1,0 +1,40 @@
+---
+layout: post
+title: 'Design Pattern Revisited: Strategy Pattern'
+date: '2012-06-14T23:54:16-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25139163796/design-pattern-revisited-strategy-pattern
+---
+<p>In my first post on design patterns about a month ago I discussed the Strategy Pattern, and then about a week later I realized that the my example for that post actually used the Template Method Pattern and <em>not</em> the Strategy Pattern— so I offered up a rain check on a decent example of the Strategy Pattern. Well, digging into one of our internal apps at 8th Light I came across a whopper of an example.</p>
+
+<p>What we have is an entire set of classes that need to respond to the same methods, for example a &ldquo;print&rdquo; method, but the way that each of those classes implements the method is slightly different depending on what the object needs. So, in order to implement each one with the general purpose &ldquo;print&rdquo; commands, we pass each specific object into a single, abstract Strategy class.  Here&rsquo;s an example:</p>
+
+<pre><code>class FileStrategy
+  attr_accessor :strategy
+
+  def initialize(strategy)
+    @strategy = strategy
+  end
+
+  def print
+    @strategy.print
+  end
+end
+</code></pre>
+
+<p>And here&rsquo;s two individual objects/classes:</p>
+
+<pre><code>class JpgPrintStrategy
+  def print
+    *...some methods specific to printing a jpg...*
+  end
+end
+
+class PdfPrintStrategy
+  def print
+    *...some methods specific to printing a PDF...*
+  end
+end
+</code></pre>
+
+<p>Now we could just create a <code>FileStrategy.new(JpgObject)</code> or <code>FileStrategy.new(PdfObject)</code> and know that we could  call the <code>print</code> method and get the output we needed. Of course this example is a little contrived because a file would need to be able to do a lot more than just print, but at least we can see how it&rsquo;s possible to &ldquo;vary the algorithm&rdquo; with the Strategy Pattern.</p>

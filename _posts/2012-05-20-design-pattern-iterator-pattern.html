@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'Design Pattern: Iterator Pattern'
+date: '2012-05-20T22:49:58-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/23459140292/design-pattern-iterator-pattern
+---
+<p>The Iterator Pattern is something that is so common in Ruby that it seems odd that it merits its own pattern. What the Iterator pattern does is provide us with a way to &ldquo;access the elements of an aggregate object sequentially&rdquo; (<em>Design Patterns in Ruby</em>, 27). The most common appearance of it in Ruby is the humble but powerful <code>each</code> method that we call on arrays and hashes. The each method is an <em>internal</em> iterator that takes a block of code (inside the <code>do-end</code> or the <code>{}</code> symbols). For example <code> samplearray.each {|n|print "#{n}"}</code> would print out each element of an array.</p>
+
+<p>The <code>each</code> method is an internal iterator because we pass the action down into the array and the array calls the code block for each item. All of the action takes place internally.</p>
+
+<p>An external iterator is one in which the client drives the call to the next object, as opposed to when we call the <code>each</code> method and the block goes through each item until it gets to the end. Another advantage of the external iterator is that they can be reused and passed around, but it adds in a layer of complexity that can also be dangerous.</p>
+
+<p>There is one big danger in using both internal and external iterators, and that is if the aggregate object were to change while you&rsquo;re iterating through it. The easy solution is to make a shallow copy of the aggregate object- that way there is an exact snapshot to iterate through.</p>

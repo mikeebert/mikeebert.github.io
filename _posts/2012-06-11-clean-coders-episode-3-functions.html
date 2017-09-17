@@ -1,0 +1,42 @@
+---
+layout: post
+title: 'Clean Coders Episode 3: Functions'
+date: '2012-06-11T12:23:35-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24888975931/clean-coders-episode-3-functions
+---
+<p><em>Note: In this post I switch between using the words function &amp; method because the video uses <em>function</em> but I usually use <em>method</em>. For the purposes of this post they mean the same thing.</em></p>
+
+<h5>&ldquo;Your functions should all be about four lines long&rdquo;</h5>
+
+<p>That&rsquo;s the bold advice offered up in the third episode of Clean Coders,  and if you follow the rules laid out in the episode it seems entirely possible to keep your methods nice and small. The primary rule is to &ldquo;extract &lsquo;til you drop&rdquo; so that every function does only one thing and does it well.</p>
+
+<p>But why should your methods even be that short? I&rsquo;ll admit that when I first read this advice in <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">Clean Code</a> I was pretty resistant to it. As a newcomer I usually found it quite a bit easier to read big functions as opposed to having to scroll up and down a page and track behavior through multiple methods and even between multiple classes. It just seemed simpler to have everything in one spot, and it was definitely easier to write it all in one place.</p>
+
+<p>However, now that I&rsquo;ve been working with more and more code I can understand why it&rsquo;s so important to have short functions- and for me it all comes down to <strong>one reason</strong>, and  when shortening those functions it&rsquo;s crucial that you follow <strong>one rule</strong>.</p>
+
+<h4>The Reason: Maintenance</h4>
+
+<p>My <a href="http://mikeebert.tumblr.com/post/23957894242/clean-coders-episode-2-names">episode two report</a> included the quote &ldquo;“the true cost of software is in maintenance”, and the more I work on code and think about how I&rsquo;d code out different ideas I realize just how true this is. As excited as a programmer might be about some whiz-bang masterpiece of code they are writing, there will inevitably be some new requirement and it will have to change. The simpler your functions are, the easier they will be to change.</p>
+
+<h4>The Rule: Naming</h4>
+
+<p>Uncle Bob makes a good point of discussing just how important naming these new short functions are, but I don&rsquo;t think he&rsquo;s blatant enough (and maybe I feel this way because I&rsquo;m still no good at naming). There should have been a big flashing message that &quot;You have to name your small functions well or you&rsquo;ll confuse the next person looking at your code even more&rdquo;. However, when a function <em>is</em> named well I don&rsquo;t even have to go digging around to look at the other functions it references— and if I do, I know what behavior I&rsquo;m looking for. Here&rsquo;s a short example off the top of my head (that actually does too much as a function), but I&rsquo;ll use it strictly as a naming example:</p>
+
+<pre><code>def charge_late_fees(book)
+  calculate_late_fee(book) if book.overdue?
+end
+</code></pre>
+
+<p>This is very easy to read and I have a pretty good hunch what the <code>charge_late_fee</code> and <code>overdue?</code> functions are going to do.</p>
+
+<p>On the other hand, let&rsquo;s look at the following:</p>
+
+<pre><code>def charges(book)
+  amount(book) if book.past_due
+end
+</code></pre>
+
+<p>Here I have no idea what the 'charges&rsquo; are for, what 'amount&rsquo; refers to and what time frame 'late&rsquo; refers to. Is this a charge to a writer if there rough draft wasn&rsquo;t the right amount of pages by a deadline? Or a charge to a dealer if they hadn&rsquo;t paid for a certain amount of books on time? I&rsquo;d definitely have to do some investigating.</p>
+
+<p>Overall this was another great episode and includes A LOT of code examples. There&rsquo;s even three additional screencasts for almost two extra hours of refactoring.</p>

@@ -1,0 +1,96 @@
+---
+layout: post
+title: Setting Up Google OAuth2 for Authentication With Joodo and Clojure
+date: '2012-08-24T01:09:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/30086394308/setting-up-google-oauth2-for-authentication-with
+---
+<p>One of the first stories for the internal project that we&rsquo;re working on is to integrate authorization for any registered users using Google&rsquo;s OAuth2. I paired with Eric on this story on Wednesday and he was able to deftly port over much of what was done in the rails version of the app to set the authorization token. Then today Jeremy helped me troubleshoot the last few glitches we were having. Here&rsquo;s a quick overview of the steps we used (and I&rsquo;ll run this post past Eric and Jeremy to make sure I didn&rsquo;t forget anything). Also, please note that this is just an initial run through and there will be a lot of refactoring and reorganizing before we&rsquo;re done. You don&rsquo;t want to do things like leave your Google keys in your controller- which we do below.</p>
+
+<h3>Including the Dependency</h3>
+
+<p>Thankfully, we found Pelle Braendgaard&rsquo;s <a href="https://github.com/pelle/clauth">clauth</a> library pretty quickly and much of his README helped guide us along. However, it was actually Suart Hinson&rsquo;s <a href="https://github.com/stuarth/clj-oauth2">version of clj-oauth2</a> that we ended up using, so the first step was to include it from <a href="https://clojars.org/stuarth/clj-oauth2">Clojars.org</a> in the dependencies section of the <code>project.clj</code> file at the root level of our project. So now it looks something like this:</p>
+
+<pre><code>; project.clj
+(defproject sample-app "0.0.1"
+  :description "A website deployable to AppEngine"
+  :dependencies [[org.clojure/clojure "1.4.0"]
+             [joodo "0.10.0"]
+             [speclj "2.2.0"]
+             [stuarth/clj-oauth2 "0.3.2"]]
+  :plugins [[speclj "2.2.0"]]
+  :test-paths ["spec/"]
+  :java-source-path "src/"
+  :repl-init-script "config/development/repl_init.clj"
+  :joodo-core-namespace sample-app.core)
+</code></pre>
+
+<h3>Setting Up Google OAuth2 API Access</h3>
+
+<p>The next step, or so we thought, was to create an authentication controller that would direct the authentication request, send the appropriate information to Google and get the authorization token back. However, the &ldquo;appropriate information&rdquo; that you need comes from the Google API console once you&rsquo;ve set up a project there. If you haven&rsquo;t done that you can set up a project with them <a href="https://code.google.com/apis/console/b/0/#access">here</a>. We had this set up but in case you don&rsquo;t here&rsquo;s the steps:</p>
+
+<p>After setting up the project click on &ldquo;API Access&rdquo; over in the left hand panel and then the big &ldquo;Create an OAuth 2.0 Client ID&rdquo; button:</p>
+
+<p><img src="https://lh4.googleusercontent.com/-l8cJTiq1rcc/UDb4dP4hLAI/AAAAAAAAB9c/z-tj89zuECY/s716/oauth2_screen.jpg" alt=""/></p>
+
+<p>By default Google will provide you with a client ID, a client secret and automatically sets up <code>https://localhost</code> as a redirect uri. You can add any path on the end of localhost you want, but because we have a Rails version of our app that uses a gem requiring a specific path, we used a matching path of &ldquo;authentication/google-com-auth2&rdquo;</p>
+
+<p><strong>TWO NOTES/GOTCHAS</strong></p>
+
+<p>1) <strong>If you don&rsquo;t configure a specific port for the redirect-uri in the Google API console then you can use the path on multiple ports</strong> . Just set it to something like  http://localhost/google-com-auth2 and then you could use localhost:3000/authentication/google-com-auth2 for a Rails App, localhost:9292/authentication/google-com-auth2 for a Sinatra App, or in our case, localhost:8080/authentication/com-google-auth2 for a Joodo app. You can also configure multiple redirect uri&rsquo;s.</p>
+
+<p>2) By default Google sets your redirect-uri to use  <code>https:</code> , however it&rsquo;s a bit tricky to set up your local server to use SSL, so the easy solution for development is to just be sure your redirect-uri uses <code>http:</code></p>
+
+<h3>And Time For the Controller</h3>
+
+<p>Now we were ready to set up our authentication-controller. Although it looks like there is a lot going on here, it&rsquo;s actually pretty straightforward. Lets break it down section by section:</p>
+
+<pre><code>(ns sample-app.authentication.authentication-controller
+    (:require
+    [clj-oauth2.client :as oauth2]
+    [joodo.middleware.request :refer [*request*]]
+    [ring.util.response :refer [redirect]]
+    [compojure.core :refer (defroutes GET context)]))
+</code></pre>
+
+<p>In this first section at the top of our file we require <code>clj-oauth2.client</code> at the top of our file as well as <code>joodo.middleware.request</code> so that we can set the session with auth-token that Google sends back.</p>
+
+<pre><code>(def login-uri
+    (get (System/getenv) "LOGIN_URI" "https://accounts.google.com"))
+</code></pre>
+
+<p>In this block above we define the login-uri that sends our user over to the Google login page&hellip; which we use in the next block that contains all of the aforementioned appropriate information:</p>
+
+<pre><code>(def google-com-oauth2
+    {:authorization-uri (str login-uri "/o/oauth2/auth")
+    :access-token-uri (str login-uri "/o/oauth2/token")
+    :redirect-uri "http://localhost:8080/authentication/google_oauth2/callback"
+    :client-id "*provided-to-you-in-google-api-console*"
+    :client-secret "*provided-to-you-in-google-api-console*"
+    :access-query-param :access_token
+    :scope ["https://www.googleapis.com/auth/userinfo.email"]
+    :grant-type "authorization_code"
+    :access-type "online"
+    :approval_prompt ""})
+</code></pre>
+
+<p>And in the final two sections we define the authorization request that uses the details from above, and then we define our two routes:</p>
+
+<pre><code>(def auth-req
+    (oauth2/make-auth-request google-com-oauth2))
+
+(defroutes authentication-controller
+    (context "/authentication" []
+       (GET "/" [] (redirect (:uri auth-req)))
+       (GET "/google_oauth2/callback" []
+            (assoc
+              (redirect "/index")
+              :session 
+              {:auth-token 
+               {:value 
+                (:access-token (oauth2/get-access-token google-com-oauth2 (:params *request*) auth-req))}}))))
+</code></pre>
+
+<p>I won&rsquo;t lie, that final route includes enough parentheses to make my eyes cross, but what it&rsquo;s doing is setting the auth-token value based on what comes back from the Google authorization, and then redirects the user to the index page.</p>
+
+<p>Eventually we&rsquo;re going to create an abstraction or two that properly checks these tokens and users, and we&rsquo;ll move all of the Google OAuth2 details into another file as well. However, for now we are at least seeing the expected behavior in our tests and through the browser and we can at least check the that a session has an auth-token set.</p>

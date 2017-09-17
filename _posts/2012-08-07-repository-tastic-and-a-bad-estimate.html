@@ -1,0 +1,20 @@
+---
+layout: post
+title: Repository-tastic and a Bad Estimate
+date: '2012-08-07T22:32:07-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28953026595/repository-tastic-and-a-bad-estimate
+---
+<p>The past couple of days I&rsquo;ve been continuing to work on integrating a Repository using DataMapper objects and a PostgreSQL database. Last week I came off vacation feeling really good about how I&rsquo;d set up my abstractions for my in-memort objects and their datastores, and I estimated that <em>at the longest</em> it would only take me a day and a half to wire up the new Repository.</p>
+
+<p>That was dumb. My first mistake was that I was probably just too damn optimistic coming off of the break. I&rsquo;d taken a proper vacation and spent very little time with the project code, and I also hadn&rsquo;t thought about DataMapper for a few weeks since I&rsquo;d been using in-memory objects. I should have checked myself on three counts:</p>
+
+<p>1) I&rsquo;ve never used DataMapper in-depth before and whenever using a new technology I should always give myself a buffer.</p>
+
+<p>2) I was using a &ldquo;sort-of&rdquo; repository pattern, but to properly implement I needed to deepen my understanding of it. I&rsquo;m very lucky that <a href="http://www.8thlight.com/our-team/paul-pagel">Paul</a> and <a href="http://www.8thlight.com/our-team/doug-bradbury">Doug</a> are concurrently implementing the Repository pattern on an internal project so I have some excellent code to use as an example— but reading through that code is still additional time.</p>
+
+<p>3) In order to avoid duplication and ensure that my in-memory and DataMapper objects were interchangeable I wanted to use RSpec&rsquo;s shared examples, which is something else that I&rsquo;d never used before. Technically, setting up shared examples is relatively easy, but refactoring the test set-up so that all of the shared examples can use the same variables is another lesson in abstraction&hellip; and again takes more time.</p>
+
+<p>The good news is that things are moving along now and I&rsquo;m learning a lot. In a couple of my class_specs I&rsquo;ve even been able to just copy and paste the specs into shared examples and it has quickly test-driven my way to new DataMapper objects and  repositories. The bad news is that if this was a client project I&rsquo;d be working well into the night to complete this story so that I could also finish the other points I&rsquo;d committed to for this iteration.</p>
+
+<p>My other takeaway from this experience is just how important a team is. If I&rsquo;d been working on a client project I (hopefully) would have been a part of a team that would have added some additional knowledge and perspective when it came to the estimate. Someone on the team either would have recognized that we were using a new technology (and needed to give ourselves more time), or would have been familiar enough with the technology that we could have cruised through all the little snafus that ended up being valuable &ldquo;lessons&rdquo; for me, but also ate up valuable time.</p>

@@ -1,0 +1,45 @@
+---
+layout: post
+title: Rolling My Own Datastore
+date: '2012-06-26T09:59:40-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25925893074/rolling-my-own-datastore
+---
+<p>I&rsquo;ve been talking about using in-memory objects for the testing and development of my Sinatra app. When I say in-memory object I&rsquo;m referring to all of the data behind my app as the objects: users, tasks, relationships, events&hellip; and in-memory simply means I&rsquo;m storing it as a short-term object in RAM with no persistence beyond the session or thread I start up for testing.</p>
+
+<p>In order to help me think through my implementation (which I&rsquo;ll be working on today) here&rsquo;s a quick run-through of the why and how behind it.</p>
+
+<h4>Why In-Memory Objects?</h4>
+
+<p>Two words: speed and flexibility. It is much quicker to have an object with an address in memory (the output that looks like &ldquo;User:0x007fcda38cccd8&rdquo;) than an object that is buried inside a database and needs some sort of interface (such as ActiveRecord or DataMapper) to hunt it down. It is only a matter of fractions of a second per object, but when you are TDD'ing your way through a thoroughly tested system all of those fractions add up to put a damper on your productivity and adds significant pauses to your flow.</p>
+
+<p>Flexibility comes from the fact that if you&rsquo;ve built a thorough and clean interface to your in-memory data stores then you can move that interface over to whatever database will best serves your needs. Plus you can defer the decision of what database to use until the moment you really need to make that decisions- providing more time for you and your customer to learn how the data will be used. And the kicker? You can selectively move different parts of the data to different stores, such as using PostgeSQL for some of the data and a <a href="http://en.wikipedia.org/wiki/NoSQL">NoSQL database</a> for other parts.</p>
+
+<h4>How In-Memory Objects?</h4>
+
+<p>I&rsquo;m sure there are several ways that you can implement a store of in-memory objects,  but I&rsquo;m going to stick with a simple hash. When I fire up my app I&rsquo;m going to construct a general Datastore hash that has keys corresponding to :users, :tasks, etc. Then the value of each of those keys will be the collection of objects inside of it, and each one of those object&rsquo;s keys will be its id. Here&rsquo;s a quick example:</p>
+
+{% highlight ruby %}
+datastore =  {
+  :users => {
+    1 => {
+      :name => "Mike",
+      :email =>"mike@test.com"
+    },
+    2 => {
+      :name => "John",
+      :email => "john@test.com"
+    }
+  },
+  :tasks => {
+    1 => {
+      :description => "First task"
+    },
+    2 => {
+      :description => "Second task"
+    }
+  }
+}
+{% endhighlight %}
+
+<p>It looks simple enough, but I know that creating all of the actions I need (find_by_id, find_by_name, delete, save&hellip;.) are going to take some time. I better get started.</p>

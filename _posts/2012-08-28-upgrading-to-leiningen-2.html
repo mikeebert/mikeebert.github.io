@@ -1,0 +1,64 @@
+---
+layout: post
+title: Upgrading to Leiningen 2
+date: '2012-08-28T00:37:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/30368615037/upgrading-to-leiningen-2
+---
+<p>We&rsquo;re using Leiningen for automating our internal Clojure project, and we are specifically using the latest-and-greatest Leiningen version 2.0.0-preview10 (as of this writing). I&rsquo;d installed my previous version of Leiningen using homebrew and a nice easy <code>brew install leiningen</code> command, but unfortunately the upgrade to version 2 isn&rsquo;t the easy. After countless misfires (my system kept installing version 1.7), here&rsquo;s the steps that finally got it done for me. [<em>Note: I&rsquo;m running Mac OS X 10.7.4</em>]</p>
+
+<h4>1) Check where the folder of your current Leiningen installation is and rename it to stash it away.</h4>
+
+<p>Mine was located at <code>~/myusername/.lein</code> and you can confirm if yours is in the same spot with the following command in the terminal:</p>
+
+<pre><code>ls -a ~/
+</code></pre>
+
+<p>Use the <code>mv</code> command to rename it:</p>
+
+<pre><code>mv ~/.lein ~/.lein1
+</code></pre>
+
+<h4>2) If you previously installed it with homebrew, uninstall it</h4>
+
+<p>The following command in terminal will remove it:</p>
+
+<pre><code>brew uninstall leiningen
+</code></pre>
+
+<h4>3) Create a new home for Leiningen right where the old one was.</h4>
+
+<p>In the terminal type:</p>
+
+<pre><code>mkdir ~/.lein
+mkdir ~/.lein/bin
+</code></pre>
+
+<h4>4) Grab the script that installs the latest version of Leiningen</h4>
+
+<p>You can view the script <a href="https://raw.github.com/technomancy/leiningen/preview/bin/lein">here</a>. There are fancy command line ways to <code>curl</code> or <code>wget</code> the script from the URL, or you can just use &lsquo;Save As&rsquo; from your browser. Either way, it needs to be saved into the newly created <code>~/.lein/bin</code> directory.</p>
+
+<p>NOTE: If you save it from your browser then it will most likely add the .txt file extension. You can remove it/rename it using the command line:</p>
+
+<pre><code>mv ~/.lein/bin/lein.txt ~/.lein/bin/lein
+</code></pre>
+
+<h4>5) Change the new 'lein&rsquo; file to be executable:</h4>
+
+<pre><code>chmod 755 ~/.lein/bin/lein
+</code></pre>
+
+<h4>6) Check your $PATH</h4>
+
+<p>You need to make sure that ~/.lein/bin is on your path before you try and run any 'lein&rsquo; commands. Check your current path in the terminal by typing <code>$PATH</code> and enter. as long as you see something like <code>/Users/yourusername/.lein/bin</code> then you are o.k. Otherwise open up your <code>~/.bash_profile</code> in a text editor and add the following line:</p>
+
+<pre><code>PATH=$PATH:$HOME/.lein/bin
+</code></pre>
+
+<p>Now, quit Terminal, open it back up, type $PATH and make sure that <code>/Users/yourusername/.lein/bin</code> is there.</p>
+
+<h4>7) Fire it up</h4>
+
+<p>If steps 1 through 6 checked out then you should be good to go. You can punch in a command like <code>lein repl</code> and it will go through the install process before firing up a repl.</p>
+
+<p><a href="http://www.twitter.com/mikeebert">Let me know</a> if anyone hits any snags or has any tips.</p>

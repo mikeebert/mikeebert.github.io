@@ -1,0 +1,28 @@
+---
+layout: post
+title: 'Pairing Tour: Chris Peak and Sprites'
+date: '2013-01-20T14:34:28-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/41032417999/pairing-tour-chris-peak-and-sprites
+---
+<p>Day eight of my pairing tour took me to a client site to pair with one of 8th Light’s design craftsman, <a href="http://www.8thlight.com/our-team/chris-peak">Chris Peak</a>. The 8th Light team he’s working with just finished a major milestone for the client so Chris had a list of housekeeping tasks to tackle. We started off writing a little CoffeeScript and Jasmine specs, made some tweaks to the database config, and wrapped the day working with Image sprites in CSS.</p>
+
+<p>There wasn’t much to report on regarding the CoffeScript or database config tweaks— however, the sprite stuff was really cool and it was great to watch Chris quickly flip between Photoshop and his CSS file to get the icons just right.</p>
+
+<p>Like many people, my introduction to sprites was primarily through <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>. By just attaching a class name like <code>class = “icon-home”</code> to an element a cool little pre-made “home” icon would show up. I knew that all of these icons came from one single image sheet but had never dug into the &ldquo;magic” behind them.</p>
+
+<p>Well, as it turns out there really isn’t that much magic, it’s just a clever use of the <code>width</code>, <code>height</code>, <code>background-image</code> and <code>background-position</code> attributes.</p>
+
+<p>Here’s a look at the relevant attributes from inspecting the elements of the <a href="http://twitter.github.com/bootstrap/base-css.html#icons">icons page</a> in Twitter’s own Bootstrap guide:</p>
+
+<pre><code>.icon-home {
+    background-position: 0 −24px;
+    background-image: (“../img/glyphicons-halflings.png”);
+    width: 14px;
+    height: 14px;
+}
+</code></pre>
+
+<p>The first two lines of this block include the png file that has all of the icons (<a href="http://twitter.github.com/bootstrap/assets/img/glyphicons-halflings.png">as seen here</a>) and then positions it accordingly. By positioning it −24 pixels along y-axis it shifts the focus of the image down the “sheet” of images. Since the home-icon is positioned all the way to the left there is no adjustment necessary for the x-axis. The width and height attributes are simply the constraints that they want to put on the background image. The home-icon is only 14 pixels x 14 pixels so that is all that they need to include.</p>
+
+<p>An easy way to experiment with sprites in “real-time” is to head over to the aforementioned <a href="http://twitter.github.com/bootstrap/base-css.html#icons">Twitter Bootstrap icon section</a>, right click on an icon to inspect it, and then start playing around with the CSS attributes to see how each adjustment affects the image. Happy sprit-ing.</p>

@@ -1,0 +1,79 @@
+---
+layout: post
+title: 'Design Pattern: Builder Pattern'
+date: '2012-07-04T23:15:40-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26534546908/design-pattern-builder-pattern
+---
+<p>The Builder Pattern is similar to the <a href="http://mikeebert.tumblr.com/post/22988677276">Factory Pattern</a> in that it provides you with the object that you need, but instead of just providing the right <em>type</em> or Class that you need, the Builder Pattern offers more detailed configuration.</p>
+
+<p>In <em>Design Patterns in Ruby</em> Russ Olsen uses an easy-to-understand example of a Computer object and how you could use a ComputerBuilder to configure the Computer with different components like a display, motherboard, memory and drives. The purpose of the builder is to <strong>delegate</strong> the creation tasks to a builder object and <strong>abstract</strong> the details of <em>how</em> to configure a Computer object. When you use a builder object you can just tell the builder what you need.</p>
+
+<p>Rather than reproduce Olsen&rsquo;s code I here I recommend you head over to the <a href="http://designpatternsinruby.com/section01/code.html">Design Pattern book website</a> and view the code samples from Chapter 14. Instead, I&rsquo;m thinking of an example from my cycling days and considering how Trek might implement their <a href="http://www.trekbikes.com/us/en/projectone/model/madone7seriesteamedition//">Project One</a> website, which allows customers to configure their dream bike (I provide the link only as credit to Trek, it&rsquo;s actually a brutally slow and buggy Flash site).</p>
+
+<p>We are going to start with a CustomerOrder object (or what the Gang of Four would call &ldquo;the Director&rdquo;), and the final product we want will be the Bike. If we were just picking between a road bike, mountain bike and hybrid bike we could get away with a factory that could return the type of bike. However, because they&rsquo;ve navigated to the road bike section of the site we know the type, but our Bike will have different options so we&rsquo;re going to need some configuration. We&rsquo;ll have options for size, wheels and a gruppo (which includes shifters and drivetrain items like derailluers, cranks and gears) but customers can also configure their drivetrain more specifically.</p>
+
+<p>Rather than have our CustomerOrder object handle all of this configuration, we will delegate it to a RoadBikeBuilder object. We could initialize our order with the type of Builder we want:</p>
+
+<pre><code>order = CustomerOrder.new(RoadBikeBuilder)
+</code></pre>
+
+<p>and then the two classes could look like this.</p>
+
+<pre><code>class CustomerOrder
+    def initialize(builder)
+        @builder = builder
+    end
+end
+
+class RoadBikeBuilder
+    attr_reader :bike
+
+    def initialize
+        @bike = RoadBike.new
+    end
+
+    def size(size_in_cm)
+        @bike.size = size_in_cm
+    end
+
+    def wheels(model)
+        @bike.wheels = WheelFactory.new(model)
+    end
+
+    def gruppo(brand)
+        @bike.gruppo = GruppoFactory.new(brand)
+    end
+
+    def cranks(size, chainring_size)
+        @bike.gruppo.crank_length = size
+        @bike.gruppo.chainrings(chainring_size)
+    end
+
+    def gears(gear_ratio)
+        @bike.gruppo.cassette(gear_ratio)
+    end
+end
+</code></pre>
+
+<p><em>You can see that I&rsquo;m using factories inside the builder to return a model of wheels and a brand of gruppo, which are really just types of those things.</em></p>
+
+<p>Now when we want to set the configuration of the bike we can do it like this:</p>
+
+<pre><code>order.builder.size(52)
+order.builder.wheels(:race_x_lite)
+order.builder.gruppo(:sram_force)
+order.builder.cranks(170,52)
+order.builder.gears("11x26")
+</code></pre>
+
+<p>and when we&rsquo;re done we can say:</p>
+
+<pre><code>order.bike = builder.bike
+</code></pre>
+
+<p>Using the builder keeps our CustomerOrder from having to worry about all of the messy configuration details of a bike- plus, if the customer decides they want a mountain bike instead we can just pass the order a new builder.</p>
+
+<h4>Checking Your Built Object &amp; Magic Methods</h4>
+
+<p>I&rsquo;m not going to dive into them here, but Olsen goes on to discuss how you can use your Builder to check your object and also how you can configure the method_missing in your Builder to allow for &ldquo;magic methods&rdquo; that parse incoming methods to see if it might be a possible configuration option. It&rsquo;s not too difficult to consider how you might implement these two things, but I&rsquo;m afraid I haven&rsquo;t set my bike example up well enough to easily take that step&hellip; plus I think I hear some fireworks that need checking out.</p>

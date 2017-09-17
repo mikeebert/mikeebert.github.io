@@ -1,0 +1,71 @@
+---
+layout: post
+title: Setting Up a Command Line Clojure App
+date: '2012-09-18T08:14:10-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/31792001823/setting-up-a-command-line-clojure-app
+---
+<p>It&rsquo;s tic-tac-toe time for me again, except this round will be in Clojure. <a href="https://twitter.com/mjansen401">Mike</a> gave me the option of  doing the app in either <a href="https://github.com/slagyr/joodo">Joodo</a> or on the command line, and since I&rsquo;m working with Joodo for our internal project I decided to try out a command line app. There was just one problem, I had no idea how to create a Clojure command line app. The whole idea of compiling and using a JAR is pretty foreign to me and it&rsquo;s one of those &ldquo;basic&rdquo; steps that most of the tutorials gloss over. I just kept coming across commands like this, without any idea what it did or how to get there:</p>
+
+<pre><code>java -cp lib/clojure.jar clojure.main main.clj
+</code></pre>
+
+<p>I asked around and surmised that this statement essentially tells the system to use java, and that the &ldquo;classpath&rdquo; (-cp) is in the &lsquo;lib&rsquo; directory of this project, and then dig into the clojure JAR (java archive). Then with that jar you should have everything you need to run the &ldquo;main&rdquo; file.</p>
+
+<p>This started to make sense, but before I went too far down a rabbit hole I came across <a href="https://github.com/technomancy/leiningen">Leiningen&rsquo;s</a> 'uberjar&rsquo; command and <a href="http://www.beaconhill.com/blog/?p=283">this post</a> by Brad Lucas. Armed with these two resources I was able to create a very simple command line app up that used a 'runner&rsquo; file to run a class that greeted a user, asked for some input, and printed that input back out. So, here goes&hellip;</p>
+
+<p>Create your project folder and call it something like &ldquo;hello_clojure&rdquo;. Inside of that create a file called 'project.clj&rsquo; and a directory called 'src&rsquo;. The contents of your project.clj file will look like this:</p>
+
+<pre><code>(defproject helloworld "0.0"
+    :description "hello world application"
+    :dependencies [[org.clojure/clojure "1.4.0"]]
+    :main helloworld.runner
+    :java-source-path "src/")
+</code></pre>
+
+<p>You&rsquo;ll note in the fourth line that we are explicitly declaring our <code>:main</code> in the namespace helloworld.runner. You can call it anything you want, in which case you&rsquo;d define main as <code>:main helloworld.anything-you-want</code>.</p>
+
+<p>Now, as long as you <a href="http://mikeebert.tumblr.com/post/30368615037/upgrading-to-leiningen-2">have Leiningen 2 installed</a>, you can run 'lein deps&rsquo;. This will install your dependencies and create a directory called 'target&rsquo; alongside your 'src&rsquo; directory and the project.clj file.</p>
+
+<p>Next up, inside of your 'src&rsquo; directory create another directory called 'helloworld&rsquo; and inside that one create a file called 'runner.clj&rsquo;. (To recap, this file officially resides at hello_clojure/src/helloworld/runner.clj). The contents of runner.clj will look like this:</p>
+
+<pre><code>(ns helloworld.runner
+    (:require [helloworld.welcome :refer [greeting]])
+    (:gen-class :main true))
+
+(defn -main []
+    greeting)
+</code></pre>
+
+<p>The first line is the namespace for our file. The second is requiring the file and function that we will fire off our greeting. The third line says that this is in fact our main file (which we set up in project.clj). The last two lines define the 'main&rsquo; function.</p>
+
+<p>Now we can create the greeting inside a file at 'hello_clojure/src/helloworld/welcome.clj&rsquo;, and the contents look like this:</p>
+
+<pre><code>(ns helloworld.welcome)
+
+(defn greeting []
+    (println "Hello from inside the app.")
+    (println "Enter a phrase: ")
+    (let [phrase (read-line)]
+        (println (str "You typed " phrase)))
+    (println "Goodbye."))
+</code></pre>
+
+<p>This function simply prints two opening lines, then uses the <a href="http://clojuredocs.org/clojure_core">clojure.core</a> 'read-line&rsquo; function to get some input, and then prints it back for the user.</p>
+
+<p>Now it&rsquo;s time to package and run our program. Make sure you are at the root directory of the 'hello_clojure&rsquo; project in your terminal and type 'lein uberjar&rsquo;. The output should look something like this:</p>
+
+<pre><code>Created .../projects/hello_clojure/target/helloworld-0.0.jar
+Including hello-world-0.0.jar
+Including clojure-1.4.0.jar
+Created .../projects/hello_clojure/target/helloworld-0.0-standalone.jar
+</code></pre>
+
+<p>All you need to do to run this app is type the following into your terminal:</p>
+
+<pre><code>java -jar target/helloworld-0.0-standalone.jar
+</code></pre>
+
+<p>And hopefully there you have it. When you are through your 'hello_clojure&rsquo; directory structure should look like the one below. If anyone has any problems or suggestions please <a href="http://www.twitter.com/mikeebert">let me know</a>.</p>
+
+<p><img src="https://lh3.googleusercontent.com/-VFfctKgQ-U4/UFhkV9Pfh7I/AAAAAAAAB-U/1u8ju56OmjY/s263/hello_clojure_directory.jpg" alt=""/></p>

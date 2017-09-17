@@ -1,0 +1,24 @@
+---
+layout: post
+title: 'Minimax: Part I (no code)'
+date: '2012-04-27T09:17:28-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/21910447476/minimax-part-i-no-code
+---
+<p>Before I dive into my minimax code (which I&rsquo;m still tweaking a bit) I&rsquo;m going to do my best to explain the Minimax algorithm in as few and as simple steps as possible.</p>
+
+<p>The Minimax rule is primarily applied to a two-player zero-sum game with a finite amount of scenarios. Given enough time and memory you could play out all the possible scenarios and at the end of each &ldquo;tree&rdquo; of scenarios one player wins, one player loses or it&rsquo;s a draw. I&rsquo;ll refer to the two players as the Max player (the player we&rsquo;re making the decision for) and the Min Player (the opponent). Both players want to win, and the algorithm is designed to look at the possible moves that Max can make- and return the one that minimizes Max&rsquo;s losses.</p>
+
+<p>1) We begin by looking at what moves are possible <em>in the next turn</em> for the Max player- and then proceed to score the possible outcome of each one of those initial moves. For example, if we&rsquo;re playing tic-tac-toe on a 3x3 board and two moves have already been placed then there are seven possible moves for Max to make that we need to score.</p>
+
+<p>2) Each of these initial moves are scored according to the final outcome after playing through all possible scenarios to their &ldquo;terminal&rdquo; state- a win, loss or draw. Outcomes are scored as a positive number if Max wins, a negative number if Min wins, and a 0 if it&rsquo;s a draw.</p>
+
+<p>3) Max and Min assume their opponents are trying to make the best move possible, and thus both can use the same scoring method to find that move (recursion!). Max will make the initial possible moves and then hand those boards over to the scoring method for Min to make their best move, and then Min will hand that back to the scoring method for Max to make their next best move&hellip; and so on until we eventually come up with a value (win, loss or draw) that we can use to score the initial possible moves.</p>
+
+<p>4) The primary difference in the scoring method is the scoring strategy: Max wants the highest number possible (hopefully a positive number or zero), Min wants the lowest score possible (hopefully a negative number or zero). [The scoring strategy was the final piece I was missing last week.]</p>
+
+<p>5) The Max Player and the Min Player only care about the score of the final outcomes. Games in progress are unranked and spit back into the recursive loop for the opponent to make their best move.</p>
+
+<p>6) As soon as a game terminates the recursion will stop and the scoring method will return the value of the game (win, loss or draw) to the method we started with so it can check the score against the previous best score for that initial moves. It will only keep the move (or moves) with the best outcome.</p>
+
+<p>Even trying to explain it simply I realize how quickly things can get a little twisted, but hopefully that provides enough of a glimpse into what I wanted the code to do. I also haven&rsquo;t gone into the step of keeping track of depth or the number of possible ways to win, which are ways to differentiate between two moves that might have the same value at their terminal state- sort of &ldquo;what if&rdquo; scenarios if the opponent slips up and doesn&rsquo;t make their best move. That&rsquo;s my next challenge.</p>

@@ -1,0 +1,22 @@
+---
+layout: post
+title: Joodo
+date: '2012-08-20T23:14:44-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29874079718/joodo
+---
+<p>Today <a href="http://ekosz.github.com/">Eric</a>, <a href="http://jneander.github.com/">Jeremy</a>, <a href="http://www.8thlight.com/our-team/micah-martin">Micah</a> and I officially started writing code for our new internal project. It&rsquo;s the first project in Clojure for we three apprentices, but Micah knows a <a href="https://github.com/slagyr/speclj">thing</a> or <a href="https://github.com/slagyr/joodo">two</a> (or <a href="https://github.com/slagyr/limelight">three</a>) about it.</p>
+
+<p>In order to build the app we&rsquo;re using the Joodo framework, which is now the third web framework I&rsquo;ve worked with after Rails and Sinatra. Although Joodo is written in an entirely new language for me, it follows the core of the other two frameworks well enough that it actually doesn&rsquo;t seem that foreign.</p>
+
+<p>Joodo is relatively easy to get up and running and Eric wrote a great <a href="http://ekosz.github.com/2012/08/20/intro-to-joodo.html">how-to</a> today. After you <code> lein joodo new project_name</code> you have a fairly familiar directory structure to work with:</p>
+
+<p><img src="https://lh4.googleusercontent.com/-75CaLvvAwGw/UDL2MD55YyI/AAAAAAAAB9I/XiYfET8Tnac/s244/joodo_new.jpg" alt=""/></p>
+
+<p>You can see in the &lsquo;src&rsquo; directory above that it sets up folders for your models, views and controllers, and there is even already a spec folder with a sample test for you. (You can browse through a clean Joodo project <a href="https://github.com/mikeebert/joodo_sample">here</a>).</p>
+
+<p>However, we actually aren&rsquo;t going to be using the standard MVC architecture for this project, but rather moving towards a <a href="http://blog.8thlight.com/uncle-bob/2011/09/30/Screaming-Architecture.html">&ldquo;screaming&rdquo; architecture</a> that brings our entities up to their own level instead of buried down and spread across the prescribed directories. For example, if we have a <code>User</code> for our application, then there will be a user directory that lives at &ldquo;src/our_app_name/user&rdquo;, and inside of the directory will all be all of the relevant files for a user, including its models, controllers and views.</p>
+
+<p>Setting this up required a little tweaking to the core.clj file to direct the layout and template rendering to a different directory than the default &ldquo;view&rdquo;, but really that was about it.</p>
+
+<p>For any programmers who work primarily with an OO language and a web framework like Rails, I recommend a jump into the Clojure/Joodo waters. So far the water is just fine.</p>

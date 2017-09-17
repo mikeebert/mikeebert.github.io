@@ -1,0 +1,36 @@
+---
+layout: post
+title: Posting JSON with Net::HTTP
+date: '2013-07-30T14:03:05-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/56891815151/posting-json-with-nethttp
+---
+<p>Recently I&rsquo;ve been working on a gem that serves as a proxy between the app that includes it and an external service. It adds a route and forwards GET and POST requests to the service and then returns the responses. The gem includes a simple Rails engine and we are using <a href="http://ruby-doc.org/stdlib-2.0/libdoc/net/http/rdoc/Net/HTTP.html">Net::HTTP</a> from Ruby&rsquo;s standard library to forward the requests. I&rsquo;ll got into more depth about building the gem later, but for now just wanted to offer a quick tip on posting with Net::HTTP.</p>
+
+<p>The GET request with Net::HTTP is very simple and only requires a couple of lines. The URI module is included as part of Net::HTTP and is often used to build the Uniform Resource Identifier objects for requests.</p>
+
+<pre><code>uri = URI('http://www.your-url.com/stuff')
+response = Net::HTTP.get_response(uri)
+</code></pre>
+
+<p>Sending a POST can also be pretty straightforward:</p>
+
+<pre><code>uri = URI('http://www.your-url.com/stuff')
+response = Net::HTTP.post_form(uri, 'param1' =&gt; 'info', 'param2' =&gt; 'more info')
+</code></pre>
+
+<p>However, the external service that we are posting to is expecting JSON so we needed to configure our request to send appropriate headers. Unfortunately Net::HTTP&rsquo;s <a href="http://ruby-doc.org/stdlib-2.0/libdoc/net/http/rdoc/Net/HTTP.html#method-c-post_form"><code>post_form</code></a> method doesn&rsquo;t support headers. Figuring out the process to do that was a little cumbersome so I figured I&rsquo;d document it here.</p>
+
+<p>The key to sending JSON is to create a new Net::HTTP object and then send the headers hash as a third argument to its <code>post</code> method. Unfortunately, that&rsquo;s not included in the <a href="http://ruby-doc.org/stdlib-2.0/libdoc/net/http/rdoc/Net/HTTP.html#method-i-post">documentation</a>, but once we figured that out it&rsquo;s pretty simple. (Props to <a href="https://twitter.com/quigebo">this guy</a> for a little extra googling-fu.) Here&rsquo;s an example of what it looks like:</p>
+
+<pre><code>params = {'param1' =&gt; 'info', 'param2' =&gt; 'more info'}
+json_headers = {"Content-Type" =&gt; "application/json",
+                "Accept" =&gt; "application/json"}
+
+uri = URI.parse('http://www.your-url.com/stuff')
+http = Net::HTTP.new(uri.host, uri.port)
+
+response = http.post(uri.path, params.to_json, json_headers)
+</code></pre>
+
+<p>And voila, you have a <a href="https://twitter.com/quigebo">response object</a> at your disposal.</p>

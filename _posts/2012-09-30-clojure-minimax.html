@@ -1,0 +1,40 @@
+---
+layout: post
+title: Clojure Minimax
+date: '2012-09-30T22:52:00-05:00'
+tags:
+- Clojure
+- tictactoe
+tumblr_url: http://mikeebert.tumblr.com/post/32646678437/clojure-minimax
+---
+<p>[Update: <em>A big thanks to <a href="https://twitter.com/ajlopez">@ajlopez</a> for linking to this post on <a href="http://paper.li/ajlopez/1291580164">Clojure Daily</a>. If anyone has any feedback please feel free to <a href="http:/www.twitter.com/mikeebert">ping me</a>. The full code is <a href="https://github.com/mikeebert/clojure-tictactoe/blob/master/src/tictactoe/ai.clj">here</a>.</em>]</p>
+
+<p>Five months ago I wrapped up the minimax algorithm for my Ruby tic-tac-toe game and did my best to <a href="http://mikeebert.tumblr.com/post/21910447476/minimax-part-i-no-code">explain it</a> without any code. I never ran through the code because, honestly, it <a href="https://gist.github.com/3808840">wasn&rsquo;t that pretty</a> and I didn&rsquo;t feel it communicated the intention of the algorithm as well as I hoped.</p>
+
+<p>However, this past week I took on the algorithm in Clojure and although my functions aren&rsquo;t optimized for performance yet, I think they are much simpler and hopefully somewhat clearer.</p>
+
+<p>The goal of the minimax algorithm is to find the best move from a series of available moves. In order to do this you make all of the available moves and then hand it off to the scoring algorithm. If any of those moves result in a win or a loss than the algorithm returns the score. However, if none of those moves complete the game then you score all the next available moves for your opponent and assume that they will make the best one. If those moves don&rsquo;t result in a win or loss then the board is handed back to the scoring algorithm, which now scores for the original player&hellip; and so on and so forth until all the scenarios have been played out and scored.</p>
+
+<p>My Clojure solution came out like this:</p>
+
+{% highlight clojure %}
+(defn minimax-score [player opponent board depth]
+  (or (value board player opponent depth)
+    (let [values (map #(minimax-score opponent player
+                  (place-move % (:piece opponent) board) (inc depth))
+    (available-spaces board))]
+    (best-score opponent values))))
+
+(defn minimax-move [maxplayer minplayer board]
+  (let [values (map #(minimax-score maxplayer minplayer (place-move % (:piece maxplayer) board) 1)
+                    (available-spaces board))
+        moves (available-spaces board)
+        move-values (zipmap moves values)]
+  (best-move move-values)))
+{% endhighlight %}
+
+<p>In the <code>minimax-move</code> function  I use <code>map</code> to call the <code>minimax-score</code> function on all of the available moves. Then I zipmap the moves to their scores and pick the move with the best score.</p>
+
+<p>In the <code>minimax-score</code> function I take in a board with the two players and the depth, and then I either return the value of the board (which is based on the winner and the depth), or I find out all the values of the existing moves (calling the same <code>minimax-score</code> on each one) and return the highest value.</p>
+
+<p>Although this code is nice and simple, unfortunately without optimization it still takes a while. If the computer has to make the opening move on an empty board it takes about 25 seconds to play out all the scenarios. Although that&rsquo;s about three minutes faster than my unoptimized Ruby code, it&rsquo;s still not acceptable. My next step is to try and take advantage of any built-in optimizations that the Clojure language may offer before using something like alpha beta pruning. It&rsquo;ll be good to dive even deeper into the language.</p>

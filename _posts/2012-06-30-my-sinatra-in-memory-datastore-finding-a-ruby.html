@@ -1,0 +1,65 @@
+---
+layout: post
+title: My Sinatra In-Memory Datastore & Finding a Ruby Method Owner
+date: '2012-06-30T13:29:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26219125953/my-sinatra-in-memory-datastore-finding-a-ruby
+---
+<p>After spending a week messing around with Sinatra configs, Singletons and class variables trying to set up the in-memory datastore for my app I finally found what I was looking for yesterday. Although I must have looked at the <a href="http://www.sinatrarb.com/intro#Configuration">configuration section</a> of the Sinatra README a dozen times, it was this <a href="http://stackoverflow.com/questions/4525482/in-sinatraruby-how-should-i-create-global-variables-which-are-assigned-values">Stack Overflow post</a> that was explicit enough to hit me over the head with it. (It&rsquo;s scenarios like this that make me feel like such a noob.)</p>
+
+<h4>Setting the Settings</h4>
+
+<p>Sinatra offers all <a href="http://www.sinatrarb.com/intro#Available%20Settings">sorts of settings</a> that you can configure like <code> port, protection, logging, environment...</code> and you just do it inside the configuration block in your main app file. For example, if you wanted to set the environment to test you just do this:</p>
+
+<pre><code>configure do
+    set :environment, :test
+end
+</code></pre>
+
+<p>But, you can actually set <em>any object you want</em> in your configurations and  it will attach itself to the &lsquo;settings&rsquo; object that&rsquo;s available throughout your app (which is of course, slightly dangerous, but for now it&rsquo;s what I&rsquo;m going with).</p>
+
+<p>For example, if you want to set an object called examplevariable you could do it like this:</p>
+
+<pre><code>configure do
+    set(:examplevariable, "This is just a string but could be an anything you want")
+end
+</code></pre>
+
+<p>Now, anywhere inside your app you can call <code>settings.examplevariable</code> and it will return the string object &ldquo;This is just a string but could be an anything you want&rdquo;.</p>
+
+<p>Now here&rsquo;s a slightly simplified version of the code in my Foundry app that I used to set the datastore:</p>
+
+<pre><code>class Foundry &lt; Sinatra::Application
+
+    configure do
+        set :datastore, MemoryDatastore.new
+    end
+
+end
+</code></pre>
+
+<p>Now I can use commands like the ones below to access the datastore anywhere (even the views if I wanted to make a really bad design decision):</p>
+
+<pre><code>settings.datastore.save(user_object)
+settings.datastore.find_by_id(id)
+settings.datastore.delete(id)
+settings.datastore.all
+</code></pre>
+
+<p>The one thing I wanted to figure out in order to properly test my app and be able to mock or stub out the datastore when necessary, was what exactly &ldquo;owned&rdquo; the settings. Where did they live?</p>
+
+<h4>Finding a Ruby method&rsquo;s owner</h4>
+
+<p>I don&rsquo;t know if this is something that I read once and forgot, or if it&rsquo;s something that I just hadn&rsquo;t discovered yet, but you can find any Ruby method&rsquo;s owner with the following:</p>
+
+<pre><code>method(:method_name).owner
+</code></pre>
+
+<p>So by adding the following line to my test:</p>
+
+<pre><code>puts "The owner of settings is #{method(:settings).owner}"
+</code></pre>
+
+<p>I was able to discover that Sinatra::Delegator owns the settings method. That&rsquo;s acceptable to me and much better than my previous class variable solution- which ended up on the Ruby Object class! I may be a noob, but even I know that&rsquo;s definitely not the place for an in-memory database.</p>
+
+<p>With all that out of the way, it&rsquo;s time to knock out some stories on this app.</p>

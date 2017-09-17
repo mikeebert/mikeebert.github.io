@@ -1,0 +1,34 @@
+---
+layout: post
+title: 'Deep Dive into Limelight '
+date: '2012-05-11T19:37:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/22826612267/deep-dive-into-limelight
+---
+<p>Today I spent a good chunk of my day getting comfortable with [Limelight](<a href="http://limelight.8thlight.com/sparkle">http://limelight.8thlight.com/sparkle</a> . Limelight is a graphical user interface developed by the craftsmen at 8th light that can give local apps a polished look and feel. It&rsquo;s built in Ruby on top of Java so it&rsquo;s compatible with most systems. My goal is to use Limelight as an interface for my tic tac toe game so today I went through the documentation, <a href="https://github.com/slagyr/limelight">the source code</a> and some example Limelight apps.</p>
+
+<p>Limelight uses the metaphor of a production, scenes, players and props and then provides styles slightly similar to CSS that help make it all look good.</p>
+
+<p>It&rsquo;s late and I&rsquo;m punching this out on my phone so I won&rsquo;t go too in depth, but I recommend checking Limelight out. You&rsquo;ll need JRuby so if you have <a href="https://rvm.io//">rvm</a> installed but don&rsquo;t have JRuby just type the following into terminal</p>
+
+<pre><code>rvm install jruby-1.6.6
+</code></pre>
+
+<p>then</p>
+
+<pre><code>rvm use jruby-1.6.6
+</code></pre>
+
+<p>After that install the limelight gem</p>
+
+<pre><code>gem install limelight
+</code></pre>
+
+<p>And finally just type</p>
+
+<pre><code>limelight open
+</code></pre>
+
+<p>to access all the limelight docs and sample apps (in a limelight application, naturally).</p>
+
+<p>One thing I definitely have noticed is that running the limelight docs app sucks down a lot of RAM on my little MacBook Air. Having only 4GB of RAM is typically enough but I noticed Jruby using over 500mb at points today. I&rsquo;ll be interested to see what happens with my tic tac toe app.</p>

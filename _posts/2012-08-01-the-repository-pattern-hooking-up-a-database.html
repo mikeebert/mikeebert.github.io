@@ -1,0 +1,14 @@
+---
+layout: post
+title: The Repository Pattern & Hooking Up a Database
+date: '2012-08-01T23:05:34-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28530463266/the-repository-pattern-hooking-up-a-database
+---
+<p>Today I made the first steps towards re-wiring up my app to a database. I originally started out concurrently developing an in-memory datastore and a PostgreSQL database, but once I got rolling and needed to knock out a big batch of stories before my trip I focused on just using the in-memory objects and datastore.</p>
+
+<p>Now that I&rsquo;m going back and wiring up the database I&rsquo;ve started looking into the repository pattern, which is essentially what I&rsquo;m doing, and it&rsquo;s a pattern that has also gained popularity around the 8th Light office. <a href="http://geekswithblogs.net/gyoung/archive/2006/05/03/77171.aspx">One of the best articles I&rsquo;ve found</a> about the repository pattern is actually from 2006 and the author, Greg Young, explains why he&rsquo;s using the repository pattern in place of Active Record. He argues that &ldquo;ActiveRecord seems to defeat the entire concept of DDD [Domain Driven Design], ActiveRecord promotes a database centric model&rdquo;.</p>
+
+<p>By &ldquo;deferring&rdquo; my database decision until now I&rsquo;ve been able to focus on the functionality of my app and constructing the objects and interactions in a way that best suits my application (i.e. &ldquo;domain&rdquo;). Once I got over the initial learning curve, using in-memory objects and the datastores was very simple too. I could even fire up a browser and all of the in-memory objects would persist while the server was running so that I could demo the app. Last but not least, my tests were really fast, about 107 tests in a tenth of a second.</p>
+
+<p>But&hellip; that all came to a screeching halt today. Implementing a DataMapper repository hasn&rsquo;t gone quite as smoothly as I&rsquo;d hoped, and I&rsquo;m also trying to implement RSpec&rsquo;s &ldquo;shared_examples&rdquo; for the first time so that I can just have the DataMapper repos use the same tests that I already set up for their associated in-memory objects. The shared_examples are actually really sweet, but I have yet to actually get any of those tests to pass. Fortunately tomorrow&rsquo;s another day.</p>

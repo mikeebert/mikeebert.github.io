@@ -1,0 +1,38 @@
+---
+layout: post
+title: Mocking Input in Clojure (Thanks, Colin)
+date: '2012-09-24T23:07:18-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/32243344470/mocking-input-in-clojure-thanks-colin
+---
+<p>I&rsquo;m really having a good time building tic-tac-toe in Clojure, but there are definitely still a few snags with learning a new language- especially a functional one. One of these has been properly mocking out functions for tests.</p>
+
+<p>Fortunately, Clojure has the dangerously powerful <code><a href="http://clojuredocs.org/clojure_core/clojure.core/with-redefs">with-redefs</a></code> function, which both <a href="http://ghendry.posterous.com/stubbing-in-clojure">Ginny</a> and <a href="http://ekosz.github.com/2012/08/22/overriding-functions-in-clojure.html">Eric</a> have written about. I say dangerously powerful because it&rsquo;s very simple to redefine any function you want. That makes it easy to have a test passing that might not even really test anything (which I suppose is true with many mocks and stubs).</p>
+
+<p>I was able to use <code>with-redefs</code> to mock out a single <code>read-line</code>  call that gets input from a user and tests a few of my console UI functions. Here&rsquo;s a simple example of getting a move.</p>
+
+<pre><code>(it "should get a move from a human-player"
+    (with-redefs [read-line (constantly "1")]
+        (should= 1 (get-human-move))))
+</code></pre>
+
+<p>However, I was hitting a wall when trying to put together a series of inputs that could test behavior for invalid input or even an entire game loop.</p>
+
+<p>If I learned one thing during my last foray into tic-tac-toe it&rsquo;s that there is &ldquo;the struggle&rdquo; that&rsquo;s somewhat necessary to help things sink in, and then there&rsquo;s the useless banging of the head against a wall. I spent a couple of days thinking about how to simulate the input with no real solutions, so before I spent anytime engaging in the latter activity I decided to take a peek at Colin&rsquo;s <a href="https://github.com/trptcolin/tictactoe-clojure/blob/master/test/tictactoe/test_console.clj">test file for his tic-tac-toe implementation in Clojure</a>, where I discovered not one, but two, gems.</p>
+
+<p>First up is the <code><a href="http://clojuredocs.org/clojure_core/clojure.core/with-in-str">with-in-str</a></code> function. It&rsquo;s part of the Clojure core but I hadn&rsquo;t checked it out yet. This function does a very similar thing to what I was doing with redefining <code>read-line</code>, but as soon as I saw it knew that this is where I would pass a sequence of inputs. And that&rsquo;s when I saw the second gem: Colin created a function called <code>make-input</code> that created a lazy sequence of inputs that could be passed to <code>with-in-str</code>.</p>
+
+<pre><code>(defn make-input [coll]
+  (apply str (interleave coll (repat "\n"))))
+</code></pre>
+
+<p>The <code>interleave</code> function is the key here, as it creates the lazy sequence, in this case placing a &ldquo;\n&rdquo; between each item in the collection that you pass it. So, if I want to test that my <code>get-human-move</code> rejects words and gets only valid numbers I can do this:</p>
+
+<pre><code>(it "shoud reject a non number and get another input"
+        (with-in-str (make-input '("nine" 3))
+            (should= 3 (get-human-move))))
+</code></pre>
+
+<p>Lazy sequences are definitely something I&rsquo;m working on wrapping my brain around so the discovery of Colin&rsquo;s <code>make-input</code> method was a sweet two-for.</p>
+
+<p>(Thanks as well to Ginny for tipping me off to the <a href="http://clojuredocs.org/clojure_core">ClojureDocs Clojure Core</a> page. For the past month I&rsquo;ve had at least one browser tab <em>always</em> open to it.)</p>

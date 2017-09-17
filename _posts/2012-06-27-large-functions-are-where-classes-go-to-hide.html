@@ -1,0 +1,18 @@
+---
+layout: post
+title: '"Large Functions Are Where Classes Go To Hide"'
+date: '2012-06-27T09:45:09-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25998669005/large-functions-are-where-classes-go-to-hide
+---
+<p>The title of this post is a quote of Uncle Bob&rsquo;s that we hear frequently in the third and fourth <a href="http://www.cleancoders.com/">Clean Coders</a> episodes. He states that when a function starts to get big it&rsquo;s most likely doing too much— a function should do one thing only and do that one thing well. Those extra responsibilities that we try to cram into a a long function (aka method) can be extracted out into separate classes.</p>
+
+<p>Yesterday <a href="http://twitter.com/#!/mjansen401">Mike</a> and I worked on the <a href="https://github.com/professor/GildedRose">Gilded Rose Kata</a>, which involves adding functionality to a <a href="https://github.com/professor/GildedRose/blob/master/gilded_rose.rb">46 line method</a> that has up to five levels of nested &ldquo;if&rdquo; statements&hellip; inside a for loop. The method was most definitely doing too much (and looked vaguely similar to some tic-tac-toe code I wrote about five months ago).</p>
+
+<p>The README file for the kata tells you what you should expect the method to do, so Mike had us start out by writing tests to confirm that it actually did it. We wrote twelve tests covering all of the rules, then took a hard look at refactoring the method. Mike made the bold move I was thinking but probably wouldn&rsquo;t have had the guts to do, and that&rsquo;s to delete the entire method so we could start from scratch. His reasoning was that our tests would tell us what we needed and we could confidently rewrite the method from scratch.</p>
+
+<p>Although the idea that our tests could be so solid that we could just delete the method that provides ALL of the class logic <em>sounds</em> great, but it still felt like jumping off a cliff into water I know <em>should</em> be deep enough.</p>
+
+<p>Of course, that&rsquo;s why we make these kind of leaps in practice, and the reality was that the rewrite went quickly and ended up being really clean (with lots of nice refactors from Mike).</p>
+
+<p>And sure enough, as we worked through the tests we could see where the separations in logic were and where the classes were hiding inside the method. We pulled out four separate strategy classes that neatly encapsulated the rules for each type of item we wanted to update. When it came time to add in the functionality that was the original challenge of the kata, Mike added in a few tests and the end result was a small, clean class that only required a few lines of code.</p>

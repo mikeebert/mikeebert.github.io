@@ -1,0 +1,32 @@
+---
+layout: post
+title: '"More Important Than Getting Your Code to Work..."'
+date: '2012-08-06T22:00:33-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28878319201/more-important-than-getting-your-code-to-work
+---
+<h4>&ldquo;&hellip;is getting your code to communicate&rdquo;</h4>
+
+<p>After opening with a tragic and beautiful description of the lifecycle of the sun, Uncle Bob dives into some nitty gritty advice in the fifth episode of <a href="http://www.cleancoders.com/codecast/clean-code-episode-5/show">Clean Coders</a>: Form.  Most of the episode focuses on specifics of what can help make your code <em>look</em> like well written prose—and thus, read like it. He also expands on a topic I struggled with in the last episode, and nestled in there he drops one his usual <em>are you kidding?!?!</em> statements that I&rsquo;ve come to expect— the kind where a rookie like me thinks he&rsquo;s crazy— and then I realize just how right he is.</p>
+
+<h3>The Devil is in the Details: Comments, Spaces &amp; Blank Lines</h3>
+
+<p>I won&rsquo;t go over all of his specific syntactical recommendations, but the core of his argument is: &ldquo;When someone first looks at our code we want them to be impressed by the attention to details&hellip;convinced that professionals were at work.&rdquo;</p>
+
+<p>This statement rings loud and clear with that English degree someone gave me way back when. If we want our code to read like well-written prose it should follow generally accepted standards. There was also just an interesting <a href="http://blogs.hbr.org/cs/2012/07/i_wont_hire_people_who_use_poo.html#disqus_thread">article in the Harvard Business Review</a> by Kyle Wiens, the co-founder of <a href="http://www.iFixit.com">iFixit</a>, who applies a grammar test to all of his job applicants.</p>
+
+<h4>Comments: Don&rsquo;t do it</h4>
+
+<p>Uncle Bob&rsquo;s take on comments: &ldquo;Every Time you write a comment, you fail&rdquo;. His argument is that code should be expressive enough (with well-named variables and methods) that it speaks for itself. Although he admits that there are times that comments are absolutely necessary, he &ldquo;doesn&rsquo;t congratulate himself&rdquo; when he has to write one. The other thing that people forget about comments is that they never stay relevant. Chances are likely that there will be something in the near future that will change the code the comment refers to.</p>
+
+<h3>The Two Partition Sandwich: &ldquo;App&rdquo; and &ldquo;Main&rdquo; with a Slice of Abstraction</h3>
+
+<p>In episode four Uncle Bob introduced the concept that you should be able to draw a line between where the application and the lower level modules are. Examples of the lower level modules would be database and views. Both should essentially be &ldquo;plug-ins&rdquo; to the rest of your application, and dependencies should flow away from the lower-level modules so that your app doesn&rsquo;t depend on the implementation of the database or view. The higher level and lower level modules should both flow towards an abstraction layer that allows you change out the lower level modules if necessary.</p>
+
+<h3>&ldquo;Getting your code to communicate is even more important than getting your code to work&rdquo;</h3>
+
+<p>This was the statement that made me hit pause on the video and ask <em>&ldquo;Huh? Is he serious?&rdquo;</em>. I mean, having code that gets the job done is the most important thing, right?</p>
+
+<p>&hellip;and then a moment passed and I thought, &ldquo;well, what if I can&rsquo;t even get my code to work? I just need to get it to work, right?&rdquo; And of course I do need to get it to work, but what do we usually do when we can&rsquo;t figure something out? We ask somebody else for help. That means Uncle Bob is right on at least one count— because if our code doesn&rsquo;t work but is at least well-written then the people helping us have a better chance of understanding what we&rsquo;re doing.</p>
+
+<p>&hellip;and then a couple of more moments passed, and I realized that &ldquo;getting the job done&rdquo; means a lot of different things. If you just want to get the code to work with no regard to the future or change— new features, different lower-level details, optimizations— then that&rsquo;s a job you can do, but over a very brief course of time it won&rsquo;t be a job that you&rsquo;ll be proud of. The next person to come along and work on your code is not going to  be &ldquo;impressed by the attention to details&hellip;convinced that professionals were at work.&rdquo; And to quote <a href="http://www.8thlight.com/our-team/steven-degutis">Stephen Degutis</a> from last week&rsquo;s <a href="http://university.8thlight.com">8th Light U</a>, &ldquo;you in six months is another person&rdquo;. No, getting the job done should mean writing clean, decoupled code that communicates to a reader exactly what&rsquo;s going on. If something needs to be changed or built upon it then there should be a solid foundation to start from.</p>

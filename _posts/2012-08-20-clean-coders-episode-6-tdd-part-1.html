@@ -1,0 +1,29 @@
+---
+layout: post
+title: 'Clean Coders Episode 6: TDD Part 1'
+date: '2012-08-20T15:24:37-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/29842683830/clean-coders-episode-6-tdd-part-1
+---
+<p>In part one of the <a href="http://www.cleancoders.com">Clean Coders</a> episode on Test Driven Development, Uncle Bob lays out the three rules of TDD, and then frames his &ldquo;hard sell&rdquo; of TDD  within the framework of the most common protestations against it. (It&rsquo;s a pretty entertaining episode as the protestions are made by Uncle Bob channeling his inner Vulcan.)</p>
+
+<p>First, the three rules:</p>
+
+<pre><code>1) Write no production code until you have written a failing test.
+2) Write only enough of a test to demonstrate failure.
+3) Only write enough production code that is necessary to make a test pass.
+</code></pre>
+
+<p>These rules may seem like a huge shift for developers who&rsquo;ve never practiced TDD before, and the argument that might immediately jump out is the seemingly disruptive flow of all the context switching between test, code, test, code, etc&hellip; It looks as if writing all those tests will slow you down in the short run. But in my experience, the TDD flow is just a different kind of flow- like a new style of swimming stroke. Once you get comfortable with it you can write code just as quickly as you did in the past.</p>
+
+<p>As Uncle Bob explains through the rest of the episode, the real time savings of TDD adds up exponentially over the long run.</p>
+
+<p>The most tangible benefit is <strong>reduced debugging time</strong>, as a well-developed test suite will eliminate most bugs before they happen. And if bugs do pop up, it will be much easier to track it down.</p>
+
+<p>Uncle Bob covers the BIG time savings of TDD in a series of topics that are very closely intertwined:  <strong>Decoupling, Eliminating Fear, Trust &amp; the Courage to Change</strong>.</p>
+
+<p>When you test drive your code it often forces you to build a decoupled app so that you&rsquo;re able to test each part of it. These decisions lead to a better overall design and architecture of your application. A decoupled system is one that is more *&ldquo;flexible, scalable and maintainable&quot;— and when you have complete faith in your suite of tests then you can flex, scale and maintain that code without fear. You can clean up old code, refactor ugly code or swap out modules of your application, and if anything goes awry then your tests will immediately let you know what happened so that you can fix it and continue moving forward.</p>
+
+<p>Without a suite of tests that you can trust, then each &quot;upgrade&rdquo; to your system could be a stressful affair instead of something to be excited about.</p>
+
+<p>(Hmm, maybe Apple should release a test suite for users that we can run before an OS upgrade? That would certainly make it less stressful)</p>

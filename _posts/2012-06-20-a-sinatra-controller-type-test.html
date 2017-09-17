@@ -1,0 +1,69 @@
+---
+layout: post
+title: A Sinatra Controller-Type Test
+date: '2012-06-20T11:22:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25506907021/a-sinatra-controller-type-test
+---
+<p>This morning <a href="http://www.twitter.com/mjansen401">Mike</a> helped me work through my first controller-style RSpec test, and the &ldquo;catch&rdquo; was that I was doing it for my Sinatra app. Since this was my first test like this, and it is slightly different from a Rails app, I&rsquo;m going to document a walkthrough to help it sink in.</p>
+
+<p>In my main Sinatra app file I have the following action:</p>
+
+{% highlight ruby %}
+class Foundry < Sinatra::Base
+
+  #...other methods omitted...
+
+  post "/users" do
+    @user = DataStore::UserDbInteractor.new(DATA_STRATEGY).create(params)
+    erb :thankyou
+  end
+end
+{% endhighlight %}
+
+<p>The only think I really want to test in this action is that the <code>UserDbInteractor</code> is called to create a new user. In Rails I could set up this test and then check that my <code>@user</code> I created is equal to a <code>user</code> I set up in the test, like so:</p>
+
+<pre><code>assigns[:user].should == user
+</code></pre>
+
+<p>Unfortunately, the &lsquo;assigns&rsquo; action is not available in Sinatra, but I can use <a href="http://rubydoc.info/gems/rspec-mocks/file/README.md#Message_Expectations">message expectations</a> just as you would in a Rails test test to assert that a <em>mock</em> <code>UserDbInteractor</code> should receive the &ldquo;new&rdquo; and &ldquo;create&rdquo; methods- and that&rsquo;s really most of what I need to test here anyway. I can test the <code>UserDbInteractor</code> explicitly to confirm that the object it returns is what I expect, and I also already have a Cucumber test that fills in a form, posts to &ldquo;/users&rdquo; and confirms the output is as expected.</p>
+
+<p>So, here&rsquo;s how my RSpec test for the <code>"/post"</code> action looks:</p>
+
+{% highlight ruby %}
+describe "Foundry" do
+  def app
+    @app ||= Foundry
+  end
+
+  #...some other tests...
+
+  it "should send the form values to a new User Interactor and create a user" do
+    params = {"name" => "Test", "email" => "test@test.com"}
+    user = :user
+    interactor = mock(DataStore::UserDbInteractor)
+    DataStore::UserDbInteractor.should_receive(:new).and_return(interactor)
+    interactor.should_receive(:create).and_return(user)
+    post "/users", params = {name: "Test", email: "test@test.com"}
+  end
+end
+{% endhighlight %}
+
+<p>The first three lines below the &ldquo;it should&hellip;&rdquo; statement are my set-up, including creating my mock interactor.</p>
+
+<p>The next line is my first message expectation, that <code>DataStore::UserDbInteractor</code> should be called with the &ldquo;new&rdquo; method. If I was to change <code>:new</code> to a method that I didn&rsquo;t have, for example <code>:zebra</code>, I would get the following error message from my failing test:</p>
+
+<pre><code>Failure/Error: DataStore::UserDbInteractor.should_receive(:zebra)#.and_return(interactor)
+       (&lt;DataStore::UserDbInteractor (class)&gt;).zebra(any args)
+           expected: 1 time
+           received: 0 times
+     # ./spec/foundry_spec.rb:23:in `block (2 levels) in &lt;top (required)&gt;'
+</code></pre>
+
+<p>So in this line I want to make sure it receives the call to <code>new</code> and when it does I want it to return the <code>interactor</code> I set up with the <code>and_return</code> method.</p>
+
+<p>If you look back up at my original &ldquo;/post&rdquo; method (the first gist) you can see that I have the <code>create</code> method chained on after the <code>new</code> method. So in my second message expectation I&rsquo;m asserting that the <code>interactor</code> object I created and returned should now have its <code>create</code> method called. Since I&rsquo;ve returned the new interactor object in the first expectation, and I have a create method setup for it (in a separate file), this second expectation passes too.</p>
+
+<p>The slightly odd thing about this test is that it doesn&rsquo;t follow the typical context -&gt; action-&gt; assertion pattern that I&rsquo;m used to in testing. It&rsquo;s actually my final line that calls the action to &ldquo;/post&rdquo; <em>after my assertions</em>, but without it the previous message expectations would fail.</p>
+
+<p>If this is anyone&rsquo;s first look at this type of test I recommend setting up something similar to it (and you could definitely use some simpler classes and objects) and then just playing around with the spec to see what passes and what fails. Once Mike helped me to get it passing I started moved things around and commenting out lines or sections to see how things would fail, and as usual, the error messages helped explain how I was breaking things.</p>

@@ -1,0 +1,24 @@
+---
+layout: post
+title: 8th Week at 8th Light (Retro Catch-Up)
+date: '2012-04-23T11:41:49-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/21649335080/8th-week-at-8th-light-retro-catch-up
+---
+<p>Today I&rsquo;m starting my eighth week at 8th Light. The past few weeks were spent on completing a few user stories for tic-tac-toe, continuing practice of the katas, and on the minimax and n-queens algorithms.</p>
+
+<p>Retro Happy Face:
+Over this period my Ruby, testing and understanding of the SOLID principles have definitely improved. I&rsquo;ve spent a lot of time blowing apart and refactoring code to make it clearer and easier to understand, and I definitely spent the first four or five weeks over-testing but am now starting to find the balance of what I should and shouldn&rsquo;t test. The SOLID principles are still slightly fuzzy since I only have so much experience as a reference point, but I&rsquo;m also starting to recognize the balance of adhering to the principles vs. over-engineering a problem.</p>
+
+<p>Retro Sad Face and Delta(things to change):
+My struggle with properly executing the minimax algorithm has taught me a lot of personal lessons about how I process information and tackle challenges. My past few posts have certainly felt more personal as I ponder the mental road blocks I&rsquo;ve hit. Those blocks seem to have been a mix of hardhead-ness and layers of mental cruft as I undo years of being an athlete, coach, team director and event manager. 
+All of those jobs required me to be decisive and often to take immediate action- but the reason I was able to take action so quickly was because I had thousands and thousands of miles in my legs and a lifetime of working with people to help me quickly process a situation and make a decision. I have not yet written thousands and thousands lines of code or spent years working with algorithms and design patterns, so I need to slow down my decision-making and action-taking intervals from what I&rsquo;m used to, and learn a balance between <a href="http://ofps.oreilly.com/titles/9780596518387/emptying_the_cup.html">emptying the cup</a> and <a href="http://ofps.oreilly.com/titles/9780596518387/emptying_the_cup.html#unleash_your_enthusiasm">unleashing my enthusiasm</a>.</p>
+
+<p>On Friday Uncle Bob had a good <a href="http://blog.8thlight.com/uncle-bob/2012/04/20/Why-Is-Estimating-So-Hard.html">post</a> about why estimating the time it takes to complete a task is so hard. He says that the reason we often blow the estimate is because although we can <em>think</em> through a problem relatively quickly, actually writing down the procedure for thinking through that problem is much more difficult—and those are the steps that we need to pass along to a computer.</p>
+
+<p>With writing down the steps of the procedure in mind, this weekend I cried uncle on one of my personal minimax challenges in order to properly understand <em>all</em> of the steps. Up until now I hadn&rsquo;t looked at any other 8th Light'ers code because it felt like a bit like &ldquo;cheating&rdquo;, but the problem with most of the other examples I had looked at was that it was just pseudocode or involved a bit of hand-waving and glossed over the low-level details. In order for me to figure out what step in my procedure I was missing I needed to see how the sausage was made. Saturday I spent an hour or two and a couple pages of a notebook writing out and diagraming how my solution compared with <a href="http://www.8thlight.com/our-team/mike-jansen">Mike</a>&rsquo;s (which happened to be the first source code result when I searched &ldquo;minimax&rdquo; on Github), and I learned two things:<br/>
+1. Last week I&rsquo;d narrowed down the hole that my logic kept falling into (the opposing ways in which min and max determine their best move), so seeing Mike&rsquo;s solution helped me to figure that out.<br/>
+2. I don&rsquo;t know that having someone else&rsquo;s source code can really be considered cheating.<br/>
+Although I understand Mike&rsquo;s solution and figured out the hole in my own logic I still need to write a solution and tests that work with my already established classes and methods. Working through his code felt much more like Uncle Bob&rsquo;s <a href="http://butunclebob.com/ArticleS.UncleBob.TheBowlingGameKata">definition of a kata</a>— of understanding the way someone else solves a problem to use as a foundation of understanding the bigger picture.</p>
+
+<p>Time to write some code.</p>

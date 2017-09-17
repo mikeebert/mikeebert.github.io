@@ -1,0 +1,30 @@
+---
+layout: post
+title: 'Design Pattern: Singleton Pattern'
+date: '2012-06-29T00:20:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26121615867/design-pattern-singleton-pattern
+---
+<p>A lot of articles you&rsquo;ll find on the Singleton pattern starts off by telling you how it&rsquo;s the <em>worst</em> and most hated of all the design patterns. However, most people also comment about how we can&rsquo;t seem to get by without the singleton. In Ruby there are examples of singletons in Webrick, Rails and even rake. I&rsquo;m even tempted to fire up a singleton to help keep track of my in-memory datastore, but I&rsquo;m going to sleep on it for a night to make sure it&rsquo;s not a case of finding out about a hammer and seeing lots of nails&hellip;</p>
+
+<p>So, what is a singleton and why is it so bad? 
+<strong>&ldquo;One Object, Global Access&rdquo;</strong> These four words are from Olsen&rsquo;s <a href="http://designpatternsinruby.com/">Design Patterns in Ruby</a> and answer both questions for us.</p>
+
+<p>When you create a singleton class you&rsquo;re creating a class that can have only one instance of itself and provides global access to that single instance. Creating your own singleton in Ruby isn&rsquo;t too difficult and there&rsquo;s a great example <a href="http://dalibornasevic.com/posts/9-ruby-singleton-pattern-again">here</a>. The class your creating a singleton of has a class variable that&rsquo;s the instance of itself and then the class controls the access to that instance. You also place the &ldquo;new&rdquo; method inside the private methods so that nothing else can create an instance of it.</p>
+
+<pre><code>class Example
+    @@instance = Example.new
+
+    #...other methods...
+
+    def self.instance
+        return @@instance
+    end
+
+    private_class_method :new
+end 
+</code></pre>
+
+<p>Seeing as how we can&rsquo;t get away from singletons Ruby even goes through the trouble of providing the <a href="http://www.ruby-doc.org/stdlib-1.9.3/libdoc/singleton/rdoc/Singleton.html">Singleton module</a> to aid in the setup.</p>
+
+<p>And the bad part? <strong>Global access</strong>. A singleton provides a way for all of your classes to communicate together, and it seems like it might be easy to get carried away with or lose track of what&rsquo;s taking to what. My primary hesitation in using it for my in-memory datastore is exposing it to too many things. I&rsquo;ve already switched up my implementation from what I <a href="http://mikeebert.tumblr.com/post/25925893074/rolling-my-own-datastore">posted on Tuesday</a> though, so this weekend I&rsquo;ll do a follow up on what I decide to do.</p>

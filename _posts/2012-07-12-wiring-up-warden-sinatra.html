@@ -1,0 +1,292 @@
+---
+layout: post
+title: 'Wiring up Warden & Sinatra '
+date: '2012-07-12T22:58:00-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/27097231613/wiring-up-warden-sinatra
+---
+<p>After yesterday&rsquo;s scattershot approach to trying to set up Warden for authentication in my Sinatra app (and trying to use the sinatra_warden gem), today I systematically went through the set up and configuration and shortly after lunch had everything up and running. Now I just need to decide how I want all of the access and redirects to work. I don&rsquo;t know if anyone is ever going to use Warden with a Sinatra app that has an in-memory datastore, but I wanted to document the steps I took.</p>
+
+<p>I also need to offer a huge tip of the hat to a <a href="https://gist.github.com/557436">gist</a> by fellow Chicagoan Nicholas Young that helped get me going. I don&rsquo;t know who you are, Nicholas, but if our paths ever cross I owe you a drink.</p>
+
+<h3>Getting Started</h3>
+
+<p>1) Add the warden gem to your gemfile. At some point you&rsquo;re also going to need some form of authentication and I used &lsquo;bcrypt-ruby&rsquo; so you could add that now as well.</p>
+
+{% highlight ruby %}gem 'warden' #*I'm using version 1.2.1*
+gem 'bcrypt-ruby' #*I'm using 3.0.1*
+{% endhighlight %}
+
+<p>2) Tell your Sinatra app to use warden</p>
+
+{% highlight ruby %}require 'warden'
+{% endhighlight %}
+
+<p>3) Tell your Sinatra App to use Rack Session Cookies, which is where it will set the values for authenticated users.</p>
+
+{% highlight ruby %}use Rack::Session::Cookie
+{% endhighlight %}
+
+<p>So at this point you have a Gemfile with an additional Gem or two and an App file that looks something like this:</p>
+
+{% highlight ruby %}
+require 'sinatra'
+require 'warden'
+
+class YourApp < Sinatra::Application
+  use Rack::Session::Cookie
+
+  get "/" do
+    erb 'index'.to_symm
+  end
+
+  get "/protected_pages" do
+    erb 'admin_only_page'.to_sym
+  end
+end
+{% endhighlight %}
+
+<p><em><code>use Rack::Session:Cookie</code> can go anywhere inside the YourApp class, I just stuck it at the top for now.</em></p>
+
+<h3>Configuring Warden</h3>
+
+<p>Now it&rsquo;s time to tell your app what Warden will do</p>
+
+<p>1) <strong>Set up the Warden manager</strong>. This part&hellip;um, manages Warden, and this next section of code can also go anywhere inside the class of your main app (but I&rsquo;d stick with top or bottom). I&rsquo;ll do a line-by-line breakdown below, but what we&rsquo;re doing is telling Warden what your authentication strategy (or strategies) is, what app will handle authentication failures, and what to serialize into and out of the session (that we just enabled in step 3 above). We also need to let Sinatra know specifically what method to use when authenticating, so we&rsquo;ll set that too.</p>
+
+{% highlight ruby %}
+use Warden::Manager do |manager|
+  manager.default_strategies :password
+  manager.failure_app = YourApp
+  manager.serialize_into_session {|user| user.id}
+  manager.serialize_from_session {|id| Datastore.for(:user).find_by_id(id)}
+end
+
+Warden::Manager.before_failure do |env,opts|
+  env['REQUEST_METHOD'] = 'POST'
+end
+{% endhighlight %}
+
+<p>2) <strong>A Warden Strategy</strong>. In the second line of the code above we set the default authentication strategy to <code>:password</code>. You can configure as many strategies as you&rsquo;d like beyond that, however, we&rsquo;ll just stick with one for now. Below this block of code we&rsquo;ll add in our strategy:</p>
+
+{% highlight ruby %}
+Warden::Strategies.add(:password) do
+  def valid?
+    params["email"] || params["password"]
+  end
+
+  def authenticate!
+    user = Datastore.for(:user).find_by_email(params["email"])
+    if user && user.authenticate(params["password"])
+      success!(user)
+    else
+      fail!("Could not log in")
+    end
+  end
+end
+{% endhighlight %}
+
+<p>The <code>valid?</code> method in this strategy is just a check that the user has at least typed in at least an email or a password and is trying to log in. <strong>IMPORTANT GOTCHA:</strong> the params being passed into Warden are indeed strings and not symbols, for example: <code>"email" =&gt; "me@test.com", "password" =&gt; "n00b"</code>.</p>
+
+<p>The <code>authenticate!</code>method is required by Warden and inside of it is some of the authentication that I set up myself. In the first line I ask my in-memory user datastore to find my user, and in the next lines I say that if it&rsquo;s a valid user and the user authenticates its password, then it&rsquo;s either <code>success!</code> or <code>fail!</code>, which are both methods required by Warden.</p>
+
+<p>3) <strong>Failure, Serialize and the Method</strong>. In the lines following the default strategy setup (from the Warden Manager Setup gist above) we set up the remaining things the Manager needs to know. You can have any app handle failures, but in this case we&rsquo;re just going to keep it in house, so <code>failure_app</code> is set to <code>YourApp</code>. I already mentioned the serialize and setting the 'post&rsquo; method for authentication, so let&rsquo;s take a look at what our potential app file would look like now.</p>
+
+{% highlight ruby %}
+require 'sinatra'
+require 'warden'
+
+class YourApp < Sinatra::Application
+  use Rack::Session::Cookie
+
+  use Warden::Manager do |manager|
+    manager.default_strategies :password
+    manager.failure_app = YourApp
+    manager.serialize_into_session {|user| user.id}
+    manager.serialize_from_session {|id| Datastore.for(:user).find_by_id(id)}
+  end
+
+  Warden::Manager.before_failure do |env,opts|
+    env['REQUEST_METHOD'] = 'POST'
+  end
+
+  Warden::Strategies.add(:password) do
+    def valid?
+      params["email"] || params["password"]
+    end
+
+    def authenticate!
+      user = Datastore.for(:user).find_by_email(params["email"])
+      if user && user.authenticate(params["password"])
+        success!(user)
+      else
+        fail!("Could not log in")
+      end
+    end
+  end
+
+  get "/" do
+    erb 'index'.to_sym
+  end
+
+  get "/protected_pageges" do
+    erb 'admin_only_page'.to_sym
+  end
+end
+{% endhighlight %}
+
+<h3>Setting Up Some Warden Methods &amp; Routes</h3>
+
+<p>We&rsquo;ve finished setting up the meat of the configuration so now we&rsquo;ll just need to add in a way for users to login, logout and a way for us to work with the session information.</p>
+
+<p>1) <strong>Using the Environment Variable &amp; User</strong> Warden actually just stores itself as an environment variable at <code>env['warden']</code>, but instead of typing that every time I want to use it I added the following method:</p>
+
+{% highlight ruby %}def warden_handler
+  env['warden']
+end
+{% endhighlight %}
+
+<p>And once a user gets stored in session they are available at <code>env['warden'].user</code> but instead I just set up the following <code>current_user</code> method, which also makes <code>current_user</code> available in my views.</p>
+
+{% highlight ruby %}def current_user
+  warden_handler.user
+end
+{% endhighlight %}
+
+<p>Last but not least, I want to check authentication for the 'protected_pages&rsquo; route on my website, so I&rsquo;ll create a check_authentication method:</p>
+
+{% highlight ruby %}def check_authentication
+  redirect '/login' unless warden_handler.authenticated?
+end
+{% endhighlight %}
+
+<p>Again, all I&rsquo;m doing is asking the env['warden&rsquo;] if it&rsquo;s authenticated?</p>
+
+<p>2) <strong>Login, Posting to a Session, Logout &amp; Unauthenticated</strong> I&rsquo;m not going to dive into buildling a login form or the pages for all of these, but here are the routes you&rsquo;ll need to get started, and I&rsquo;ll explain a few of the details below.</p>
+
+{% highlight ruby %}
+  get "/login" do
+    erb '/login'.to_sym
+  end
+
+  post "/session" do
+    warden_handler.authenticate!
+    if warden_handler.authenticated?
+      redirect "/users/#{warden_handler.user.id}" 
+    else
+      redirect "/"
+    end
+  end
+
+  get "/logout" do
+    warden_handler.logout
+    redirect '/login'
+  end
+
+  post "/unauthenticated" do
+    redirect "/"
+  end
+{% endhighlight %}
+
+<p>The login route is simply a route to the login form. Once a user enters their information and clicks &ldquo;sign-in&rdquo; I have the form post to &ldquo;/session&rdquo;, where it goes through and uses the authenticate! method that I set up in my default :password strategy. If it&rsquo;s authenticated I direct a user to their own page, otherwise I&rsquo;m currently redirecting them to the home page.</p>
+
+<p>The logout route simple tells the warden_handler (i.e. env['warden&rsquo;]) to logout, and redirects them to the login page.</p>
+
+<p>The final route, <code>post "/unauthenticated"</code> is critical and if you don&rsquo;t include it all failed authentications will end up on the &ldquo;Sinatra doesn&rsquo;t know this ditty&rdquo; page. I just chose to redirect unauthenticated logins to the home page for now.</p>
+
+<h3>And a Loooong Blog Post Later, You&rsquo;re Ready to Authenticate</h3>
+
+<p>So now the set up is done and hopefully you&rsquo;ve already built out your views and whatever authentication code you need in your User class. All we need to do now is add the check_authentication to whatever route we want (or even in a Sinatra <a href="http://www.sinatrarb.com/intro.html#Filters">before filter</a>):</p>
+
+{% highlight ruby %}get "/protected_page" do
+  check_authentication
+  erb 'admin_only_page'.to_sym
+end
+{% endhighlight %}
+
+<p>Before directing the user to the admin page it will ask the warden_handler if the user has been authenticated, and if they aren&rsquo;t, the <code>post "/unauthenticated"</code> route will redirect them to the home page.</p>
+
+<h3>Wrap Up</h3>
+
+<p>There are LOTS of other things that I haven&rsquo;t even touched on, like ways that you can set crumbs to direct users to the last page before login, but I just wanted to keep it simple for now and hopefully this little walkthrough has been of some use. I appreciate any feedback (either comments on the gists or you can find me on <a href="http://www.twitter.com/mikeebert">Twitter</a>). Below is the complete YourApp code with the Warden specific stuff moved to the bottom (which is what I did in my own app). In my next post I&rsquo;ll cover the Warden Test Helpers, which are really easy to use with Rspec.</p>
+
+{% highlight ruby %}
+require 'sinatra'
+require 'warden'
+
+class YourApp < Sinatra::Application
+  get "/" do
+    erb 'index'.to_sym
+  end
+
+  get "/protected_pagected_pages" do
+    check_authentication
+    erb 'admin_only_page'.to_sym
+  end
+
+  get "/login" do
+    erb '/login'.to_sym
+  end
+
+  post "/session" do
+    warden_handler.authenticate!
+    if warden_handler.authenticated?
+      redirect "/users/#{warden_handler.user.id}" 
+    else
+      redirect "/"
+    end
+  end
+
+  get "/logout" do
+    warden_handler.logout
+    redirect '/login'
+  end
+
+  post "/unauthenticated" do
+    redirect "/"
+  end
+
+  # Warden configuration code
+  use Rack::Session::Cookie
+
+  use Warden::Manager do |manager|
+    manager.default_strategies :password
+    manager.failure_app = YourApp
+    manager.serialize_into_session {|user| user.id}
+    manager.serialize_from_session {|id| Datastore.for(:user).find_by_id(id)}
+  end
+
+  Warden::Manager.before_failure do |env,opts|
+    env['REQUEST_METHOD'] = 'POST'
+  end
+
+  Warden::Strategies.add(:password) do
+    def valid?
+      params["email"] || params["password"]
+    end
+
+    def authenticate!
+      user = Datastore.for(:user).find_by_email(params["email"])
+      if user && user.authenticate(params["password"])
+        success!(user)
+      else
+        fail!("Could not log in")
+      end
+    end
+  end
+
+  def warden_handler
+    env['warden']
+  end
+
+  def check_authentication
+    unless warden_handler.authenticated?
+      redirect '/login'
+    end
+  end
+
+  def current_user
+    warden_handler.user
+  end
+end
+{% endhighlight %}

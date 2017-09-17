@@ -1,0 +1,16 @@
+---
+layout: post
+title: ECHO! ECHo... ECho... Echo.. echo...
+date: '2012-10-24T22:14:17-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/34272579997/echo-echo-echo-echo-echo
+---
+<p>On Monday Java and I made our peace and it&rsquo;s been a productive start to the week. I finished up my tic-tac-toe implementation yesterday with some surprising results.</p>
+
+<p>My <a href="https://github.com/mikeebert/tictactoe-java/blob/master/src/tictactoe/Ai.java">minimax algorithm in Java</a> is almost identical to the one <a href="https://github.com/mikeebert/ttt-ruby/blob/master/lib/ai.rb">I did in Ruby</a>, <em>except</em> that I haven&rsquo;t done any alpha-beta pruning or depth optimization yet. The surprise is that my tests for a correct move on an open board are executing in under a second, whereas the Rspec tests for an unoptimized version in Ruby took over three minutes! This is such a huge difference I immediately assume something is wrong with my code&hellip; but I&rsquo;m testing all the cases I need to and they keep coming up green, quickly. However, I can&rsquo;t actually play the game until I wire up my server&hellip;</p>
+
+<p>Which brings me back to the echo. I&rsquo;ve been <a href="http://www.jmarshall.com/easy/http/">reading up on HTTP</a> <a href="http://introcs.cs.princeton.edu/java/84network/">servers</a> and looking through the craftsmen&rsquo;s various implementations, but like many problems I was hesitating on that first step. Mike gave me the challenge this morning of starting with an Echo server, which is a server that just repeats back whatever the client sends it.</p>
+
+<p>Using both the <a href="http://introcs.cs.princeton.edu/java/84network/">Princeton online example</a> and <a href="https://github.com/mjansen401/java/tree/master/Echo/src">Mike&rsquo;s echo example</a> I was a able to spike through this and by the end of the day <a href="https://github.com/mikeebert/echo-server/tree/master/src">had an echo server and echo client</a> running in my IDE. I was actually a little surprised it went through on the first try, but like I said, apparently Java and I made our peace.</p>
+
+<p>Tomorrow, on to test driving an actual server.</p>

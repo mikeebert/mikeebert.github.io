@@ -1,0 +1,24 @@
+---
+layout: post
+title: Back to Basics
+date: '2012-06-01T00:59:15-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24179730460/back-to-basics
+---
+<p>In my last post I discussed wiring up my Limelight UI to my existing tic tac toe code and how &ldquo;smoothly&rdquo; things had gone. I recreated all of the methods that my CommandLineInterface class had (and that the Game class expected) inside of my LimelightUI class, and after a couple of tweaks I had everything running just as it did in my command line.</p>
+
+<h4>Should Have Listened to My Gut</h4>
+
+<p>However, I wasn&rsquo;t entirely satisfied with my implementation and I could definitely feel some <em>tension</em> in those tweaks I had to make. When Mike looked over the code he could see that tension as well and he sent me back to the drawing board (literally) to consider the different responsibilities of my Game and UI classes and how I might be able to create a better interface for my tic toe module (the Game, Board and Player classes). He also asked me to consider how I might integrate it all into my old Rails app.</p>
+
+<p>Maybe my brain just started filling up a little earlier than usual this week, but when I started to think about concepts like dependencies, responsibilities and creating an interface in a language that doesn&rsquo;t use explicit interfaces, things definitely weren&rsquo;t as concrete in my head as I wanted them to be. These are all things I know about insofar as I&rsquo;ve read some chapters in books about them, but that doesn&rsquo;t mean that I really <em>know</em> them. Plus, Mike recommended I maybe do some UML diagramming to help me conceptualize it all, and although I&rsquo;ve seen lots of UML diagrams in the PPP book I don&rsquo;t actually understand the specifics behind them.</p>
+
+<p>Rewiring this Limelight class and creating a good interface was going to require some thinking&hellip; and as Uncle Bob tells us: &ldquo;<a href="http://blog.8thlight.com/uncle-bob/2011/11/22/Clean-Architecture.html">there&rsquo;s nothing wrong with thinking</a>.&rdquo;</p>
+
+<h4>No Code Day</h4>
+
+<p>So, with the exception of one kata this morning I actually didn&rsquo;t write much code today. Instead I read a lot of code, popped open the <a href="http://www.amazon.com/Software-Development-Principles-Patterns-Practices/dp/0135974445">PPP Book</a>, a copy of Martin Fowler&rsquo;s &ldquo;<a href="http://www.amazon.com/Refactoring-Ruby-Edition-Jay-Fields/dp/0321603508">Refactoring:Ruby Edition</a>&rdquo;, and for good measure I also started reading through Fowler&rsquo;s <a href="http://www.amazon.com/UML-Distilled-Standard-Modeling-Language/dp/0321193687">UML Distilled</a>.</p>
+
+<h4>Slightly More Experience</h4>
+
+<p>I&rsquo;d already read both the SOLID principles section of the PPP book and the opening of &ldquo;Refactoring&rdquo; before, but now that I had slightly more code under my belt from learning limelight the past couple of weeks, hooking it up to my code, and also getting to work on the internal project- I can definitely conceptualize the &ldquo;big picture&rdquo; concepts just a little bit better and I have a few ideas about how I might be able to do this rewiring. I&rsquo;m also thinking that I might even implement one of the design patterns I&rsquo;ve studies thus far. I don&rsquo;t want to get too carried away though— I better just take it one step at a time for now.</p>

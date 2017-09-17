@@ -1,0 +1,30 @@
+---
+layout: post
+title: Using ERB Partials in Sinatra
+date: '2012-07-30T22:09:05-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28380306089/using-erb-partials-in-sinatra
+---
+<p>In my apprenticeship app I use almost the exact same HTML form for creating a new task and editing an existing one. Sharing a partial between the task and edit insures that any changes I want (or need) to make to my form only needs to be done once.</p>
+
+<p>If you Google around for using Rails-like partials in a Sinatra app you&rsquo;ll find all sorts of hand-rolled helpers and methods. Fortunately, Sinatra offers built-in support for partials, but it&rsquo;s <em>lightly</em> documented in the Sinatra readme. Here&rsquo;s a quick rundown of how I got mine working.</p>
+
+<p>In my task#new and task#edit views I have the following code:</p>
+
+<pre><code>#new view
+</code></pre>
+
+<form method="post" action="/tasks">
+        
+    </form>
+
+<pre><code>#edit view
+&lt;form method="post" action="/tasks/&lt;%= @task.id %&gt;"&gt;
+    &lt;input type="hidden" name="_method" value="put"&gt;
+    &lt;%= erb 'tasks/_form'.to_sym %&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>And then my directory structure just looks like this:</p>
+
+<p><img src="https://lh5.googleusercontent.com/-n6jYD0WiClc/UBc9RnzPt0I/AAAAAAAAB7Y/FuBhVGlHV2g/s219/partial_sinatra_structure.jpg" alt=""/></p>

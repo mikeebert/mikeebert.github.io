@@ -1,0 +1,48 @@
+---
+layout: post
+title: 'Pairing Tour: Working with Presenters'
+date: '2013-01-15T23:32:27-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/40659833547/pairing-tour-working-with-presenters
+---
+<p>I kicked off the second week of my pairing tour with <a href="http://www.8thlight.com/our-team/steve-kim">Skim</a>, who’s been working on a big app upgrade for a client for the better part of the past year.</p>
+
+<p>In the morning we updated a set of attributes from previously assigned values to a new range of values. This meant we also needed to update  the way queries were made on those values, but the previously written tests guided us pretty well. It was the first time I’d ever seen <a href="http://www.elasticsearch.org/">elastic search</a> in action and a great intro to both the power and complexity of it.</p>
+
+<p>In the afternoon we helped one of the client’s designers update a view and it was my first chance to work with presenters in Rails. I’d read about <a href="http://blog.jayfields.com/2007/03/rails-presenter-pattern.html">presenters in various articles</a> and seen them in one of 8th Light’s internal apps, but I never quite understood them. It’s amazing how much easier it is understand something when you have a guide along the way. Within a few minutes of working on it with Skim I was able to get a feel for how presenter’s work and why it makes sense to use them. Here’s a very over-simplified example of one:</p>
+
+<p>In a traditional Rails controller you could have an action like this to set up variables for your views:</p>
+
+<pre><code>def show
+    @user = current_user
+    @course = current_user.courses.last
+    render :show
+end
+</code></pre>
+
+<p>Then in your views you might have some logic like this:</p>
+
+<pre><code>&lt;% if @user.freshman? %&gt;
+    “Welcome to your first year”
+&lt;% elsif @user.senior %&gt;
+    “Congrats on your final year”
+&lt;% end %&gt;
+
+This class is offered by the &lt;%= @course.department.name %&gt; department.
+</code></pre>
+
+<p>However, by using the presenter pattern you could strip the logic out of your view, limit the amount of digging into an object a view needs to do, and also slim down your controller. What the presenter boils down to is an object that encapsulates what you actually need for your view. Here’s how it would look:</p>
+
+<pre><code>#in the controller
+def show 
+    @presenter = CoursePresenter.new(@user)
+    render :show
+end
+
+#in the view
+&lt;%= @presenter.welcome_message %&gt;
+
+This class is offered by the &lt;%= @presenter.course_department_name %&gt;
+</code></pre>
+
+<p>Again, this is a very over-simplified example and wouldn’t necessarily call for creating an entirely new CoursePresenter class. However, if you found yourself setting a lot of variables in your controller action and/or using a lot of logic in your views hopefully it helps illustrate how you could use a presenter</p>

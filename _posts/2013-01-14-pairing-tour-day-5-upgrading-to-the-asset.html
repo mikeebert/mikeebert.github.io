@@ -1,0 +1,151 @@
+---
+layout: post
+title: 'Pairing Tour Day 5: Upgrading To The Asset Pipeline'
+date: '2013-01-14T22:07:07-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/40572147239/pairing-tour-day-5-upgrading-to-the-asset
+---
+<p>I wrapped up last week by pairing with my mentor Mike on an upgrade to our <a href="http://university.8thlight.com">8th Light University</a> app. It’s a straightforward Rails app that we needed to update to take care of the <a href="http://blog.codeclimate.com/">recently discovered Rails vulnerability</a>. Mike also wanted to use it as an opportunity to make the jump up from Rails 3.0.10. That meant a leap to the <a href="http://guides.rubyonrails.org/asset_pipeline.html">asset pipeline</a> and I wanted to document the steps we took in order to get everything working.</p>
+
+<h3>Update Rails and mySql</h3>
+
+<p>We have a pretty spartan Gemfile and use mySql2 so the only two things we needed to do to start were update the versions of these two gems:</p>
+
+<pre><code>gem 'rails', '~&gt; 3.1.10'
+gem ‘mysql2’, ‘0.3.11’
+</code></pre>
+
+<p>In the first run through of this upgrade we had some problems with mySql so I decided to lock it to version ‘0.3.11’.  After this we did a <code>bundle update</code>.</p>
+
+<h3>’rake rails:update’</h3>
+
+<p>I’d never heard of <code>rake rails:update</code> before but I came across it in <a href="http://marc-bowes.com/2011/09/02/rails-3.1-assets.html">this post</a> after hitting some initial troubles and decided to give it a shot. What it does is goes through and updates your necessary files, but prompts you along the way so that you know what will be overwritten. Below is my terminal output as an example, which also includes what files I decided to overwrite and which I didn’t.</p>
+
+<p>Whenever it prompted me to overwrite a file I loaded it in MacVim first, then allowed it to override, then selected ‘load file’ from the OS X dialog, then toggled between ‘undo’ (u) and ‘redo’ &reg; to make sure I wanted to apply the changes:</p>
+
+<pre><code>identical  config/boot.rb
+exist  config
+conflict  config/routes.rb
+Overwrite ~/projects/university/config/routes.rb? (enter "h" for help) [Ynaqdh] n
+        skip  config/routes.rb
+    conflict  config/application.rb
+Overwrite ~/projects/university/config/application.rb? (enter "h" for help) [Ynaqdh] Y
+    force  config/application.rb
+identical  config/environment.rb
+    exist  config/environments
+    conflict  config/environments/development.rb
+Overwrite ~/projects/university/config/environments/development.rb? (enter "h" for help) [Ynaqdh] Y
+    force  config/environments/development.rb
+    conflict  config/environments/production.rb
+Overwrite ~/projects/university/config/environments/production.rb? (enter "h" for help) [Ynaqdh] Y
+    force  config/environments/production.rb
+    conflict  config/environments/test.rb
+Overwrite ~/projects/university/config/environments/test.rb? (enter "h" for help) [Ynaqdh] Y
+    force  config/environments/test.rb
+    exist  config/initializers
+identical  config/initializers/backtrace_silencers.rb
+identical  config/initializers/inflections.rb
+identical  config/initializers/mime_types.rb
+    conflict  config/initializers/secret_token.rb
+Overwrite ~/projects/university/config/initializers/secret_token.rb? (enter "h" for help) [Ynaqdh] n
+        skip  config/initializers/secret_token.rb
+    conflict  config/initializers/session_store.rb
+Overwrite ~/projects/university/config/initializers/session_store.rb? (enter "h" for help) [Ynaqdh] n
+        skip  config/initializers/session_store.rb
+    create  config/initializers/wrap_parameters.rb
+    exist  config/locales
+    conflict  config/locales/en.yml
+Overwrite ~/projects/university/config/locales/en.yml? (enter "h" for help) [Ynaqdh] Y
+    force  config/locales/en.yml
+    exist  script
+identical  script/rails
+</code></pre>
+
+<h3>Moving the Assets &amp; Creating Application files</h3>
+
+<p>Before the asset pipeline all of the images, stylesheets and javascripts were stored in the ‘public’ directory. Now all of those should be moved to <code>app/assets/images</code>, <code>app/assets/javascripts</code>’ and <code>app/assets/stylesheets</code>.  These three simple commands should do the trick (depending on the structure of your directories):</p>
+
+<pre><code>mv public/images app/assets/
+mv public/stylesheets app/assets/
+mv public/javascripts app/assets/
+</code></pre>
+
+<p>I also needed to add an application.js and application.css file that required my other files. The application.js file looked like this (note the order of the files you are requiring!):</p>
+
+<pre><code>#app/assets/application.js
+//= require jquery  
+//= require jquery_ujs  
+//= require_self  
+//= require_tree .
+</code></pre>
+
+<p>and the application.css file looked like this (again, pay attention to order!):</p>
+
+<pre><code>#app/assets/application.css
+/*
+*= require reset
+*= require_self
+*= require_tree .
+*/
+</code></pre>
+
+<h3>Add the Asset Gems</h3>
+
+<p>Next, add this group to your Gemfile, followed by a <code>bundle update</code> command:</p>
+
+<pre><code>group :assets do  
+  gem 'sass-rails', " ~&gt; 3.1.0"  
+  gem 'coffee-rails', " ~&gt; 3.1.0"  
+  gem 'uglifier', '1.0.4'  
+end 
+</code></pre>
+
+<h3>Changing the config files:</h3>
+
+<p>Update or add the following lines in their corresponding files:</p>
+
+<pre><code>#config/development.rb
+config.action_view.debug_rjs = true
+
+#config/production.rb
+config.serve_static_assets = true
+</code></pre>
+
+<h3>Update your views and CSS</h3>
+
+<p>You can fire up your server to see how things are coming along- but most likely you’ll have some broken images and javascript that doesn’t work. This is because prior to the asset pipeline it was common to use things like a standard <code>img src="public/assets/gangnam-style.gif"</code>tag— but now we use an image tag like <code></code>. You&rsquo;ll have to go in and change each of these image links manually.</p>
+
+<p>We also need to update the headers of our <code>’layout.html.erb’</code> file to include our new <code>application.js</code> and <code>application.css</code> files. The old links probably looked something like:</p>
+
+<pre><code>&lt;%= stylesheet_link_tag 'reset.css', 'jquery.css', '8thlightu.css' %&gt;
+&lt;%= javascript_include_tag 'custom/application.js' %&gt;
+</code></pre>
+
+<p>which can be replaced with:</p>
+
+<pre><code>&lt;%= stylesheet_link_tag 'application.css’ %&gt;
+&lt;%= javascript_include_tag 'application.js’ %&gt;
+</code></pre>
+
+<h3>Jasmine YML Update</h3>
+
+<p>At this point all of our RSpec and Cucumber tests were passing (and things looked good when we fired up our server) but none of our Jasmine specs passed. We realized that our <code>spec/javascripts/support/jasmine.yml</code> file still pointed to the old assets. In that file we were able to replace this entire block of lines:</p>
+
+<pre><code>src_files:
+  - public/javascripts/prototype.js
+  - public/javascripts/effects.js
+  - public/javascripts/controls.js
+  - public/javascripts/dragdrop.js
+  - public/javascripts/application.js
+  - public/javascripts/**/*.js
+</code></pre>
+
+<p>with these two lines:</p>
+
+<pre><code>src_files:
+  - assets/application.js 
+</code></pre>
+
+<h3>The End</h3>
+
+<p>If everything went according to plan then congrats, you’re done! Things should look great and all of your Specs, Features and Jasmine Tests pass…  Of course, I realize that may not be the case and there might be a hiccup or two along the way. If anyone has experience with alternate upgrade paths, questions, or feedback <a href="http://www.twitter.com/mikeebert">I’d love to hear it</a>.</p>

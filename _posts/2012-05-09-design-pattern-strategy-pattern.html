@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'Design Pattern: Strategy Pattern'
+date: '2012-05-09T21:51:34-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/22755156685/design-pattern-strategy-pattern
+---
+<p><a href="http://blog.benvoss.me/">Ben</a> and I have started a Daily Design Pattern Club (current membership: 2). Ben has a couple months head-start on me in learning the patterns and is reading <a href="http://shop.oreilly.com/product/9780596007126.do">Head First Design Patterns</a> with examples in Java. I&rsquo;m reading <a href="http://www.informit.com/store/product.aspx?isbn=9780321490452">Design Patterns in Ruby</a> with examples in&hellip; Ruby.</p>
+
+<p>The first pattern we covered was the Strategy Pattern— and the most basic way to think of it is as a way to implement various versions of an algorithm or method.</p>
+
+<p>What if for object A you want an algorithm or method to behave one way and for object B you want that algorithm or method to behave another way? You could accomplish that with a nasty if/else statement (which I&rsquo;m certainly guilty of), but what you really need is a &ldquo;strategy&rdquo; for A and a &ldquo;strategy&rdquo; for B&hellip; which brings us to the cleverly named Strategy Pattern.</p>
+
+<p>One of the places I&rsquo;ve used the pattern in my tic-tac-toe app was in the comparison of scores in the minimax algorithm. For my max player I only care about a newly found score if it&rsquo;s <em>higher</em> than the current best score. For my Min player I only care about a newly found score if it&rsquo;s <em>lower</em> than the current best score. In order to accomplish this in my first run-through of the minimax algorithm I just used the aforementioned nasty if/else statement, but it was one of the first refactors I tackled. I decided to make my max and min players two separate classes that each had their own &ldquo;strategy&rdquo; for the compare method. The methods are almost identical except that one uses a &ldquo;&gt;&rdquo; sign and the other uses a &ldquo;&lt;&rdquo; sign, but now my code is much cleaner and the intention is much clearer.</p>
+
+<p>Those classes also started to use part of the Template Strategy, but that&rsquo;s another post.</p>

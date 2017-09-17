@@ -1,0 +1,43 @@
+---
+layout: post
+title: Watch Those JavaScript Variables
+date: '2012-12-05T23:18:47-06:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/37312965153/watch-those-javascript-variables
+---
+<p>The project I&rsquo;m working on with <a href="http://www.8thlight.com/our-team/jim-suchy">Jim</a> and <a href="http://www.8thlight.com/our-team/michael-baker">Michael</a> has definitely hit its stride and the past week I’ve been working with a fair amount of JavaScript. It had been a couple months since I’d spent more than a few minutes tweaking this or that UX element so it’s been great to really dive in.</p>
+
+<p>Today I had a big gotcha that cost me a few more minutes than I care to admit, but fortunately Michael helped me troubleshoot for a few minutes and caught the gotcha staring us in the face.</p>
+
+<p>I was spiking through these two almost identical functions to see how they worked on the page&hellip;. and the first worked just fine:</p>
+
+<pre><code>$(‘#title-suggestions’).on('click', ‘li’, function(event) {
+  title = $(this).val();
+  updateSearchTerms(title, ‘#title-search’);
+});
+</code></pre>
+
+<p>It grabbed the text of an ‘li’ element in the ‘title-suggestions’ and added it to the already selected search terms.</p>
+
+<p>Then I wanted to do the same thing in the cities suggestion so I wrote this:</p>
+
+<pre><code>$(‘#city-suggestion’).on(‘click’, ‘li’, function(event) {
+  location = $(this).val();
+  updateSearchTerms(location, ‘#city-search’);
+});
+</code></pre>
+
+<p>However, when I jumped into the browser to make sure it worked I was getting a weird redirect. Then I tried to just add in a simple <code>console.log(location)</code> debug statement and I was <em>still</em> getting the error.</p>
+
+<p>Experienced JS gurus probably already see both of my mistakes. The first and biggest gotcha is that I wasn’t using ‘var’ to declare my variables for either <code>title</code> in the first function or <code>location</code> in the second. The second line of both functions should be:</p>
+
+<pre><code>var term = $(this).val();
+</code></pre>
+
+<p>This declaration scopes the variable to the function I’m in and is good practice because it keeps the variable from “bubbling up”.</p>
+
+<p>The second gotcha and the actual cause of my error is that the name <strong>location</strong> is a host variable in JavaScript that contains information about the page that is loaded. You can open up the JavaScript console in your browser of choice and just by typing <code>location</code> you’ll get a whole bunch of information about the page you’re on.</p>
+
+<p>My double whammy was that because I wasn’t declaring ‘location’ as a variable inside the scope of my function it was bubbling up and causing problems. The first function worked just fine, even without a scoped variable, because the title variable didn’t conflict with anything else.</p>
+
+<p>Here’s an older <a href="http://www.nczonline.net/blog/2007/06/03/javascript-variable-names-you-shouldn-t-use/">article with a short list of other variable names you probably want to avoid</a> when writing JavaScript.</p>

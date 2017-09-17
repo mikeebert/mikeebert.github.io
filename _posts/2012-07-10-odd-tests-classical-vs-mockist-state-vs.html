@@ -1,0 +1,48 @@
+---
+layout: post
+title: 'Odd Tests: Classical vs. Mockist & State Vs. Behavior Testing'
+date: '2012-07-10T23:13:34-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/26952337278/odd-tests-classical-vs-mockist-state-vs
+---
+<p>I&rsquo;m continuing to build out my Sinatra app with more and more features which means that my main app file is continuing to gain more routes and controller actions. In a previous post I discussed a <a href="http://mikeebert.tumblr.com/post/25506907021">sinatra controller-type test</a> and I&rsquo;ve found myself using a similar structure to test the new actions I&rsquo;m adding in. However, these test still feel odd (and maybe not quite right?) to me so I&rsquo;m going to type through them one more time framed by  Martin Fowler&rsquo;s excellent article <a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&rsquo;t Stubs</a>.</p>
+
+<p>In a typical Rails application you have a route like this:</p>
+
+<pre><code>get "accounts/show/:id", :controller =&gt; 'accounts', :action =&gt; 'show'
+</code></pre>
+
+<p>and then a controller action that looks like this:</p>
+
+<pre><code>class AccountsController &lt; ApplicationController
+  def show
+    @account = Account.find(params[:id)
+  end
+end
+</code></pre>
+
+<p>To accomplish the same thing in Sinatra you can put your route and your action in the app file:</p>
+
+<pre><code>class Bank &lt; Sinatra::Application
+
+get "/accounts/show/:id" do
+    @account = Account.find(params[:id])
+    erb '/accounts/show'.to_sym
+end
+</code></pre>
+
+<p>When I test these actions like I did in my pretious post I&rsquo;m using what Fowler refers to as the &lsquo;Mockist&rsquo; style of testing, and I&rsquo;m testing behavior rather than state. The test for this action would something like this:</p>
+
+<pre><code>it "should ask the database for the account and render the show page" do
+    account = mock(Account)
+    Account.should_receive(:find).and_return(account)
+    get "/accounts/show/1"
+    last_response.should be_ok
+end
+</code></pre>
+
+<p>What this test does is tests the behavior of the actions, so that when I call the GET <code>"/accounts/show/:id"</code> action I test that the Accounts class <em>should_receive</em> the <code>find</code> method, and then I&rsquo;m stubbing out what that <code>find</code> method returns so that it returns a mock Account object I created in the first line of the test setup. The final line of the test is just testing that the view rendered properly, which is more of a state-based test.</p>
+
+<p>I guess this test is ok and the failing messages provide some guidance to write the production code, but I think I&rsquo;m definitely more comfortable with the 'Classical&rsquo; approach, which uses objects to confirm the expected state after an action is executed. Testing state feels much more finite and is how I choose to test almost everything outside of these controller actions. Even if I use mock objects I&rsquo;m still testing that something in the state of my mock objects changed after I used them. Again, it just feels much more concrete than something like the <code>should_receive</code> method.</p>
+
+<p>However, I&rsquo;m honestly not sure of how to Classicly test some of these Sinatra actions so for now I&rsquo;ll stick to the Mockist style. RSpec offers some helpers for testing the variables established in Rails controllers, but no such luck in Sinatra. If anyone has any tips please hit me up over on <a href="http://www.twitter.com/mikeebert">Twitter</a>. Thanks!</p>

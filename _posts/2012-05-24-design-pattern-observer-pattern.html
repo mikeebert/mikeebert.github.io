@@ -1,0 +1,52 @@
+---
+layout: post
+title: 'Design Pattern: Observer Pattern'
+date: '2012-05-24T21:27:00-05:00'
+tags:
+- design patterns
+tumblr_url: http://mikeebert.tumblr.com/post/23707129279/design-pattern-observer-pattern
+---
+<p>Unbeknownst to me, <a href="http://www.michaeljansen.net/">Mike</a> was writing a <a href="http://www.michaeljansen.net/blog/2012/05/23/GUI-Architecture--The-Importance-of-Observers.html">post</a> about the Observer Pattern as the same time as me. His post is part of a series that covers his talk &ldquo;Design Patterns in JavaScript&rdquo; from last weekend&rsquo;s <a href="http://chicagocodecamp.com/">Chicago Code Camp</a>. You should head over and read his post, especially if you work with a lot of JavaScript, but here I&rsquo;m going to stick to the basics of the pattern—and of course, Ruby.</p>
+
+<p>The Observer Pattern is used when there is an action or series of actions that need to be executed after another action has taken place. For example, let&rsquo;s say you have an online store and once you&rsquo;ve changed the price of a particular item to below $10 you need your website to display the price in a bold font (with lots of punctuation and naturally some flash animation), it also needs to be moved to the &ldquo;bargain&rdquo; section of your website, and customers who&rsquo;ve signed up for price alerts need to be notified.</p>
+
+<p>One way to accomplish this would be to load up your <code>item#update</code> method with lots of conditionals and actions that take place once the item hits a certain price threshold. However, this would violate the single responsibility principle and the open-closed principle because each time you needed something else to happen after a price update you&rsquo;d have to go in and rewrite the method.</p>
+
+<p>Enter the Observer Pattern. What you really need are small classes that execute only after something has changed - the &ldquo;observers&rdquo;. Although they are called observers they actually don&rsquo;t actively do anything. All of the responsibility in this relationship falls on the &ldquo;subject&rdquo;- which in the example I started would be the Item. When the price of the item changed it would tell its observers to do whatever they were supposed to do.</p>
+
+<p>And how does the item know about its observers and send them messages? With a simple array and an attr_accessor. Here&rsquo;s a quick example of an item class with some observers:</p>
+
+<pre><code>class Item
+  attr_accessor :description, :price, :observers
+
+  def initialize(price)
+    @price = price
+    @observers = []
+  end
+
+  #...some code for our item...
+
+  def update_price(amount)
+    @price = amount
+    notify_observers
+  end
+
+  def notify_observers
+    @observers.each {|observer| observer.commonly_named_method(self)}
+  end
+end
+</code></pre>
+
+<p>In order to add and remove observers to an item we could write some methods to shovel new ones into the @observers array:</p>
+
+<pre><code>@observers &lt;&lt; NewObserver
+</code></pre>
+
+<p>or delete them</p>
+
+<pre><code>@observers.delete(observer_to_delete)
+</code></pre>
+
+<p>However, Ruby has an Observable module you can include on your class that gives you all sorts of goodies. Rather than cover them here I&rsquo;ll direct you over to the <a href="http://www.ruby-doc.org/stdlib-1.9.3/libdoc/observer/rdoc/Observable.html">Ruby Docs</a> for a thorough rundown.</p>
+
+<p>Since I happened to read about this wonderful pattern last night I may or may not have <a href="http://en.wikipedia.org/wiki/Law_of_the_instrument">seen a nail</a> today. While pairing on a project with <a href="http://blog.cymen.org/">Cymen</a> we worked on a method that will generate an invoice, upload a PDF version of that invoice to Amazon S3, <em>and</em> generate and upload PDF&rsquo;s of all the associated documents with that invoice to S3 as well. Our method started to get pretty heavy so I mentioned the Observer Pattern. There&rsquo;s a chance we&rsquo;re going to use it but first we just wanted to make sure that everything worked, and then we&rsquo;ll check with the rest of the team to see what they think.</p>

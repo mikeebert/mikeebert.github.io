@@ -1,0 +1,41 @@
+---
+layout: post
+title: 'Design Pattern: Decorator Pattern'
+date: '2012-06-24T10:17:21-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25781484284/design-pattern-decorator-pattern
+---
+<p>The Decorator Pattern is another pattern where an object, in this case the decorator, stands in for another object. The Decorator actually wraps itself around the other object and adds functionality to it- hence, &ldquo;decorating&rdquo; it.</p>
+
+<p>I think with this pattern working backwards from a complex example better helps to understand it. The example below is from <a href="http://designpatternsinruby.com/">Design Patterns in Ruby</a> and the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">wiki</a> article on decorators, but I&rsquo;ve changed a couple names to be even more explicit.</p>
+
+<p>Olsen&rsquo;s example in &ldquo;Design Patterns&rdquo; includes a BasicWriter class that outputs text, and then decorator classes that include LineNumberWriter, TimeStampWriter and CheckSumWriter. All of the decorators inherit their behavior from a WriterDecorator super class, which implements all the methods that SimpleWriter does. The initial super class wraps the original BasicWriter object and implements all of the BasicWriter object&rsquo;s methods. Here&rsquo;s an example of that Decorator super class</p>
+
+<pre><code>class WriterDecorator
+    attr_accessor :basic_writer
+
+    def initialize(basic_writer_object)
+        @basic_writer = basic_writer_object
+    end
+
+    def some_method_in_the_basic_writer_class
+        @basic_writer.some_method_in_the_basic_writer_class
+    end
+
+    #...all of the other basic_writer methods...
+
+end
+</code></pre>
+
+<p>So then all of your different decorators inherit from this class so that they can be passed in any BasicWriter object. Then the decorator adds the additional methods it wants to in order to add some functionality to the basic writer.</p>
+
+<p>The kicker is that you can actually wrap decorators in other decorators, hence providing all of the different decorating combinations you need! (<em>Even though I have yet to think of how I&rsquo;d use this I think it&rsquo;s pretty cool stuff</em>). Here is Olsen&rsquo;s example of chained decorators:</p>
+
+<pre><code>writer = CheckSumWriter.new(TimeStampWriter.new(LineNumberWriter.new(BasicWriter.new('your_document.txt'))))
+</code></pre>
+
+<p>So now we have a Basic Writer that can number lines, stamp the time and check some sums, and we can chain together any combination of these three to build an object that has just the functionality we need. Only need to number lines? Just use that decorator. Want to number lines and stamp the time? Only use those two.</p>
+
+<p>Here&rsquo;s a version of the UML diagram that appears in &ldquo;Design Patterns&rdquo;, the wiki and the original <a href="http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612">Gang of Four book</a>. It shows how a Decorator inherits from the super class, all of the classes implement the same method, and the decorator adds a method. The one part of of the diagram I don&rsquo;t get is how it shows the ConcreteComponent (in the example above, our BasicWriter) inheriting from that super class. I don&rsquo;t think in this case the &ldquo;open&rdquo; arrow means inheritance, so that&rsquo;s another question I&rsquo;ll ask in the office tomorrow.</p>
+
+<p><img src="https://lh6.googleusercontent.com/-ZIvGDqgZi8w/T-cZjji4NHI/AAAAAAAAB40/gCWsB549WII/s559/decorator_uml.jpg" alt=""/></p>

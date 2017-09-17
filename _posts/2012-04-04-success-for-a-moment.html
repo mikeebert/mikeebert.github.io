@@ -1,0 +1,10 @@
+---
+layout: post
+title: Success! For a moment...
+date: '2012-04-04T08:07:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/20463076326/success-for-a-moment
+---
+<p>Yesterday I was able to finally get the method to play through all of the games and rank the moves correctly. It was a pretty great feeling the first time it ran and the solution seemed so simple that I&rsquo;m almost embarrassed it took me so long. However, I know that I discovered a lot more than how to write just one method over the past few days so I&rsquo;m not too concerned.</p>
+
+<p>I&rsquo;m actually going to do a full write-up on my code and the solution&hellip; but there are still some major flaws to work on. The first is speed. It takes about three minutes to make the first move on a blank 3x3 board, and about 25 seconds to make a move on a board with one move (if the human plays first). After those first two moves it takes less than a second for consecutive moves, but again this is only a 3x3 board. The other problem I need to solve is that I need to program it to play the correct defensive moves. It always plays the correct offensive move, but doesn&rsquo;t block the right set-ups. I&rsquo;ve been so focused on getting the recursive method to work I lost sight of the actual strategy of the game. Fortunately, after days of working with this (and since I&rsquo;d previously hard-coded in all the rules logic for a 3x3 grid in my Rails app), I don&rsquo;t think it will be too difficult to go back and tell the Ai how to choose the right defensive move.</p>

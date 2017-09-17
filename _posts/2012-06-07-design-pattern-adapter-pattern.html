@@ -1,0 +1,37 @@
+---
+layout: post
+title: 'Design Pattern: Adapter Pattern'
+date: '2012-06-07T18:02:33-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24635328945/design-pattern-adapter-pattern
+---
+<p>In <a href="http://designpatternsinruby.com/">Design Patterns in Ruby</a> Russ Olsen describes an adapter as &ldquo;an object that crosses the chasm between the interface that you have and the interface that you need&rdquo;. Although I don&rsquo;t entirely agree with his implementation of the pattern I think this definition is spot on.</p>
+
+<p>For clarification, an interface is the point at which two objects (classes) interact—so if you have a round peg that needs to connect to a square hole, you&rsquo;re going to need an adapter.</p>
+
+<p>Olsen has a great, simple example for an adapter class too. Let&rsquo;s say you have a text editor that processes objects with the attributes @text, @length_in_inches and @color. However, someone sends you a foreign_object that use the adapter @string, @length_in_mm and @colour. An adapter class would simply instantiate with the foreign_object and look like this:</p>
+
+<pre><code>class ForeignObjectAdapter
+  def initialize(object)
+    @object = object
+  end
+
+  def text
+    return @object.string
+  end
+
+  def length_in_inches
+    return (@object.length_in_cm/2.54)
+  end
+
+  def color
+    return @object.colour
+  end
+end
+</code></pre>
+
+<p>Voila! Now all of the expected methods are present and your text editor program can use the ForeignObjectAdapter to process the foreign_object.</p>
+
+<p>The <a href="http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612">Gang of Four</a> mention two forms of the Adapter Pattern, the class version and the object version, and the example above is the class version. Olsen goes on to describe how to implement the object version in Ruby, and that&rsquo;s where I tend to disagree with him. Maybe he did it because he felt he needed to at least let his readers know that it was an option.</p>
+
+<p>The way you implement the object version of the Adapter Pattern in Ruby involves creating methods that are unique to your object- singleton methods- but that involves overwriting and modifying the methods of the original class. Olsen even warns that this could involve &ldquo;serious encapsulation violations&rdquo;, but doesn&rsquo;t really explain what those could be. The separate adapter class seems much cleaner and a better way to keep yourself and your team from a black hole of trouble. I did, however, appreciate his explanation of the Singleton class and Singleton methods because it actually explained it more clearly than I&rsquo;d read before.</p>

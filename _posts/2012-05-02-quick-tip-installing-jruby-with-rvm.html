@@ -1,0 +1,31 @@
+---
+layout: post
+title: 'Quick Tip: Installing JRuby with RVM'
+date: '2012-05-02T18:02:55-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/22278058951/quick-tip-installing-jruby-with-rvm
+---
+<p>As I mentioned I installed <a href="http://www.jruby.org">JRuby</a> to test the performance differences of my minimax algorithm using JRuby vs <a href="http://en.wikipedia.org/wiki/Ruby_MRI">MRI</a>. Although JRuby would run I kept getting &ldquo;TypeError: Can&rsquo;t Convert Hash to String&rdquo; errors from various config files during the install.</p>
+
+<p>On the JRuby.org page their instructions for installing with RVM are just:</p>
+
+<pre><code>If you use RVM, then installing JRuby is also a piece of cake:
+rvm install jruby  
+</code></pre>
+
+<p>Well, yeah, not so much cake for me. Fortunately I came across these instructions over on the <a href="https://github.com/jruby/jruby/wiki">JRuby wiki</a>:</p>
+
+<pre><code>Note: If you're using RVM to install JRuby, remove these options from (your optional 
+ rubygems configuration file) ~/.gemrc: --conservative --local.
+
+With `--local', (at this writing) RVM fails to obtain the jruby-launcher gem required by jruby.
+
+With `--conservative', the older rubygems (at this writing, 1.8.9) currently used by JRuby fails
+ to begin gem executables with #!/usr/bin/env, and that doesn't work on most systems.
+
+Then: rvm install jruby ; rvm use jruby
+</code></pre>
+
+<p>Sure enough, my .gemrc file (located at ~/.gemrc) had those two lines. I removed them for the install, and voilá, everything ran perfectly.</p>
+
+<p>(After the install I added those two lines back in. You can find out more about what they do and other gem commands at the <a href="http://guides.rubygems.org/command-reference/">RubyGems guides</a>.)</p>

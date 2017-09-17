@@ -1,0 +1,75 @@
+---
+layout: post
+title: Sinatra, RSpec and Cucumber
+date: '2012-06-18T23:20:37-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/25411006920/sinatra-rspec-and-cucumber
+---
+<p>I mentioned last week that I had started building a Sinatra app and had some luck getting my first Cucumber tests running with the help of a Nettuts tutorial and 200 lines of &ldquo;free&rdquo; step definitions from the cucumber-sinatra gem. Since this was my first dive into Sinatra and Cucumber I was a little leary of going carte blanche with the gem. Fortunately on a second run I was able to get it working with my own step definitions and then I was also able to get Rspec up and running too. Here&rsquo;s the main steps in case anyone wants to give this a shot.</p>
+
+<h4>Gemfile</h4>
+
+<p>Easy peasy.</p>
+
+<pre><code>source "http://rubygems.org"
+gem "sinatra"
+gem "cucumber"
+gem "capybara"
+gem "rspec"
+</code></pre>
+
+<h4>File Structure</h4>
+
+<p>Below is the file structure of my app, called &lsquo;Foundry&rsquo;. The important files to note for the Cucumber setup are the 'features&rsquo; directory and all its files, which is the usual location for the Cucumber files. The important RSpec files are in their usual place too in the 'spec&rsquo; folder. (You can ignore the 'interactors&rsquo; and 'memory_objects&rsquo; folders, those are another ball of wax I&rsquo;m working on.)</p>
+
+<p><img src="https://lh4.googleusercontent.com/-Jy7CbjCRzFg/T9_cIGMYY3I/AAAAAAAAB4g/Ta7rIUtnOgk/s453/foundry_setup.jpg" alt=""/></p>
+
+<h4>Cucumber 'env.rb&rsquo; File</h4>
+
+<p>This is the important file for wiring Cucumber up to the app and it tells Cucumber where and what everything is. This file goes inside 'features/support&rsquo;. The first line uses <a href="http://blog.8thlight.com/micah-martin/2007/10/08/micah's-general-guidelines-on-ruby-require.html">Micah&rsquo;s guidelines</a> for requiring our main app file. The next three lines require the three gems Cucumber needs, and the final 'World do&rsquo; block is specific to Cucumber. In a Rails app the cucumber gem automatically sets this up but we need to do it manually in Sinatra</p>
+
+{% highlight ruby %}
+#where foundry below is the name of your main app file
+require File.join(File.expand_path(File.dirname(__FILE__)),'../../foundry')
+
+require "Capybara"
+require "Capybara/cucumber"
+require "rspec"
+
+World do
+  Capybara.app = Foundry #where Foundry is the class in your main app file
+
+  include Capybara::DSL
+  include RSpec::Matchers
+end
+{% endhighlight %}
+
+<h4>RSpec 'spec_helper&rsquo; File</h4>
+
+<p>And here&rsquo;s all the wiring for RSpec to your app, which goes right inside the spec folder. Again, in the first line I&rsquo;m telling it where everything is. The comments in the code explain the last two blocks.</p>
+
+{% highlight ruby %}
+require File.join(File.expand_path(File.dirname(__FILE__)), '/../', 'foundry')
+
+require 'sinatra'
+require 'rack/test'
+
+set :environment, :test
+
+#specify that the app is a Sinatra app
+def app
+  Sinatra::Application
+end
+
+#make Rack::Text available to all spec contexts
+RSpec.configure do |config|
+  config.include Rack::Test::Methods
+end
+{% endhighlight %}
+
+<p>And there you have it. With that setup you can start running Cucumber tests on your main app file and RSpec tests on your main app file as well as anything in your lib directory (with the standard require statement). If you&rsquo;d like to read more these posts were pretty helpful:</p>
+
+<ul><li><a href="http://blog.codenursery.com/search/label/cucumber">Martin Englund&rsquo;s Cucumber post</a>  </li>
+<li><a href="http://blog.codenursery.com/2011/11/adding-rspec-to-sinatra.html">Martin Englund: Adding RSpec to Sinatra</a></li>
+<li><a href="http://net.tutsplus.com/tutorials/ruby/ruby-for-newbies-testing-web-apps-with-capybara-and-cucumber/">Net Tuts: Testing Web Apps with Capybara and Cucumber</a></li>
+</ul>

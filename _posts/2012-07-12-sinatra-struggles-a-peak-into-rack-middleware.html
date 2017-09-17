@@ -1,0 +1,18 @@
+---
+layout: post
+title: 'Sinatra Struggles: A Peak into Rack Middleware'
+date: '2012-07-12T00:27:48-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/27030198801/sinatra-struggles-a-peak-into-rack-middleware
+---
+<p>Today I started trying to wire up <a href="https://github.com/hassox/warden">Warden</a> to my Sinatra app for authentication. I was hoping I could get away with just rolling (and testing) my own authentication and putting a filter in place on the actions that needed it, but since Warden is a part of <a href="https://github.com/plataformatec/devise/">Devise</a>, the very popular authentication system for Rails, it makes sense that Mike wants me to get familiar with it.</p>
+
+<p>Over the last few days I&rsquo;d researched how others had implemented Warden in a Sinatra app and I came across some really simple solutions <em>and</em> some really ugly ones. The ugly ones involve sticking your entire app inside of the authentication class, which definitely feels like it violates all sorts of architectural principles.</p>
+
+<p>This morning I tried a few of the solutions (even the ugly ones) and unfortunately none of them worked for me. My first hint that this wasn&rsquo;t going to be easy-peasy was that none of the posts I came across (or the <a href="https://github.com/jsmestad/sinatra_warden">sinatra_warden</a> gem) had been updated within the past couple of years and scrolling through the comments revealed that a lot of people had given up and rolled their own authentication.</p>
+
+<p>So since there was obviously not going to be an easy button I started doing my homework on one of the big beginner-gaps I knew I&rsquo;d have to start filling in: <a href="http://rack.github.com/">Rack</a> &amp; Middleware. I&rsquo;ve come across both plenty of times in the past eight months but my understanding of them was hazy at best. As long as they did their jobs I didn&rsquo;t ask questions. Well, now they weren&rsquo;t doing their jobs so it was time to roll up my sleeves and take a look under the hood. (<em>&ldquo;Can you help me get this alternator out?&hellip; Sure, but why&rsquo;d you loosen all the bolts on your windshield wiper motor?&rdquo;</em> True story)</p>
+
+<p>I BARELY scratched the surface of these two things today, but the short definition is that Rack is set up to interact with a web server and handle requests to the server and then spit out a response. Rack Middleware filters the requests to handle certain ones in a specific way. Since Warden <em>is</em> a Rack-based middleware, understanding these two basic concepts went a long way towards helping me understand what I need Warden to do.</p>
+
+<p>For a quick overview I recommend checking out this <a href="http://railscasts.com/episodes/151-rack-middleware">Railscast</a> on Rack Middleware, and then check out the <a href="https://github.com/hassox/warden/wiki/Overview">Warden wiki</a> and the <a href="http://rack.rubyforge.org/doc/">Rack documentation</a>. I expect to be spending quite a bit of time on those pages tomorrow, and once (<em>if</em>) I get Warden up and running I&rsquo;ll extend my definitions.</p>

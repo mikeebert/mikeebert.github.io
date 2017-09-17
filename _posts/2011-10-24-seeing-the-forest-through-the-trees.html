@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Seeing the Forest Through The Trees\t"
+date: '2011-10-24T09:01:28-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/11862775204/seeing-the-forest-through-the-trees
+---
+<p>Week four: three down and nine to go. Thinking of it that way almost makes me a little sad that I only have nine weeks left, but it also inspires me to push myself to learn as much as I can.</p>
+
+<p>This past week in class we took some big steps in terms of building out actual applications and linking together the major working parts of the Model, View and Contoller. When it comes to  actually writing the code and getting everything to work I feel like I have a pretty good grasp on it, but this weekend our homework was reading more about Model associations and it&rsquo;s the &ldquo;big picture&rdquo; logic that&rsquo;s my current challenge.</p>
+
+<p>I&rsquo;m working through how to apply the apps we know how to build to solving a real-world problem or vice versa- what sort of problems we can solve using the apps we know how to build. I think I&rsquo;m tending to make either my problems or solutions a little too complex (at least at this point in my limited programming knowledge). Bear with me as I type through an example off the top of my head.</p>
+
+<p>Models are your various sets of data inside an app and it&rsquo;s taking me some time (and lots of pen &amp; paper sketching) to figure out how I&rsquo;d like to associate various models inside an app. Let&rsquo;s use Carmax as an example. They have several lots (the &lsquo;lot&rsquo; model) and lots of cars (the 'car&rsquo; model). Since only one unique car can be on one lot at any given time, but each lot has many cars, I would type in my 'car&rsquo; model that it</p>
+
+<blockquote>
+  <p>belongs_to :lot</p>
+</blockquote>
+
+<p>and in my 'lot&rsquo; model I would type that it</p>
+
+<blockquote>
+  <p>has_many :cars</p>
+</blockquote>
+
+<p>Now that wasn&rsquo;t so bad. I could now build out an app to show all the cars, all the lots, what cars are on each lot, and what lot has the car you want. (Thanks to some help from my classmate Raghu I could even start adding in search paramaters).</p>
+
+<p>Maybe I just need to keep it simple like that. I&rsquo;m probably trying to build too many associations for the various made-up apps in my head right now.</p>
+
+<p>Problem solving like this is the part of programming I always heard about but I never realized how big of a role it played. I&rsquo;m exercising my brain in ways I haven&rsquo;t in a long time and it feels great- just like getting into the gym or starting up a running routine again. I may be a bit wobbly at first, but eventually I&rsquo;ll get the hang of it.</p>

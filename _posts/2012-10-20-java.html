@@ -1,0 +1,72 @@
+---
+layout: post
+title: Java
+date: '2012-10-20T13:32:47-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/33968236670/java
+---
+<p>A couple of weeks ago Mike challenged me to build my Java HTTP server and Java tic-tac-toe game by the end of this month. I knew that learning another new language would take some time, but the shift to a statically-, strongly-typed language has been particularly painful. Combine it with working on both a client project and an internal project the past couple of weeks&hellip; and October 31st is approaching a little too quickly for my liking.</p>
+
+<p>It&rsquo;s a good thing that when I say Java I think of coffee so that I at least have some pleasant association with the word. However, as I explained that to a friend she said, &ldquo;that&rsquo;s funny, because every time you say Java I immediately think of &lsquo;Jabba the Hut&rsquo;&rdquo;&hellip; which made me think of a large, unwieldy, monstrosity not unlike a certain programming language &hellip; and that I might end up frozen in carbonite if I don&rsquo;t finish this task on time &hellip; but I digress.</p>
+
+<p>The biggest problems for me with Java have really been the basics of a static, strong language: declaring variables, declaring the right type of variables, declaring return values, declaring the right type of return values, and using data sets. For anyone not familiar with java, here&rsquo;s a couple quick examples:</p>
+
+<h4>Declaring a variable</h4>
+
+<p>If you want to use a variable in Java you need to declare its type, and if it&rsquo;s outside of a method you also need to say whether it&rsquo;s public or private. So if I want to use a variable in my class that contains console output I couldn&rsquo;t use it until I declared it:</p>
+
+<pre><code>private String consoleOutput;
+</code></pre>
+
+<p>Now, inside of a method I could assign it as normal:</p>
+
+<pre><code>consoleOutput = "Please make a move";
+</code></pre>
+
+<p>(Note that statements in Java end with a semicolon).</p>
+
+<h4>Declaring an Array</h4>
+
+<p>When using an Array in Java you not only need to declare it, but often you also need to declare what size it is and what type it contains. (You can use multiple types by saying it contains objects of the type Object- but that can cause other problems). Array declaration for an array of 9 integers would look like this:</p>
+
+<pre><code>private int[] numbers = new int[9];
+</code></pre>
+
+<p>However, if you know what your array will contain right off the bat you can also set it this way:</p>
+
+<pre><code>private int[] otherNumbers =  {1, 2, 3, 4, 5, 6, 7, 8, 9};
+</code></pre>
+
+<p><em>Because of course you&rsquo;d use curly braces to represent your array, right?</em></p>
+
+<h4>Declaring return values and variables in methods</h4>
+
+<p>All methods in Java need to have their return value declared. If a method doesn&rsquo;t return anything then &ldquo;void&rdquo; is used. Java also requires that Types are declared for all arguments that come in. Here&rsquo;s some examples using our numbers arrays from above:</p>
+
+{% highlight java %}
+
+// changes value but doesn't return anything. takes in two integers as arguments.
+public void changeArrayValue(int indexToChange, int newValue) {
+  numbers[indexToChange] = newValue;
+}
+
+//changes value and returns new array
+public int[] changeAndReturnUpdatedArray(int indexToChange, int newValue) {
+  numbers[indexToChange] = newValue;
+  return numbers;
+}
+
+//returns true and false
+public boolean checkArrayLengthforForgetfulPeople(int lengthGuess) {
+  if (numbers.length == lengthGuess) 
+    return true;
+  return false;
+}
+{% endhighlight %}
+
+<p>Note that I&rsquo;ve made all of these methods public because they could be called on instances of this theoretical class we&rsquo;re working in&hellip; let&rsquo;s call it NineDigitNumberArray. So to create an instance we&rsquo;d of course have to declare it&rsquo;s type</p>
+
+<pre><code>public NineDigitNumberArray newNineDigitArray;
+</code></pre>
+
+<p>&hellip; as you can see,     the language can be quite verbose. In hindsight I&rsquo;m glad that I was able to start with Ruby and Clojure as my first two languages. Both are dynamic, and for lack of a better term, are just more &ldquo;fun&rdquo;. But who knows, when I first started learning Clojure I had a similar feeling&hellip; going back to Ruby was a breath of fresh air. Now that I started learning Java, when I went back to working on a Clojure project this week <em>it</em> felt like a breath of fresh air. Fortunately, the past couple of days Java has finally started to click&hellip; on to tic-tac-toe.</p>

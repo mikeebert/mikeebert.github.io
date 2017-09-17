@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'Getting Started with a Kata in Clojure Using Speclj '
+date: '2012-08-26T21:43:22-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/30285650033/getting-started-with-a-kata-in-clojure-using
+---
+<p>As I&rsquo;m learning Clojure I&rsquo;m going to be working on the katas that I also did in Ruby. These exercises helped me immensely with getting comfortable with a language: the syntax, finding new methods and new ways to do things, and also the red-green-factor cycle of a new testing framework. I&rsquo;m starting out with the Prime Factors kata in Clojure and here&rsquo;s a quick overview of setting up in Speclj for anyone else that wants to give it a whirl.</p>
+
+<p>The <a href="https://github.com/functional-koans/clojure-koans">Clojure Koans</a>, which are currently maintained by <a href="http://www.8thlight.com/our-team/colin-jones">Colin</a>, use a specifically built koan-engine and Clojure syntax to make the assertions that help move you along. For example, the following code will simply return <code>false</code></p>
+
+<pre><code>(= 2 4)
+</code></pre>
+
+<p><a href="https://github.com/slagyr/speclj">Speclj</a> is a testing framework for Clojure that was developed by <a href="http://www.8thlight.com/our-team/micah-martin">Micah</a>, and just by requiring it in your project and spec files it provides you with a &ldquo;should&rdquo; syntax (<a href="https://github.com/slagyr/speclj/wiki/Should-variants">among others</a>) that should feel very familiar to anyone who has used RSpec. The same assertion as the one above in Speclj would look like this:</p>
+
+<pre><code>(should= 2 4)
+</code></pre>
+
+<p>In order to get up and running with the kata I set up a directory structure like this inside a folder named &ldquo;primefactors_kata&rdquo;:</p>
+
+<p><img src="https://lh6.googleusercontent.com/-sJAUACHA8Kc/UDrKVcFWm8I/AAAAAAAAB90/8Sg7v4mEl1g/s255/clojure_kata_directory.jpg" alt=""/></p>
+
+<p>Then inside of your project.clj file you&rsquo;ll need to set up the project. This says what your project is, where things are, and lists the dependencies that the project needs.</p>
+
+<pre><code>(defproject prime-factors-kata "0.1"
+  :description "Kata in Clojure"
+  :dependencies [[org.clojure/clojure "1.4.0"]
+                             [speclj "2.2.0"]]
+  :plugins [[speclj "2.2.0"]]
+  :test-paths ["spec/"]
+  :java-source-path "src/")
+</code></pre>
+
+<p>Then you&rsquo;ll start with your primes_spec.clj file, which looks similar to a RSpec file, except that you need to say what namespace you are in, followed by what the test needs to &ldquo;use&rdquo;, a lá <code>require</code> in Ruby</p>
+
+<pre><code>(ns primes-spec
+    (:use
+        [speclj.core]
+        [primes]))
+
+(describe "Prime Factors"
+    (it "should factor 2"
+        (should= (primes-of 2) [2]))))
+</code></pre>
+
+<p>Now in order to run your tests you can use <a href="https://github.com/technomancy/leiningen">Leiningen</a> (which you will need to install if you haven&rsquo;t already), and the command in terminal is <code>lein spec</code> to run all the tests once, or <code>lein spec -a</code> to continuously run the tests. Once you run this it will add a folder called &ldquo;target&rdquo; to your directory, but you won&rsquo;t need to do anything with it.</p>
+
+<p>So, last but not least, over in the primes.clj file we just need to declare the namespace we&rsquo;re working in and we can get down to making the tests pass. Note that the filename and the namespace matches the name from the &ldquo;use&rdquo; section of the primes_spec.clj file.</p>
+
+<pre><code>(ns primes)
+
+(defn primes-of [x]
+    [2])
+</code></pre>
+
+<p>Obviously this is only enough code to make my first test pass and won&rsquo;t return primes for any number larger than two, but hopefully this is enough to get you started. I&rsquo;ll leave the rest of the solution up to you.</p>

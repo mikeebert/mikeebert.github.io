@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'Design Pattern: Factory Pattern'
+date: '2012-05-13T15:42:48-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/22988677276/design-pattern-factory-pattern
+---
+<p>One of the other design patterns I studied this week was the Factory Pattern. Whereas the Strategy Pattern is used to choose the right algorithm for the circumstances, the Factory Pattern is used to help choose the right class for the circumstances. Sometimes you need to create an object with behaviors from one class, and other times you want to create an object with behaviors from a different class.</p>
+
+<p>The example that Russ Olsen starts with in <a href="http://www.informit.com/store/product.aspx?isbn=9780321490452">Design Patterns in Ruby</a> is having a Pond class that contains different types of animals and uses aspects of the Template Strategy to create a Pond superclass that takes on the job of creating new animals (ducks and frogs) and calling their behaviors to stimulate life in a pond. The pond class is the <strong>creator</strong> in the Factory Pattern and the DuckPond and FrogPond subclasses are the <strong>products</strong>, the objects that are being created.</p>
+
+<p>Olsen goes on to describe two versions of the Factory Pattern, the parameterized factory pattern and the abstract factory pattern.  As its name applies, in the parameterized factory pattern the creator takes a parameter that tells it which type of object to create. The abstract factory pattern is used more to create compatible sets of objects, and here Olsen expanded his example to include creatures of a Pond class and creature of a Jungle class. You could use the Abstract Factory Pattern to make it easier to be sure you weren&rsquo;t mixing the creation of lily pads and swans with the creation of tigers and monkeys.</p>
+
+<p>In my own code I applied the Factory Pattern to the creation of my tic-tac-toe players. Depending on the input from the human the Game class will create either a human player or a computer player, and since it&rsquo;s a parameter that&rsquo;s used to determine that creation I&rsquo;m specifically using the parameterized factory pattern.</p>
+
+<p>Next up, I&rsquo;ll take a step back and report in on the aforementioned Template Pattern.</p>

@@ -1,0 +1,109 @@
+---
+layout: post
+title: 'Repository Pattern: Day 2'
+date: '2012-08-02T22:33:42-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/28600693251/repository-pattern-day-2
+---
+<p>Today I dove back into setting up my models and datastores with DataMapper and Postgres and although the going was slow I had some moderate success.  The slow-going is due to the fact that I&rsquo;m using some entirely new concepts and tools, but the pace is gradually picking up as I get more comfortable.</p>
+
+<p>The first new thing (for me) that I&rsquo;m implemented was RSpec&rsquo;s shared_examples. Since I have a working, tested app using in-memory repository, in theory I should be able to just use those tests to insure that my DataMapper objects and Postgres repository behave the same way.</p>
+
+<p>In practice it&rsquo;s not too far off, but there are still a lot of little &ldquo;gotchas&rdquo; that I&rsquo;m having to sort out in order to use the same tests and get the same behavior. One of the big ones was namespacing. I have two user classes to represent the different models, one for DataMapper and one for an in-memory User, which means two user.rb files too. In order to make sure that the specs are calling the right one I&rsquo;ve namespaced the in-memory one into a module named &ldquo;Memory&rdquo;. Then my Datamapper User model exists at the top-level. This means that whenever I call <code>User.somemethod</code> I will get my DataMapper model (and I can even put <code>::User.somemethod</code> to be completely sure I&rsquo;m at the top level), and if I want to use my in-memory User I have to call <code>Memory::User.some_method</code>.</p>
+
+<p>Here&rsquo;s abridged versions of what the two user files look like:</p>
+
+<pre><code>#in file lib/datamapper_datastore/models/user.rb
+
+require 'data_mapper'
+class User
+  include DataMapper::Resource
+
+  property :id,         Serial
+  property :name,       String
+  property :email,      String
+end
+</code></pre>
+
+<p>..</p>
+
+<pre><code>#in file lib/memory_datastore/models/user.rb
+
+module Memory
+  class User
+    attr_accessor :id, :name, :email
+  end
+end
+</code></pre>
+
+<p>And here&rsquo;s how I&rsquo;m implementing the shared examples in my RSpec tests.</p>
+
+<pre><code>#in file spec/datamapper_datastore/models/user.rb
+
+require 'spec_helper'
+require 'lib/dm_datastore/models/user'
+require 'lib/shared_examples/models/user_examples'
+
+describe "DataMapper user" do
+  before(:all) do
+    @user = User.new(:name =&gt; "Mike", :email =&gt; "test@test.com")
+  end
+
+  it_behaves_like "user model"
+end 
+</code></pre>
+
+<p>..</p>
+
+<pre><code>#in file spec/memory_datastore/models/user.rb
+
+require 'spec_helper'
+require 'lib/memory_datastore/models/user'
+require 'lib/shared_examples/models/user_examples'
+
+module Memory
+  describe "In-Memory User" do
+    before(:all) do
+      @user = User.new(:name =&gt; "Mike", :email =&gt; "test@test.com")
+    end
+
+    it_behaves_like "user model"
+  end
+end
+</code></pre>
+
+<p>And then my shared examples file for the models just loooks like this.</p>
+
+<pre><code>#in file spec/shared_examples/models/user_examples.rb
+
+shared_examples "user model" do
+  it "should do something" do
+    ...some code...
+  end
+
+  context "User password and authentication" do
+    it "should set a password" do
+      ...some code...
+    end
+
+    ...some more tests....
+  end
+end
+</code></pre>
+
+<p>Now whenever I run my specs all of the tests from
+shared_examples/user_examples are run for both the DataMappper and
+in-memory user objects.</p>
+
+<p>The next step (once I get all of this set-up) will be to set up a
+separate rake task to run the specs against the DataMapper objects so
+that they aren&rsquo;t called every time I run <code>rspec spec</code>. As I mentioned
+yesterday, I was running 100 tests in a .1 seconds so it was easy to constantly
+fire them off. After adding in only seven DataMapper tests I&rsquo;ve
+added almost a second to the test suite, and it&rsquo;s funny how jarring that
+increase in time is. What was an instant flow of green (with some red
+and yellow, of course) is now a stuttering line. As I continue with the
+shared_examples I&rsquo;ll be adding another 70 tests to various DataMapper
+objects, which means approximately 10 seconds of tests. 11 seconds of
+tests won&rsquo;t be terrible, but quarantining those tests off into a
+separate task will be a lot nicer.</p>

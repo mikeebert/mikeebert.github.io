@@ -1,0 +1,24 @@
+---
+layout: post
+title: 'Design Pattern: Composite Pattern'
+date: '2012-06-04T22:30:19-05:00'
+tags: []
+tumblr_url: http://mikeebert.tumblr.com/post/24446642707/design-pattern-composite-pattern
+---
+<p>The Composite Pattern is a pattern that&rsquo;s designed to use smaller objects to build up larger ones, and those larger objects could themselves actually just be smaller parts of even larger objects, and so on.</p>
+
+<p>The real-world examples that Olsen provides in <a href="http://www.amazon.com/Design-Patterns-Ruby-Russ-Olsen/dp/0321490452/ref=sr_1_1?ie=UTF8&amp;qid=1338859870&amp;sr=8-1">Design Patterns in Ruby</a> and the Gang of Four mention in <a href="http://www.amazon.com/Design-Patterns-Elements-Object-Oriented-ebook/dp/B000SEIBB8">Design Patterns: Elements of Reusable Object-Oriented Software</a> (I picked up a second book) are for Graphics application and Graphical User Interfaces where a programmer might want to group together objects to form larger components. For example different shapes were all part of the Shape group, and various line styles were all Lines&hellip; but then they were all part of the DrawnObjects group.</p>
+
+<p>Digging down into the Composite Pattern reveals three important parts, and the best way to visualize it is as a tree branching down. At the top is the <strong>Component</strong>, and the next step down the tree would be the other two options, the <strong>Leaf</strong> or the <strong>Composite</strong>. <em>UML time!</em></p>
+
+<p><img src="https://lh4.googleusercontent.com/-Rko7hT6VnN8/T81u0DnymkI/AAAAAAAAB34/Yt3VYj5fDCg/s646/UML_composite.jpg"/></p>
+
+<p>The Component is the parent that all of the other leaves and branches are a part of. In the GUI example it would be the DrawnObjects.</p>
+
+<p>Next up could be a Leaf, which Olsen describes best when he says the Leaf represents the &ldquo;simple, indivisible building block of the process&rdquo; (114). In the GUI example I started a Leaf could be a dot. It&rsquo;s not really a line and not really a shape (well, let&rsquo;s pretend it&rsquo;s not technically a part of both) and a dot can&rsquo;t be broken down any further.</p>
+
+<p>And finally is the pattern&rsquo;s namesake object, the Composite. The composite derives from the Component, but is a component itself in that it&rsquo;s made up of more Leaves that all implement a similar action. The composite is also responsible for keeping track of (and adding and deleting) it&rsquo;s leaves. In the GUI example Shapes and Lines would both be Composites.</p>
+
+<p>The key to the composite is that it stands on it&rsquo;s own as a leaf and a component. A Shape is definitely a leaf of a drawn object, and definitely a component of Circles, Squares and Triangles.</p>
+
+<p>Honestly, I haven&rsquo;t been able to come up with a solid real world example for this pattern yet, but I just started digging around the <a href="https://github.com/slagyr/limelight">Limelight source code</a> to see if I could spot it  in there. In the meantime, I recommend checking out Olsen&rsquo;s cake baking example, which just makes me too hungry to explain here.</p>
