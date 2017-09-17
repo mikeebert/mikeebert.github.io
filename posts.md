@@ -1,16 +1,11 @@
 ---
-layout: default
+layout: page
+title: Posts
+permalink: /posts/
 ---
-
-<div class="home">
-
-  {%comment%}<h1 class="page-heading">Most Recent Posts</h1> {%endcomment%}
-
-  {{ content }}
-{%comment%}
-  <p></p>
+<div class="posts">
   <ul class="post-list">
-    {% for post in site.posts offset:5 %}
+    {% for post in site.posts %}
       <li>
         {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
         <span class="post-meta">{{ post.date | date: date_format }}</span>
@@ -21,9 +16,6 @@ layout: default
       </li>
     {% endfor %}
   </ul>
-{%endcomment%}
 
   <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
-
 </div>
-
