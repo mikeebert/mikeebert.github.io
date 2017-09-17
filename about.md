@@ -4,15 +4,11 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+For 13 years I lived in the cycling world. I raced full-time (mainly in the US but with two stints in Europe), managed teams, organized [events](https://www.abdcycling.com), coached athletes and worked in [bike shops](http://www.prairiepathcycles.com).
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Then I jumped into the world of software. As a consultant I helped
+companies delivery quality products— whether that meant writing code,
+helping to build stronger teams, or developing a more seamless process.
+I'm now currently building things at [Edovo](https://www.edovo.com) with an amazing group of
+people.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
