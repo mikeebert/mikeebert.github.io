@@ -6,7 +6,6 @@ tags: []
 ---
 
 <script>
-  window.onload = function() {
     function receiveMessage(e) {
       if (e.origin !== "https://edovo1508794743.zendesk.com") {
         console.log("this message was not from the right origin");
@@ -15,6 +14,6 @@ tags: []
       }
     }
 
-    window.addEventListener('message', receiveMessage);
-  }
+    window.addEventListener('message', receiveMessage, false);
+    console.log('Added listener');
 </script>
